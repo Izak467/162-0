@@ -534,12 +534,6 @@ body::before {
 
 /* ─── Landing extras ──────────────────────────────────────────── */
 .landing-btns { display: flex; gap: 12px; flex-wrap: wrap; }
-.challenge-btn {
-  padding: 15px 32px; background: transparent; color: var(--gold);
-  font-size: 16px; font-weight: 700; border: 2px solid var(--gold-dk);
-  border-radius: 8px; cursor: pointer; letter-spacing: .5px; transition: all .2s;
-}
-.challenge-btn:hover { background: rgba(201,164,74,.1); border-color: var(--gold); }
 .history-card { display: none; }
 .history-header { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 10px; }
 .history-row {
@@ -775,7 +769,6 @@ body::before {
 
   <div class="landing-btns">
     <button class="start-btn" onclick="startGame()">Start Game</button>
-    <button class="challenge-btn" onclick="startDailyChallenge()">⚾ Today's Challenge</button>
   </div>
 
   <div id="landing-fb-strip" style="display:none" class="landing-fb-strip">
@@ -896,7 +889,7 @@ body::before {
 
   <!-- Firebase: leaderboard -->
   <div class="card" id="fb-leaderboard-card" style="display:none">
-    <div class="card-header">Today's Leaderboard</div>
+    <div class="card-header">Leaderboard</div>
     <div id="fb-leaderboard-body"></div>
   </div>
 
@@ -976,120 +969,71 @@ var SEASON_AVG = {
 // ─── Awards ──────────────────────────────────────────────────────────────────
 // MVP top-3 by league, keyed "name|year" → rank. Pitchers excluded (won't
 // appear in this game). Accent-normalized via getMvpRank().
+// MVP top-3 finishers by league, keyed "name|year" → rank.
+// Pitchers excluded (Verlander 2011, Kershaw 2014 won but won't appear in game).
+// 2024 NL: only #1 listed — not confident enough in 2nd/3rd.
 var MVP_RANKS = {
+  // 2005
   'Alex Rodriguez|2005':1,'David Ortiz|2005':2,'Manny Ramirez|2005':3,
   'Albert Pujols|2005':1,'Andruw Jones|2005':2,'Derrek Lee|2005':3,
+  // 2006
   'Justin Morneau|2006':1,'Derek Jeter|2006':2,'David Ortiz|2006':3,
   'Ryan Howard|2006':1,'Albert Pujols|2006':2,'Carlos Beltran|2006':3,
-  'Alex Rodriguez|2007':1,'Magglio Ordonez|2007':2,'David Ortiz|2007':3,
+  // 2007
+  'Alex Rodriguez|2007':1,'Magglio Ordonez|2007':2,
   'Jimmy Rollins|2007':1,'Matt Holliday|2007':2,'David Wright|2007':3,
+  // 2008
   'Dustin Pedroia|2008':1,'Justin Morneau|2008':2,'Kevin Youkilis|2008':3,
   'Albert Pujols|2008':1,'Ryan Howard|2008':2,'Lance Berkman|2008':3,
+  // 2009
   'Joe Mauer|2009':1,'Mark Teixeira|2009':2,'Derek Jeter|2009':3,
   'Albert Pujols|2009':1,'Hanley Ramirez|2009':2,'Ryan Howard|2009':3,
+  // 2010
   'Josh Hamilton|2010':1,'Miguel Cabrera|2010':2,'Evan Longoria|2010':3,
   'Joey Votto|2010':1,'Carlos Gonzalez|2010':2,'Albert Pujols|2010':3,
+  // 2011 — Verlander (P) won AL
   'Jacoby Ellsbury|2011':2,'Jose Bautista|2011':3,
   'Ryan Braun|2011':1,'Matt Kemp|2011':2,'Prince Fielder|2011':3,
+  // 2012
   'Miguel Cabrera|2012':1,'Mike Trout|2012':2,'Adrian Beltre|2012':3,
   'Buster Posey|2012':1,'Ryan Braun|2012':2,'Andrew McCutchen|2012':3,
+  // 2013
   'Miguel Cabrera|2013':1,'Mike Trout|2013':2,'Chris Davis|2013':3,
   'Andrew McCutchen|2013':1,'Paul Goldschmidt|2013':2,'Yadier Molina|2013':3,
+  // 2014 — Kershaw (P) won NL
   'Mike Trout|2014':1,'Victor Martinez|2014':2,'Jose Abreu|2014':3,
   'Giancarlo Stanton|2014':2,'Andrew McCutchen|2014':3,
+  // 2015
   'Josh Donaldson|2015':1,'Mike Trout|2015':2,'Nelson Cruz|2015':3,
   'Bryce Harper|2015':1,'Paul Goldschmidt|2015':2,'Joey Votto|2015':3,
+  // 2016
   'Mike Trout|2016':1,'Mookie Betts|2016':2,'Jose Altuve|2016':3,
   'Kris Bryant|2016':1,'Daniel Murphy|2016':2,'Corey Seager|2016':3,
+  // 2017
   'Jose Altuve|2017':1,'Aaron Judge|2017':2,'Carlos Correa|2017':3,
   'Giancarlo Stanton|2017':1,'Paul Goldschmidt|2017':2,'Nolan Arenado|2017':3,
+  // 2018
   'Mookie Betts|2018':1,'Mike Trout|2018':2,'Jose Ramirez|2018':3,
   'Christian Yelich|2018':1,'Javier Baez|2018':2,'Matt Carpenter|2018':3,
+  // 2019
   'Mike Trout|2019':1,'Alex Bregman|2019':2,'Marcus Semien|2019':3,
   'Cody Bellinger|2019':1,'Anthony Rendon|2019':2,'Christian Yelich|2019':3,
+  // 2021
   'Shohei Ohtani|2021':1,'Vladimir Guerrero Jr.|2021':2,'Marcus Semien|2021':3,
   'Bryce Harper|2021':1,'Juan Soto|2021':2,'Fernando Tatis Jr.|2021':3,
-  'Aaron Judge|2022':1,'Yordan Alvarez|2022':2,'Trea Turner|2022':3,
+  // 2022
+  'Aaron Judge|2022':1,'Yordan Alvarez|2022':2,'Jose Ramirez|2022':3,
   'Paul Goldschmidt|2022':1,'Nolan Arenado|2022':2,'Manny Machado|2022':3,
+  // 2023
   'Shohei Ohtani|2023':1,'Corey Seager|2023':2,'Yordan Alvarez|2023':3,
   'Ronald Acuna Jr.|2023':1,'Matt Olson|2023':2,'Freddie Freeman|2023':3,
+  // 2024 — only listing what's confirmed
   'Aaron Judge|2024':1,'Gunnar Henderson|2024':2,'Bobby Witt Jr.|2024':3,
-  'Shohei Ohtani|2024':1,'Freddie Freeman|2024':2,'Francisco Lindor|2024':3,
+  'Shohei Ohtani|2024':1,
 };
-
-// Silver Slugger winners (best bat at each position, per year). Keyed "name|year".
-// Used as fallback when API doesn't return data.
-var SS_WINNERS = (function(){
-  var d = {};
-  function add(names, years) {
-    names.forEach(function(n){ years.forEach(function(y){ d[n+'|'+y]=1; }); });
-  }
-  // DH / OF / 1B perennial winners
-  add(['David Ortiz'], [2005,2006,2007,2011,2013,2015,2016]);
-  add(['Albert Pujols'], [2008,2009,2010]);
-  add(['Miguel Cabrera'], [2011,2012,2013,2014,2015]);
-  add(['Mike Trout'], [2012,2014,2015,2016,2019]);
-  add(['Alex Rodriguez'], [2005,2007]);
-  add(['Matt Kemp'], [2011]);
-  add(['Ryan Braun'], [2011,2012]);
-  add(['Andrew McCutchen'], [2013,2014]);
-  add(['Buster Posey'], [2012]);
-  add(['Hanley Ramirez'], [2007,2008,2009]);
-  add(['Troy Tulowitzki'], [2009,2011]);
-  add(['Joe Mauer'], [2006,2008,2009]);
-  add(['Adrian Gonzalez'], [2011]);
-  add(['Prince Fielder'], [2012]);
-  add(['Bryce Harper'], [2015]);
-  add(['Josh Hamilton'], [2008,2010]);
-  add(['Victor Martinez'], [2014]);
-  add(['Jose Abreu'], [2014,2019,2022]);
-  add(['Mookie Betts'], [2018,2020]);
-  add(['Christian Yelich'], [2018,2019]);
-  add(['Cody Bellinger'], [2019]);
-  add(['Freddie Freeman'], [2019,2020,2024]);
-  add(['Shohei Ohtani'], [2021,2023]);
-  add(['Bryce Harper'], [2021]);
-  add(['Aaron Judge'], [2017,2022,2024]);
-  add(['Paul Goldschmidt'], [2013,2022]);
-  add(['Nolan Arenado'], [2014,2015,2016,2017,2018,2019,2021]);
-  add(['Manny Machado'], [2018,2022]);
-  add(['Ronald Acuna Jr.','Ronald Acuña Jr.'], [2023]);
-  add(['Matt Olson'], [2023]);
-  add(['Yordan Alvarez'], [2021,2022,2023]);
-  add(['Corey Seager'], [2022,2023]);
-  add(['Gunnar Henderson'], [2024]);
-  add(['Bobby Witt Jr.'], [2024]);
-  add(['Francisco Lindor'], [2024]);
-  add(['Vladimir Guerrero Jr.'], [2021]);
-  add(['Marcus Semien'], [2021]);
-  add(['Juan Soto'], [2021,2024]);
-  add(['Nelson Cruz'], [2015,2016,2017,2019]);
-  add(['J.D. Martinez'], [2018]);
-  add(['Jose Ramirez'], [2018,2019,2022,2023]);
-  add(['Mookie Betts'], [2018]);
-  add(['Kris Bryant'], [2016]);
-  add(['Anthony Rizzo'], [2016]);
-  add(['Giancarlo Stanton'], [2017]);
-  add(['Joey Votto'], [2010,2017]);
-  add(['Derek Jeter'], [2006,2008,2012]);
-  add(['Elvis Andrus'], [2012]);
-  add(['Carlos Gonzalez'], [2010]);
-  add(['Justin Morneau'], [2006,2008,2009,2010,2013,2014]);
-  add(['Ryan Howard'], [2006,2009]);
-  add(['Chase Utley'], [2006,2007,2008,2009]);
-  add(['Jimmy Rollins'], [2007]);
-  add(['David Wright'], [2007,2008,2010]);
-  add(['Lance Berkman'], [2008]);
-  return d;
-})();
 
 function _normName(n) {
   return n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\./g,'').trim();
-}
-
-function _nameMatchesKey(playerName, keyName) {
-  if (playerName === keyName) return true;
-  return _normName(playerName) === _normName(keyName);
 }
 
 function getMvpRank(playerName, year) {
@@ -1103,52 +1047,51 @@ function getMvpRank(playerName, year) {
   return 0;
 }
 
-function isSilverSlugger(playerName, year) {
-  if (SS_WINNERS[playerName + '|' + year]) return true;
-  var normN = _normName(playerName);
-  for (var k in SS_WINNERS) {
-    var pipe = k.lastIndexOf('|');
-    if (+k.slice(pipe + 1) === +year && _normName(k.slice(0, pipe)) === normN) return true;
-  }
-  // Also check API data if available
-  if (S.awardData && S.awardData.ss && S.awardData.ss[playerName]) return true; // won't hit but fallback
-  return false;
-}
-
-var _awardsCache = {}; // year → { ss: {playerId: true} }
+var _awardsCache = {}; // year → { allStars: {playerId: true} }
 
 function fetchAwardsForYear(year) {
   if (_awardsCache[year]) return Promise.resolve(_awardsCache[year]);
-  var cache = { ss: {} };
+  var cache = { allStars: {} };
   _awardsCache[year] = cache;
-  return Promise.all([
-    fetch('https://statsapi.mlb.com/api/v1/awards/ALSS/recipients?season='+year+'&hydrate=person').then(function(r){return r.json();}).catch(function(){return null;}),
-    fetch('https://statsapi.mlb.com/api/v1/awards/NLSS/recipients?season='+year+'&hydrate=person').then(function(r){return r.json();}).catch(function(){return null;})
-  ]).then(function(results) {
-    results.forEach(function(data) {
-      if (!data || !data.awards) return;
-      data.awards.forEach(function(a) {
-        if (a.player && a.player.id) cache.ss[a.player.id] = true;
-      });
-    });
-    return cache;
-  }).catch(function() { return cache; });
+  // Fetch All-Star game from schedule, then get boxscore roster
+  return fetch('https://statsapi.mlb.com/api/v1/schedule?sportId=1&season='+year+'&gameType=A')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var gamePk = null;
+      var dates = data.dates || [];
+      for (var d = 0; d < dates.length && !gamePk; d++) {
+        var games = dates[d].games || [];
+        for (var g = 0; g < games.length; g++) {
+          if (games[g].gameType === 'A') { gamePk = games[g].gamePk; break; }
+        }
+      }
+      if (!gamePk) return cache;
+      return fetch('https://statsapi.mlb.com/api/v1/game/'+gamePk+'/boxscore')
+        .then(function(r) { return r.json(); })
+        .then(function(box) {
+          var teams = (box && box.teams) || {};
+          ['away','home'].forEach(function(side) {
+            var players = (teams[side] || {}).players || {};
+            Object.keys(players).forEach(function(key) {
+              var pid = players[key].person && players[key].person.id;
+              if (pid) cache.allStars[pid] = true;
+            });
+          });
+          return cache;
+        });
+    })
+    .catch(function() { return cache; });
 }
-
-var _BAT_SVG = '<svg width="11" height="11" viewBox="0 0 11 11" style="display:inline-block;vertical-align:middle;margin-left:1px" title="Silver Slugger">'
-  + '<line x1="1.5" y1="9.5" x2="6.5" y2="4.5" stroke="#c9a44a" stroke-width="2.2" stroke-linecap="round"/>'
-  + '<ellipse cx="8.8" cy="2.2" rx="2.1" ry="1.3" transform="rotate(-45 8.8 2.2)" fill="#c9a44a"/>'
-  + '</svg>';
 
 function getAwardBadgesHtml(player, year) {
   var html = '';
   var rank = getMvpRank(player.name, year);
   if (rank >= 1 && rank <= 3) {
-    html += '<span class="award-badge award-mvp" title="MVP Top-3 Finisher (#'+rank+')">🏆'+rank+'</span>';
+    html += '<span class="award-badge award-mvp" title="MVP #'+rank+' Finisher">🏆'+rank+'</span>';
   }
-  var ssApi = S.awardData && S.awardData.ss && S.awardData.ss[player.id];
-  if (ssApi || isSilverSlugger(player.name, year)) {
-    html += '<span class="award-badge award-ss" title="Silver Slugger">'+_BAT_SVG+'</span>';
+  var ad = S.awardData;
+  if (ad && ad.allStars && ad.allStars[player.id]) {
+    html += '<span class="award-badge award-as" title="All-Star">⭐</span>';
   }
   return html;
 }
@@ -1226,7 +1169,8 @@ function fetchRoster(teamId, year) {
       var st = hs.stat;
       if (!p || !st) continue;
       if ((st.gamesPlayed || 0) < 1) continue;
-      if (pitchers[p.id]) continue; // exclude pitchers entirely
+      // Exclude pitchers, but keep two-way players with 50+ games (e.g. Ohtani)
+      if (pitchers[p.id] && (st.gamesPlayed || 0) < 50) continue;
 
       var positions = elig[p.id] ? elig[p.id].slice() : [];
       // DH fallback: non-pitchers with 15+ games and no other fielding positions
@@ -2115,19 +2059,6 @@ function toggleRulesModal() {
   document.getElementById('rules-modal').classList.toggle('open');
 }
 
-// ─── Daily Challenge ─────────────────────────────────────────────────────────
-function getDailyChallenge() {
-  var d = new Date();
-  var seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-  return {
-    team: TEAMS[seed % TEAMS.length],
-    year: YEARS[Math.floor(seed / 37) % YEARS.length]
-  };
-}
-function startDailyChallenge() {
-  var dc = getDailyChallenge();
-  startGame(dc.team.id, dc.year);
-}
 
 // ─── Score history (localStorage) ────────────────────────────────────────────
 function saveToHistory(wins) {
