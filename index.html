@@ -130,18 +130,25 @@ body::before {
 .ls {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 7px; padding: 7px 4px;
+  border-radius: 8px; padding: 8px 4px;
   text-align: center; position: relative;
-  transition: border-color .2s;
-  min-height: 60px;
+  transition: border-color .2s, background .2s;
+  min-height: 68px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px;
 }
-.ls.filled  { border-color: var(--border-lt); }
-.ls.moving  { border-color: var(--gold); background: #1e3050; }
-.ls-pos  { font-size: 9px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
-.ls-name { font-size: 10px; color: var(--cream); margin-top: 3px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2px; }
-.ls-year { font-size: 8px; color: var(--muted); margin-top: 1px; }
-.ls-empty { font-size: 11px; color: var(--border-lt); margin-top: 4px; }
+.ls.filled  { background: #152d4a; border-color: var(--border-lt); }
+.ls.moving  { border-color: var(--gold); background: #1e3050; box-shadow: 0 0 0 2px rgba(201,164,74,.15); }
+.ls-pos {
+  font-size: 8px; font-weight: 800; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1px;
+  background: var(--bg); border-radius: 3px;
+  padding: 1px 4px; line-height: 1.4;
+}
+.ls.filled .ls-pos { color: var(--gold); background: rgba(201,164,74,.1); }
+.ls-name { font-size: 10px; color: var(--cream); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 3px; font-weight: 600; }
+.ls-year { font-size: 8px; color: var(--muted); }
+.ls-empty { font-size: 18px; color: var(--border); margin-top: 2px; line-height: 1; }
 @keyframes slot-assigned {
   0%   { border-color: var(--gold); box-shadow: 0 0 0 0 rgba(201,164,74,.7); }
   50%  { border-color: var(--gold); box-shadow: 0 0 0 6px rgba(201,164,74,0); }
@@ -183,52 +190,62 @@ body::before {
 .slot-machine {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px; padding: 20px;
-  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  border-radius: 12px; padding: 20px 20px 16px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.slot-machine-header {
+  display: flex; align-items: center; gap: 8px;
+}
+.slot-machine-icon {
+  font-size: 18px; line-height: 1;
 }
 .slot-machine-label {
   font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
-  color: var(--muted); white-space: nowrap;
+  color: var(--muted);
 }
-.slot-displays { display: flex; gap: 12px; flex: 1; }
-.slot-col { display: flex; flex-direction: column; gap: 4px; }
-.slot-col-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.slot-displays { display: flex; gap: 10px; }
+.slot-col { display: flex; flex-direction: column; gap: 5px; }
+.slot-col-lbl {
+  font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--muted); padding-left: 2px;
+}
 .slot-win {
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 6px; padding: 8px 16px;
-  min-width: 110px; height: 44px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 18px;
+  height: 62px;
   display: flex; align-items: center; justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  transition: border-color .2s;
 }
-#win-team { min-width: 180px; }
-.slot-val      { font-size: 18px; font-weight: 700; }
+.slot-win.landing { border-color: var(--gold-dk); }
+#win-year { min-width: 100px; }
+#win-team { flex: 1; }
+.slot-val      { font-size: 32px; font-weight: 700; letter-spacing: -1px; }
 .slot-val.year { color: var(--gold); font-family: Georgia, serif; }
-.slot-val.team { color: var(--cream); font-size: 14px; }
+.slot-val.team { color: var(--cream); font-size: 16px; font-weight: 600; letter-spacing: 0; }
 .team-logo {
-  width: 30px; height: 30px; object-fit: contain;
+  width: 38px; height: 38px; object-fit: contain;
   display: none; flex-shrink: 0;
 }
-
-
 .slot-win.cycling .slot-val {
-  opacity: .75;
-  color: var(--muted) !important;
+  opacity: .5; color: var(--muted) !important;
 }
 .slot-win.landing .slot-val {
   animation: land-pop .35s cubic-bezier(.17,.67,.42,1.3) forwards;
 }
 @keyframes land-pop {
   0%   { transform: scale(.88); opacity: .6; }
-  65%  { transform: scale(1.06); opacity: 1; }
+  65%  { transform: scale(1.08); opacity: 1; }
   100% { transform: scale(1);   opacity: 1; }
 }
-
-.slot-skip-row { display: flex; gap: 8px; align-items: center; }
+.slot-skip-row { display: flex; gap: 8px; }
 .skip-btn {
-  padding: 6px 14px; border: 1px solid var(--border);
+  flex: 1; padding: 8px 14px;
+  border: 1px solid var(--border);
   background: transparent; color: var(--muted);
-  border-radius: 6px; cursor: pointer; font-size: 12px;
-  transition: all .15s; white-space: nowrap;
+  border-radius: 8px; cursor: pointer; font-size: 12px;
+  transition: all .15s; white-space: nowrap; text-align: center;
 }
 .skip-btn:hover:not(:disabled) { border-color: var(--gold-dk); color: var(--gold); }
 .skip-btn:disabled { opacity: .3; cursor: not-allowed; }
@@ -454,8 +471,15 @@ body::before {
 .pr-top { display: flex; align-items: center; gap: 8px; }
 .pr-name { flex: 1; font-weight: 700; font-size: 14px; color: var(--cream); }
 .pr-btns { display: flex; gap: 4px; flex-wrap: wrap; }
-.pr-stats { display: flex; gap: 12px; font-size: 11px; color: var(--cream-dim); }
-.pr-stat span { color: var(--muted); font-size: 10px; margin-right: 1px; }
+.pr-stats { display: flex; gap: 5px; flex-wrap: wrap; }
+.pr-stat-pill {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 5px; padding: 2px 7px;
+  font-size: 11px; color: var(--cream-dim);
+}
+.pr-stat-lbl { font-size: 9px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+.pr-stat-ops { border-color: var(--border-lt); color: #8ab8e0; }
 
 /* Mobile sort bar */
 .sort-bar {
@@ -499,14 +523,12 @@ body::before {
   .move-token  { font-size: 12px; padding: 6px 12px; }
 
   /* Slot machine */
-  .slot-machine { flex-direction: column; align-items: stretch; gap: 12px; }
-  .slot-displays { gap: 10px; }
-  .slot-win  { height: 54px; }
-  .slot-val  { font-size: 22px; }
-  .slot-val.team { font-size: 15px; }
-  #win-team  { min-width: 0; flex: 1; }
-  .slot-skip-row { display: flex; gap: 8px; }
-  .skip-btn  { flex: 1; text-align: center; min-height: 42px; font-size: 13px; padding: 8px 12px; }
+  .slot-displays { gap: 8px; }
+  .slot-win  { height: 58px; }
+  #win-year  { min-width: 80px; }
+  .slot-val  { font-size: 28px; }
+  .slot-val.team { font-size: 14px; }
+  .skip-btn  { min-height: 40px; font-size: 12px; }
 
   /* Position buttons — thumb-friendly */
   .pos-assign-btn {
@@ -577,13 +599,16 @@ body::before {
 
   <!-- Slot Machine -->
   <div class="slot-machine">
-    <div class="slot-machine-label">Slot Machine</div>
+    <div class="slot-machine-header">
+      <span class="slot-machine-icon">⚾</span>
+      <span class="slot-machine-label">Slot Machine</span>
+    </div>
     <div class="slot-displays">
       <div class="slot-col">
         <div class="slot-col-lbl">Year</div>
         <div class="slot-win" id="win-year"><div class="slot-val year" id="sv-year">—</div></div>
       </div>
-      <div class="slot-col">
+      <div class="slot-col" style="flex:1">
         <div class="slot-col-lbl">Team</div>
         <div class="slot-win" id="win-team">
           <img id="sv-team-logo" class="team-logo" src="" alt="" onerror="this.style.display='none'">
@@ -592,8 +617,8 @@ body::before {
       </div>
     </div>
     <div class="slot-skip-row">
-      <button class="skip-btn" id="btn-skip-team" onclick="skipTeam()">Skip Team <span class="skip-ct" id="ct-skip-team">(1)</span></button>
-      <button class="skip-btn" id="btn-skip-year" onclick="skipYear()">Skip Year <span class="skip-ct" id="ct-skip-year">(1)</span></button>
+      <button class="skip-btn" id="btn-skip-year" onclick="skipYear()">Skip Year <span class="skip-ct" id="ct-skip-year">(1 left)</span></button>
+      <button class="skip-btn" id="btn-skip-team" onclick="skipTeam()">Skip Team <span class="skip-ct" id="ct-skip-team">(1 left)</span></button>
     </div>
   </div>
 
@@ -1078,7 +1103,7 @@ function renderLineup() {
         html += '<div style="font-size:9px;color:var(--gold);margin-top:2px">MOVING</div>';
       }
     } else {
-      html += '<div class="ls-empty">–</div>';
+      html += '<div class="ls-empty">◇</div>';
     }
     html += '</div>';
   }
@@ -1212,12 +1237,12 @@ function renderRoster() {
         + '<div class="pr-btns">'+btnHtml+'</div>'
         + '</div>'
         + '<div class="pr-stats">'
-        + '<span><span>G</span>'+st.games+'</span>'
-        + '<span><span>OPS</span>'+fmtSlash(st.obp+st.slg)+'</span>'
-        + '<span><span>HR</span>'+st.hr+'</span>'
-        + '<span><span>RBI</span>'+st.rbi+'</span>'
-        + '<span><span>R</span>'+st.runs+'</span>'
-        + '<span><span>SB</span>'+st.sb+'</span>'
+        + '<span class="pr-stat-pill pr-stat-g"><span class="pr-stat-lbl">G</span>'+st.games+'</span>'
+        + '<span class="pr-stat-pill pr-stat-ops"><span class="pr-stat-lbl">OPS</span>'+fmtSlash(st.obp+st.slg)+'</span>'
+        + '<span class="pr-stat-pill"><span class="pr-stat-lbl">HR</span>'+st.hr+'</span>'
+        + '<span class="pr-stat-pill"><span class="pr-stat-lbl">RBI</span>'+st.rbi+'</span>'
+        + '<span class="pr-stat-pill"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
+        + '<span class="pr-stat-pill"><span class="pr-stat-lbl">SB</span>'+st.sb+'</span>'
         + '</div>'
         + '</div>';
     }
@@ -1387,9 +1412,11 @@ function showResults() {
   var barsHtml = '';
   for (var b=0;b<barDefs.length;b++) {
     var d = barDefs[b];
+    var n = res.norm[d.k];
+    var barColor = n >= .65 ? '#4caf76' : n >= .38 ? 'var(--gold)' : n >= .18 ? '#e09050' : '#c05050';
     barsHtml += '<div class="sb-row">'
       +'<div class="sb-key">'+d.l+'</div>'
-      +'<div class="sb-track"><div class="sb-fill" style="width:'+Math.round(res.norm[d.k]*100)+'%"></div></div>'
+      +'<div class="sb-track"><div class="sb-fill" style="width:'+Math.round(n*100)+'%;background:'+barColor+'"></div></div>'
       +'<div class="sb-val">'+d.f(res.agg[d.k])+'</div>'
       +'</div>';
   }
