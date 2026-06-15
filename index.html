@@ -533,6 +533,14 @@ body::before {
   display: flex; align-items: center; gap: 8px;
 }
 .share-btn:hover { background: #222; }
+.copy-btn {
+  padding: 13px 20px; border-radius: 10px;
+  border: 1.5px solid var(--border-lt); background: transparent;
+  color: var(--cream-dim); font-size: 15px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; gap: 8px; transition: border-color 0.15s, color 0.15s;
+}
+.copy-btn:hover { border-color: var(--cream); color: var(--cream); }
+.copy-btn.copied { border-color: #4caf76; color: #4caf76; }
 
 /* ─── Landing extras ──────────────────────────────────────────── */
 .landing-btns { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -672,7 +680,7 @@ body::before {
   font-size: 11px; color: var(--cream);
 }
 .pr-stat-lbl { font-size: 9px; color: var(--cream-dim); font-weight: 700; text-transform: uppercase; }
-.pr-stat-ops { border-color: var(--border-lt); color: #8ab8e0; }
+.pr-stat-ops { border-color: var(--border-lt); }
 
 /* ── Mode selector ── */
 .mode-selector { display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; }
@@ -788,6 +796,7 @@ body::before {
       <button class="mode-btn active" id="mode-normal" onclick="selectMode('normal')">Normal</button>
       <button class="mode-btn hard-mode-btn" id="mode-hard" onclick="selectMode('hard')">☠ Hard Mode</button>
     </div>
+    <div id="mode-desc" style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:14px">Stat cards visible · shared leaderboard</div>
     <button class="start-btn" onclick="startGame()">Start Game</button>
   </div>
 
@@ -927,6 +936,7 @@ body::before {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
       Share Score
     </button>
+    <button class="copy-btn" id="copy-btn" onclick="copyScore()">📋 Copy</button>
   </div>
 </div>
 
@@ -1289,6 +1299,10 @@ function selectMode(m) {
   _selectedMode = m;
   document.getElementById('mode-normal').classList.toggle('active', m === 'normal');
   document.getElementById('mode-hard').classList.toggle('active', m === 'hard');
+  var desc = document.getElementById('mode-desc');
+  if (desc) desc.textContent = m === 'hard'
+    ? '☠ Stats hidden · separate Hard Mode leaderboard'
+    : 'Stat cards visible · shared leaderboard';
 }
 
 // ─── Stat color tint (Excel-style red→yellow→green gradient) ─────────────────
@@ -1758,13 +1772,13 @@ function renderRoster() {
       var badges = getAwardBadgesHtml(p, S.spin.year);
       rows += '<tr class="'+(hasAvail?'':'no-slots')+'">'
         + '<td class="td-name">'+p.name+(badges?'<span class="pr-award-badges">'+badges+'</span>':'')+'</td>'
-        + '<td class="td-num">'+st.games+'</td>'
-        + '<td class="td-num">'+fmtSlash(st.obp+st.slg)+'</td>'
-        + '<td class="td-num">'+st.runs+'</td>'
-        + '<td class="td-num">'+st.hr+'</td>'
-        + '<td class="td-num">'+st.rbi+'</td>'
-        + '<td class="td-num">'+st.tb+'</td>'
-        + '<td class="td-num">'+st.sb+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.games,40,110,162)+'">'+st.games+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.obp+st.slg,0.640,0.790,0.960)+'">'+fmtSlash(st.obp+st.slg)+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.runs,25,60,100)+'">'+st.runs+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.hr,0,15,40)+'">'+st.hr+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.rbi,20,60,105)+'">'+st.rbi+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.tb,80,200,340)+'">'+st.tb+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.sb,0,10,30)+'">'+st.sb+'</td>'
         + '<td class="td-pos">'+btnHtml+'</td>'
         + '</tr>';
     }
@@ -1968,9 +1982,10 @@ function showResults() {
   document.getElementById('fl-rows').innerHTML = flHtml;
 
   // ── Firebase: save score + load stats ──────────────────────────
-  var lineupSummary = S.lineup.filter(Boolean).map(function(sl) {
-    return sl.player.name.split(' ').slice(-1)[0] + ' \'' + String(sl.year).slice(2);
-  }).join(', ');
+  var lineupSummary = S.lineup.map(function(sl, r) {
+    if (!sl) return null;
+    return POS[r] + ': ' + sl.player.name.split(' ').slice(-1)[0] + ' \'' + String(sl.year).slice(2);
+  }).filter(Boolean).join(' · ');
 
   if (typeof window._fbSaveScore === 'function') {
     var _fbColl = S.hardMode ? 'hardScores' : 'scores';
@@ -2188,6 +2203,29 @@ function shareScore() {
   var emoji = w === 162 ? '🏆' : w >= 140 ? '🔥' : w >= 110 ? '⚾' : '😤';
   var text = emoji + ' I just built a ' + w + '–' + l + ' season in Murderers\' Row. Can you beat it?\n\nhttps://izak467.github.io/murderers-row/';
   window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+}
+
+function copyScore() {
+  if (!S.lastResult) return;
+  var w = S.lastResult.wins;
+  var l = 162 - w;
+  var emoji = w === 162 ? '🏆' : w >= 140 ? '🔥' : w >= 110 ? '⚾' : '😤';
+  var text = emoji + ' I just built a ' + w + '–' + l + ' season in Murderers\' Row. Can you beat it?\nhttps://izak467.github.io/murderers-row/';
+  var btn = document.getElementById('copy-btn');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      setTimeout(function() { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✓ Copied!'; btn.classList.add('copied');
+    setTimeout(function() { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+  }
 }
 </script>
 </body>
