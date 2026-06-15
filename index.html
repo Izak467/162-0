@@ -333,9 +333,14 @@ body::before {
   animation: land-pop .35s cubic-bezier(.17,.67,.42,1.3) forwards;
 }
 @keyframes land-pop {
-  0%   { transform: scale(.88); opacity: .6; }
-  65%  { transform: scale(1.08); opacity: 1; }
+  0%   { transform: scale(.82); opacity: .5; }
+  60%  { transform: scale(1.12); opacity: 1; }
+  80%  { transform: scale(.97); }
   100% { transform: scale(1);   opacity: 1; }
+}
+@keyframes screen-flash {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
 }
 .slot-skip-row { display: flex; gap: 8px; }
 .skip-btn {
@@ -414,6 +419,30 @@ body::before {
   border-color: var(--border); color: var(--muted);
   text-decoration: line-through;
 }
+.pos-assign-btn.pending {
+  border-color: var(--gold); color: var(--gold);
+  background: rgba(201,164,74,.15); font-weight: 900;
+}
+.confirm-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: #1a2e50; border: 1px solid var(--gold-dk);
+  border-radius: 8px; padding: 10px 14px; margin-top: 6px;
+  flex-wrap: wrap;
+}
+.confirm-bar-text { font-size: 13px; color: var(--cream-dim); flex: 1; }
+.confirm-bar-text strong { color: var(--gold); }
+.confirm-yes-btn {
+  padding: 7px 18px; background: var(--gold); color: #0d1b2a;
+  border: none; border-radius: 6px; font-weight: 800; font-size: 13px;
+  cursor: pointer; transition: background .15s;
+}
+.confirm-yes-btn:hover { background: var(--gold-lt); }
+.confirm-no-btn {
+  padding: 7px 14px; background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 6px; font-size: 13px;
+  cursor: pointer; transition: all .15s;
+}
+.confirm-no-btn:hover { border-color: var(--red); color: var(--red); }
 .move-help {
   font-size: 11px; color: var(--muted); margin-top: 7px; line-height: 1.5;
 }
@@ -726,7 +755,7 @@ body::before {
       <li>You see the <strong>full roster</strong> — everyone who played — sorted by games. Pick any player, assign them to any open position they're eligible for.</li>
       <li>A player needs <strong>10+ games at a position</strong> that season to be eligible there.</li>
       <li>Fill all 9 slots: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong>.</li>
-      <li>Filled slots are locked. You have <strong>two Move tokens</strong> to reassign placed players to different eligible positions.</li>
+      <li>Filled slots are locked. You have <strong>one Move token</strong> to reassign placed players to different eligible positions.</li>
       <li>You also have <strong>one team skip</strong> and <strong>one year skip</strong> per game.</li>
       <li>Lineup is scored on <strong>AVG / OBP / SLG + HR, RBI, R, SB</strong>. Rate stats are adjusted for era and games played — a full season in a pitcher's park counts differently than 60 games in 2006. The win curve is brutal — 162-0 requires excellence in every category.</li>
     </ul>
@@ -755,7 +784,7 @@ body::before {
 
   <div class="game-topbar">
     <div class="round-chip">Round <strong id="round-num">1</strong> of 9</div>
-    <div class="move-token available" id="move-token-badge" title="Use this to move an already-placed player to a different eligible position">↔ Move Token: <span id="move-token-txt">2 left</span></div>
+    <div class="move-token available" id="move-token-badge" title="Use this to move an already-placed player to a different eligible position">↔ Move Token: <span id="move-token-txt">1 left</span></div>
     <button class="rules-btn" onclick="toggleRulesModal()" title="How to play">?</button>
   </div>
 
@@ -816,7 +845,7 @@ body::before {
       <li>You see the <strong>full roster</strong> sorted by games. Pick any player and assign them to an eligible open position.</li>
       <li>A player needs <strong>10+ games at a position</strong> that season to be eligible there.</li>
       <li>Fill all 9 slots: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong>.</li>
-      <li>Filled slots are locked. You have <strong>two Move tokens</strong> to reassign placed players to different eligible positions.</li>
+      <li>Filled slots are locked. You have <strong>one Move token</strong> to reassign placed players to different eligible positions.</li>
       <li>You also have <strong>one team skip</strong> and <strong>one year skip</strong> per game.</li>
     </ul>
   </div>
@@ -944,11 +973,12 @@ var S = {
   allPlayers:   [],
   loadError:    null,
   sort:         { col:'games', dir:'desc' },
-  moveToken:    2,
+  moveToken:    1,
   availableOnly: false,
   movingSlotIdx:-1,
   recentYears:  [],   // last 3 years used — excluded from random picks
   recentTeams:  [],   // last 3 team IDs used — excluded from random picks
+  pendingAssign: null, // { playerIdx, posIdx, playerName, posName }
 };
 
 function teamLogoUrl(abbr) {
@@ -1191,6 +1221,7 @@ function skipYear() {
 // ─── Spin / Load ─────────────────────────────────────────────────────────────
 function doSpin(lockYear, lockTeamId) {
   S.spinning = true;
+  S.pendingAssign = null;
   refreshSkipBtns();
 
   // Exclude recently used years/teams from random picks
@@ -1224,45 +1255,84 @@ function doSpin(lockYear, lockTeamId) {
   wy.classList.remove('landing'); wt.classList.remove('landing');
   wy.classList.add('cycling');    wt.classList.add('cycling');
 
-  // Build delay schedule: starts fast (~45ms), decelerates to ~220ms over 14 ticks
-  var TICKS = 14;
+  // Phase 1: fast ticks (both spinning), Phase 2: year locks, Phase 3: team locks
+  var TICKS = 22;
+  var YEAR_LOCK_TICK = 16; // year lands here, team keeps spinning
   var delays = [];
   for (var i = 0; i < TICKS; i++) {
     var t = i / (TICKS - 1);
-    delays.push(Math.round(45 + t * t * 175));
+    // Ease: fast start, steep slowdown toward end
+    delays.push(Math.round(38 + Math.pow(t, 1.6) * 280));
   }
 
   var step = 0;
 
   function tick() {
-    svYear.textContent = (lockYear   != null) ? finalYear      : pick(YEARS);
-    svTeam.textContent = (lockTeamId != null) ? finalTeam.name : pick(TEAMS).name;
+    // Year: lock after YEAR_LOCK_TICK
+    if (step < YEAR_LOCK_TICK) {
+      svYear.textContent = (lockYear != null) ? finalYear : pick(YEARS);
+    } else if (step === YEAR_LOCK_TICK) {
+      // Year lands — animate it
+      svYear.textContent = finalYear;
+      wy.classList.remove('cycling');
+      void wy.offsetWidth;
+      wy.classList.add('landing');
+      playLandOne();
+      setTimeout(function() { wy.classList.remove('landing'); }, 400);
+    }
+
+    // Team keeps spinning until final tick
+    if (step < TICKS - 1) {
+      svTeam.textContent = (lockTeamId != null) ? finalTeam.name : pick(TEAMS).name;
+    }
+
     playTick();
     step++;
 
     if (step < TICKS) {
       setTimeout(tick, delays[step]);
     } else {
-      // Land on final values + reveal badge
-      svYear.textContent = finalYear;
+      // Team lands
       svTeam.textContent = finalTeam.name;
       svLogo.src = teamLogoUrl(finalTeam.abbr);
       svLogo.style.display = '';
+
+      wt.classList.remove('cycling');
+      void wt.offsetWidth;
+      wt.classList.add('landing');
       playLand();
 
-      wy.classList.remove('cycling'); wt.classList.remove('cycling');
-      void wy.offsetWidth;
-      wy.classList.add('landing'); wt.classList.add('landing');
+      // Screen flash
+      flashScreen();
 
       setTimeout(function() {
-        wy.classList.remove('landing'); wt.classList.remove('landing');
+        wt.classList.remove('landing');
         S.spinning = false;
         loadRoster();
-      }, 380);
+      }, 420);
     }
   }
 
   tick();
+}
+
+function flashScreen() {
+  var el = document.createElement('div');
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(201,164,74,.08);pointer-events:none;z-index:9998;animation:screen-flash .4s ease-out forwards';
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 450);
+}
+
+function playLandOne() {
+  try {
+    var ctx = getAudioCtx();
+    var osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine'; osc.frequency.value = 523;
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+    osc.start(); osc.stop(ctx.currentTime + 0.28);
+  } catch(e) {}
 }
 
 function loadRoster() {
@@ -1431,6 +1501,7 @@ function renderRoster() {
       if (movingPlayer && p.id !== movingPlayer.id) continue;
       var btnHtml = buildBtnHtml(p, i, movingPlayer);
       var hasAvail = movingPlayer ? true : eligibleSlotsFor(p).available.length > 0;
+      var isPendingRow = S.pendingAssign && S.pendingAssign.playerIdx === i;
       rows += '<div class="player-row'+(hasAvail?'':' no-slots')+'">'
         + '<div class="pr-top">'
         + '<div class="pr-name">'+p.name+'</div>'
@@ -1439,11 +1510,12 @@ function renderRoster() {
         + '<div class="pr-stats">'
         + '<span class="pr-stat-pill pr-stat-g"><span class="pr-stat-lbl">G</span>'+st.games+'</span>'
         + '<span class="pr-stat-pill pr-stat-ops"><span class="pr-stat-lbl">OPS</span>'+fmtSlash(st.obp+st.slg)+'</span>'
+        + '<span class="pr-stat-pill"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
         + '<span class="pr-stat-pill"><span class="pr-stat-lbl">HR</span>'+st.hr+'</span>'
         + '<span class="pr-stat-pill"><span class="pr-stat-lbl">RBI</span>'+st.rbi+'</span>'
-        + '<span class="pr-stat-pill"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
         + '<span class="pr-stat-pill"><span class="pr-stat-lbl">SB</span>'+st.sb+'</span>'
         + '</div>'
+        + (isPendingRow ? buildConfirmBar() : '')
         + '</div>';
     }
     body.innerHTML = sortBar + '<div class="player-rows">'+rows+'</div>';
@@ -1503,13 +1575,34 @@ function onAssignClick(playerIdx, posIdx) {
   if (!player) return;
   if (S.movingSlotIdx !== -1) {
     completeMove(posIdx);
-  } else {
-    assignPlayer(player, posIdx);
+    return;
   }
+  // If same button clicked again → confirm immediately
+  if (S.pendingAssign && S.pendingAssign.playerIdx === playerIdx && S.pendingAssign.posIdx === posIdx) {
+    confirmAssign();
+    return;
+  }
+  // First click → show confirmation
+  S.pendingAssign = { playerIdx: playerIdx, posIdx: posIdx, playerName: player.name, posName: POS[posIdx] };
+  renderRoster();
+}
+
+function confirmAssign() {
+  if (!S.pendingAssign) return;
+  var player = window._sortedPlayers[S.pendingAssign.playerIdx];
+  var posIdx  = S.pendingAssign.posIdx;
+  S.pendingAssign = null;
+  if (player) assignPlayer(player, posIdx);
+}
+
+function cancelAssign() {
+  S.pendingAssign = null;
+  renderRoster();
 }
 
 function buildBtnHtml(p, i, movingPlayer) {
   var btnHtml = '';
+  var pa = S.pendingAssign;
   if (movingPlayer && p.id === movingPlayer.id) {
     var moveSlots = moveSlotsFor(p, S.movingSlotIdx);
     for (var s = 0; s < moveSlots.length; s++) {
@@ -1519,7 +1612,9 @@ function buildBtnHtml(p, i, movingPlayer) {
   } else {
     var eligSlots = eligibleSlotsFor(p);
     for (var a = 0; a < eligSlots.available.length; a++) {
-      btnHtml += '<button class="pos-assign-btn" onclick="onAssignClick('+i+','+eligSlots.available[a]+')">'+POS[eligSlots.available[a]]+'</button>';
+      var pIdx = eligSlots.available[a];
+      var isPending = pa && pa.playerIdx === i && pa.posIdx === pIdx;
+      btnHtml += '<button class="pos-assign-btn'+(isPending?' pending':'')+'" onclick="onAssignClick('+i+','+pIdx+')">'+POS[pIdx]+'</button>';
     }
     for (var f = 0; f < eligSlots.filled.length; f++) {
       btnHtml += '<button class="pos-assign-btn pos-filled" disabled>'+POS[eligSlots.filled[f]]+'</button>';
@@ -1527,6 +1622,16 @@ function buildBtnHtml(p, i, movingPlayer) {
     if (!btnHtml) btnHtml = '<span style="font-size:11px;color:var(--muted)">—</span>';
   }
   return btnHtml;
+}
+
+function buildConfirmBar() {
+  var pa = S.pendingAssign;
+  if (!pa) return '';
+  return '<div class="confirm-bar">'
+    +'<div class="confirm-bar-text">Slot <strong>'+pa.playerName.split(' ').slice(-1)[0]+'</strong> at <strong>'+pa.posName+'</strong>?</div>'
+    +'<button class="confirm-yes-btn" onclick="confirmAssign()">✓ Lock In</button>'
+    +'<button class="confirm-no-btn" onclick="cancelAssign()">Cancel</button>'
+    +'</div>';
 }
 
 function toggleAvailableFilter() {
@@ -1856,7 +1961,7 @@ function startGame(lockTeamId, lockYear) {
   S.round=0; S.lineup=[null,null,null,null,null,null,null,null,null];
   S.skips={team:1,year:1}; S.spin=null; S.allPlayers=[]; S.loadError=null;
   S.spinning=false; S.loading=false; S.sort={col:'games',dir:'desc'};
-  S.moveToken=2; S.movingSlotIdx=-1; S.recentYears=[]; S.recentTeams=[]; S.availableOnly=false;
+  S.moveToken=1; S.movingSlotIdx=-1; S.recentYears=[]; S.recentTeams=[]; S.availableOnly=false;
 
   showScreen('game');
   document.getElementById('round-num').textContent = '1';
