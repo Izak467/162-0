@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>162-0 — Build Baseball's Perfect Lineup</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #0d1b2a;
+  --surface:    #132540;
+  --surface2:   #1c3355;
+  --border:     #2c4a6a;
+  --border-lt:  #3d6080;
+  --cream:      #f0ece2;
+  --cream-dim:  #b8b0a0;
+  --muted:      #6a82a0;
+  --gold:       #c9a44a;
+  --gold-lt:    #e2c070;
+  --gold-dk:    #7a5f22;
+  --red:        #c03a3a;
+  --green-fld:  #1e4d30;
+  --navy-lt:    #3a6090;
+}
+
+body {
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Segoe UI', Georgia, system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url('https://d8j0ntlcm91z4.cloudfront.net/user_3EuBEdMKRmkoyzkyMTUsq6xoneU/hf_20260615_151702_4085e95f-6080-4740-80b8-2676a5a188eb.png');
+  background-size: cover;
+  background-position: center bottom;
+  opacity: 0.13;
+  z-index: -1;
+  pointer-events: none;
+}
+
+#app { width: 100%; max-width: 1000px; padding: 0 16px 80px; }
+
+.screen { display: none; flex-direction: column; gap: 24px; padding-top: 40px; }
+.screen.active { display: flex; }
+
+/* ─── Landing ─────────────────────────────────────────────── */
+.hero { border-bottom: 2px solid var(--gold-dk); padding-bottom: 20px; }
+.hero-title {
+  font-family: Georgia, serif;
+  font-size: clamp(72px, 15vw, 120px);
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: -3px;
+  line-height: 1;
+}
+.hero-title span { color: var(--gold); }
+.hero-sub { font-size: 15px; color: var(--muted); margin-top: 6px; letter-spacing: .5px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+}
+.card-header {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--gold); margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.rules-list li {
+  color: var(--cream-dim); margin-left: 18px; margin-bottom: 8px;
+  line-height: 1.6; font-size: 14px;
+}
+.rules-list li strong { color: var(--cream); }
+
+.start-btn {
+  padding: 15px 40px;
+  background: var(--gold);
+  color: #0d1b2a;
+  font-size: 16px; font-weight: 700;
+  border: none; border-radius: 8px;
+  cursor: pointer; letter-spacing: .5px;
+  transition: background .2s;
+  align-self: flex-start;
+}
+.start-btn:hover { background: var(--gold-lt); }
+
+/* ─── Game Header ──────────────────────────────────────────── */
+.game-topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border); padding-bottom: 14px;
+}
+.round-chip {
+  font-size: 12px; color: var(--muted); letter-spacing: .5px;
+}
+.round-chip strong { color: var(--gold); font-size: 15px; }
+.move-token {
+  font-size: 12px; padding: 5px 12px;
+  border: 1px solid var(--border); border-radius: 20px;
+  color: var(--muted); cursor: default;
+}
+.move-token.available { border-color: var(--gold-dk); color: var(--gold); }
+
+/* ─── Lineup Bar ───────────────────────────────────────────── */
+.lineup-bar-wrap { position: relative; }
+.lineup-bar {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 5px;
+}
+.ls {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px; padding: 7px 4px;
+  text-align: center; position: relative;
+  transition: border-color .2s;
+  min-height: 60px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.ls.filled  { border-color: var(--border-lt); }
+.ls.moving  { border-color: var(--gold); background: #1e3050; }
+.ls-pos  { font-size: 9px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+.ls-name { font-size: 10px; color: var(--cream); margin-top: 3px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2px; }
+.ls-year { font-size: 8px; color: var(--muted); margin-top: 1px; }
+.ls-empty { font-size: 11px; color: var(--border-lt); margin-top: 4px; }
+@keyframes slot-assigned {
+  0%   { border-color: var(--gold); box-shadow: 0 0 0 0 rgba(201,164,74,.7); }
+  50%  { border-color: var(--gold); box-shadow: 0 0 0 6px rgba(201,164,74,0); }
+  100% { border-color: var(--border-lt); box-shadow: none; }
+}
+.ls.just-filled { animation: slot-assigned .6s ease-out forwards; }
+
+.ls-move-icon {
+  position: absolute; top: 3px; right: 3px;
+  font-size: 10px; color: var(--gold-dk);
+  cursor: pointer; line-height: 1; padding: 2px;
+  border-radius: 3px; transition: color .15s;
+}
+.ls-move-icon:hover { color: var(--gold); }
+
+/* Move banner */
+.move-banner {
+  background: #1a2e50; border: 1px solid var(--gold-dk);
+  border-radius: 8px; padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.move-banner-text { font-size: 13px; color: var(--cream-dim); }
+.move-banner-text strong { color: var(--gold); }
+.move-pos-btn {
+  padding: 5px 12px; border: 1px solid var(--gold-dk);
+  background: transparent; color: var(--gold); border-radius: 5px;
+  cursor: pointer; font-size: 12px; font-weight: 700;
+  transition: all .15s;
+}
+.move-pos-btn:hover { background: var(--gold-dk); color: var(--cream); }
+.move-cancel-btn {
+  margin-left: auto; padding: 5px 12px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); border-radius: 5px;
+  cursor: pointer; font-size: 12px; transition: all .15s;
+}
+.move-cancel-btn:hover { border-color: var(--red); color: var(--red); }
+
+/* ─── Slot Machine ─────────────────────────────────────────── */
+.slot-machine {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px;
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.slot-machine-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--muted); white-space: nowrap;
+}
+.slot-displays { display: flex; gap: 12px; flex: 1; }
+.slot-col { display: flex; flex-direction: column; gap: 4px; }
+.slot-col-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.slot-win {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 16px;
+  min-width: 110px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px;
+}
+#win-team { min-width: 180px; }
+.slot-val      { font-size: 18px; font-weight: 700; }
+.slot-val.year { color: var(--gold); font-family: Georgia, serif; }
+.slot-val.team { color: var(--cream); font-size: 14px; }
+.team-logo {
+  width: 30px; height: 30px; object-fit: contain;
+  display: none; flex-shrink: 0;
+}
+
+
+.slot-win.cycling .slot-val {
+  opacity: .75;
+  color: var(--muted) !important;
+}
+.slot-win.landing .slot-val {
+  animation: land-pop .35s cubic-bezier(.17,.67,.42,1.3) forwards;
+}
+@keyframes land-pop {
+  0%   { transform: scale(.88); opacity: .6; }
+  65%  { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+.slot-skip-row { display: flex; gap: 8px; align-items: center; }
+.skip-btn {
+  padding: 6px 14px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  border-radius: 6px; cursor: pointer; font-size: 12px;
+  transition: all .15s; white-space: nowrap;
+}
+.skip-btn:hover:not(:disabled) { border-color: var(--gold-dk); color: var(--gold); }
+.skip-btn:disabled { opacity: .3; cursor: not-allowed; }
+.skip-ct { font-size: 10px; opacity: .7; }
+
+/* ─── Roster Table ─────────────────────────────────────────── */
+.roster-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.roster-card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #0f1f38;
+}
+.roster-title { font-size: 12px; color: var(--muted); }
+.roster-title strong { color: var(--cream); }
+
+.table-wrap { overflow-x: auto; }
+.roster-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px;
+}
+.roster-table th {
+  padding: 9px 10px; text-align: left;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--gold); font-weight: 700;
+  background: #0f1f38;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap; cursor: pointer;
+  user-select: none;
+}
+.roster-table th:hover { color: var(--gold-lt); }
+.roster-table th.sorted { color: var(--gold-lt); }
+.sort-arrow { margin-left: 3px; font-size: 9px; }
+
+.roster-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #1a3050;
+  color: var(--cream-dim);
+  white-space: nowrap;
+}
+.roster-table tr:last-child td { border-bottom: none; }
+.roster-table tr:hover td { background: var(--surface2); }
+.roster-table tr.no-slots td { opacity: .45; }
+
+.td-name { color: var(--cream); font-weight: 600; font-size: 13px; }
+.td-slash { font-family: 'Courier New', monospace; color: #8ab8e0; font-size: 12px; }
+.td-num   { text-align: right; }
+.td-pos   { min-width: 120px; }
+
+.pos-assign-btn {
+  display: inline-block; margin: 1px 2px;
+  padding: 3px 8px; font-size: 10px; font-weight: 700;
+  border: 1px solid var(--border-lt); border-radius: 4px;
+  color: var(--cream-dim); background: var(--bg);
+  cursor: pointer; transition: all .12s;
+}
+.pos-assign-btn:hover {
+  border-color: var(--gold); color: var(--gold);
+  background: var(--gold-dk);
+}
+.pos-assign-btn.pos-filled {
+  opacity: .28; cursor: not-allowed;
+  border-color: var(--border); color: var(--muted);
+  text-decoration: line-through;
+}
+.move-help {
+  font-size: 11px; color: var(--muted); margin-top: 7px; line-height: 1.5;
+}
+
+/* ─── Loading / Error ──────────────────────────────────────── */
+.load-state { padding: 40px; text-align: center; color: var(--muted); }
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid var(--border); border-top-color: var(--gold);
+  border-radius: 50%; animation: spin 1s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.err-box {
+  background: #2a1010; border: 1px solid #6a2020;
+  border-radius: 7px; padding: 12px 16px;
+  color: #e08888; font-size: 13px; margin: 12px;
+}
+
+/* ─── Results ──────────────────────────────────────────────── */
+.results-hero {
+  text-align: center; padding: 16px 0 8px;
+  border-bottom: 1px solid var(--border);
+}
+.result-record {
+  font-family: Georgia, serif;
+  font-size: clamp(56px, 12vw, 92px);
+  font-weight: 700; line-height: 1; letter-spacing: -2px;
+}
+.result-record.perfect { color: var(--gold); }
+.result-record.great   { color: #7abaff; }
+.result-record.good    { color: var(--cream); }
+.result-tagline { font-size: 16px; color: var(--cream-dim); margin-top: 8px; }
+
+.bars-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.sb-row   { display: flex; align-items: center; gap: 10px; }
+.sb-key   { width: 34px; font-size: 11px; color: var(--muted); font-weight: 700; text-align: right; }
+.sb-track { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.sb-fill  { height: 100%; background: var(--gold); border-radius: 3px; }
+.sb-val   { width: 52px; font-size: 11px; color: var(--cream-dim); text-align: right; }
+.sb-total { text-align: right; font-size: 12px; color: var(--muted); padding-top: 10px; border-top: 1px solid var(--border); margin-top: 6px; }
+.sb-total strong { color: var(--gold); font-size: 15px; }
+
+.fl-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 9px 0; border-bottom: 1px solid #1a3050;
+}
+.fl-row:last-child { border-bottom: none; }
+.fl-pos  { width: 28px; font-size: 11px; color: var(--muted); font-weight: 800; }
+.fl-name { flex: 1; font-weight: 600; font-size: 14px; }
+.fl-ctx  { font-size: 11px; color: var(--muted); }
+.fl-slash { font-family: monospace; font-size: 12px; color: #8ab8e0; font-weight: 700; }
+.fl-cnt  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.play-again-btn {
+  align-self: center; padding: 13px 36px;
+  background: var(--gold); color: #0d1b2a;
+  font-size: 15px; font-weight: 700; border: none;
+  border-radius: 8px; cursor: pointer; transition: background .2s;
+}
+.play-again-btn:hover { background: var(--gold-lt); }
+
+@media (max-width: 640px) {
+  .lineup-bar  { grid-template-columns: repeat(5, 1fr); }
+  .bars-grid   { grid-template-columns: 1fr; }
+  .slot-machine { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+  .wrap { padding: 0 10px 24px; gap: 16px; }
+  .card { padding: 14px; }
+  .hero-title { letter-spacing: -2px; }
+  .hero-sub { font-size: 13px; }
+
+  .game-topbar { flex-wrap: wrap; gap: 8px; padding-bottom: 10px; }
+  .slot-actions { flex-wrap: wrap; gap: 8px; }
+  .skip-btn { font-size: 11px; padding: 5px 10px; min-height: 36px; }
+
+  .roster-table th,
+  .roster-table td { padding: 7px 6px; font-size: 12px; }
+  .td-name { font-size: 12px; }
+  .td-pos  { min-width: 90px; }
+
+  .pos-assign-btn {
+    padding: 6px 10px; font-size: 11px;
+    min-height: 36px; min-width: 36px;
+  }
+
+  .table-wrap {
+    /* shadow hints that table scrolls */
+    background:
+      linear-gradient(to right, var(--surface) 10px, transparent 10px),
+      linear-gradient(to left,  var(--surface) 10px, transparent 10px) 100% 0,
+      linear-gradient(to right, rgba(0,0,0,.35), transparent) 10px,
+      linear-gradient(to left,  rgba(0,0,0,.35), transparent) calc(100% - 10px);
+    background-size: 30px 100%, 30px 100%, 20px 100%, 20px 100%;
+    background-repeat: no-repeat;
+    background-attachment: local, local, scroll, scroll;
+  }
+
+  .fl-row { gap: 8px; }
+  .fl-name { font-size: 13px; }
+}
+@media (max-width: 400px) {
+  .lineup-bar { grid-template-columns: repeat(3, 1fr); }
+  .roster-table th,
+  .roster-table td { padding: 6px 5px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ═══════════ LANDING ═══════════ -->
+<div id="screen-landing" class="screen active">
+  <div class="hero">
+    <div class="hero-title"><span>162</span>-0</div>
+    <div class="hero-sub">Build Baseball's Perfect Lineup · 2005 – 2025</div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">How to Play</div>
+    <ul class="rules-list">
+      <li>Each round, a slot machine spins a random <strong>MLB team + year</strong> (2005–2025, excluding 2020).</li>
+      <li>You see the <strong>full roster</strong> — everyone who played — sorted by games. Pick any player, assign them to any open position they're eligible for.</li>
+      <li>A player needs <strong>10+ games at a position</strong> that season to be eligible there.</li>
+      <li>Fill all 9 slots: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong>.</li>
+      <li>Filled slots are locked. You have <strong>two Move tokens</strong> to reassign placed players to different eligible positions.</li>
+      <li>You also have <strong>one team skip</strong> and <strong>one year skip</strong> per game.</li>
+      <li>Lineup is scored on <strong>AVG / OBP / SLG + HR, RBI, R, TB, SB</strong>. The win curve is brutal — 162-0 requires excellence in every category.</li>
+    </ul>
+  </div>
+
+  <button class="start-btn" onclick="startGame()">Start Game</button>
+</div>
+
+<!-- ═══════════ GAME ═══════════ -->
+<div id="screen-game" class="screen">
+
+  <div class="game-topbar">
+    <div class="round-chip">Round <strong id="round-num">1</strong> of 9</div>
+    <div class="move-token available" id="move-token-badge" title="Use this to move an already-placed player to a different eligible position">↔ Move Token: <span id="move-token-txt">Available</span></div>
+  </div>
+
+  <!-- Lineup -->
+  <div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:7px">Your Lineup</div>
+    <div class="lineup-bar" id="lineup-bar"></div>
+    <div id="move-banner" style="display:none;margin-top:8px"></div>
+    <div class="move-help" id="move-help">
+      ↔ <strong style="color:var(--gold-lt)">Move Token</strong> — once a player is placed, click the <strong style="color:var(--gold-lt)">↔</strong> icon on their lineup slot to reassign them to any other eligible open position. You have <strong style="color:var(--gold-lt)">one use</strong> per game.
+    </div>
+  </div>
+
+  <!-- Slot Machine -->
+  <div class="slot-machine">
+    <div class="slot-machine-label">Slot Machine</div>
+    <div class="slot-displays">
+      <div class="slot-col">
+        <div class="slot-col-lbl">Year</div>
+        <div class="slot-win" id="win-year"><div class="slot-val year" id="sv-year">—</div></div>
+      </div>
+      <div class="slot-col">
+        <div class="slot-col-lbl">Team</div>
+        <div class="slot-win" id="win-team">
+          <img id="sv-team-logo" class="team-logo" src="" alt="" onerror="this.style.display='none'">
+          <div class="slot-val team" id="sv-team">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="slot-skip-row">
+      <button class="skip-btn" id="btn-skip-team" onclick="skipTeam()">Skip Team <span class="skip-ct" id="ct-skip-team">(1)</span></button>
+      <button class="skip-btn" id="btn-skip-year" onclick="skipYear()">Skip Year <span class="skip-ct" id="ct-skip-year">(1)</span></button>
+    </div>
+  </div>
+
+  <!-- Roster -->
+  <div class="roster-card">
+    <div class="roster-card-header">
+      <div class="roster-title" id="roster-title">Spinning…</div>
+    </div>
+    <div id="roster-body"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════ RESULTS ═══════════ -->
+<div id="screen-results" class="screen">
+  <div class="results-hero">
+    <div class="result-record" id="result-record"></div>
+    <div class="result-tagline" id="result-tagline"></div>
+  </div>
+  <div class="card">
+    <div class="card-header">Team Strength</div>
+    <div class="bars-grid" id="bars-grid"></div>
+    <div class="sb-total" id="sb-total"></div>
+  </div>
+  <div class="card">
+    <div class="card-header">Final Lineup</div>
+    <div id="fl-rows"></div>
+  </div>
+  <button class="play-again-btn" onclick="resetGame()">Play Again</button>
+</div>
+
+</div><!-- #app -->
+
+<script>
+// ─── Constants ───────────────────────────────────────────────────────────────
+var TEAMS = [
+  { id:109, name:'Arizona Diamondbacks', abbr:'ARI', color:'#A71930' },
+  { id:144, name:'Atlanta Braves',        abbr:'ATL', color:'#CE1141' },
+  { id:110, name:'Baltimore Orioles',     abbr:'BAL', color:'#DF4601' },
+  { id:111, name:'Boston Red Sox',        abbr:'BOS', color:'#BD3039' },
+  { id:112, name:'Chicago Cubs',          abbr:'CHC', color:'#0E3386' },
+  { id:145, name:'Chicago White Sox',     abbr:'CWS', color:'#3d3d3d' },
+  { id:113, name:'Cincinnati Reds',       abbr:'CIN', color:'#C6011F' },
+  { id:114, name:'Cleveland Guardians',   abbr:'CLE', color:'#E31937' },
+  { id:115, name:'Colorado Rockies',      abbr:'COL', color:'#4B3979' },
+  { id:116, name:'Detroit Tigers',        abbr:'DET', color:'#0C2340' },
+  { id:117, name:'Houston Astros',        abbr:'HOU', color:'#002D62' },
+  { id:118, name:'Kansas City Royals',    abbr:'KC',  color:'#004687' },
+  { id:108, name:'Los Angeles Angels',    abbr:'LAA', color:'#BA0021' },
+  { id:119, name:'Los Angeles Dodgers',   abbr:'LAD', color:'#005A9C' },
+  { id:146, name:'Miami Marlins',         abbr:'MIA', color:'#0077C8' },
+  { id:158, name:'Milwaukee Brewers',     abbr:'MIL', color:'#12284B' },
+  { id:142, name:'Minnesota Twins',       abbr:'MIN', color:'#002B5C' },
+  { id:121, name:'New York Mets',         abbr:'NYM', color:'#002D72' },
+  { id:147, name:'New York Yankees',      abbr:'NYY', color:'#1a3a6b' },
+  { id:133, name:'Oakland Athletics',     abbr:'OAK', color:'#003831' },
+  { id:143, name:'Philadelphia Phillies', abbr:'PHI', color:'#E81828' },
+  { id:134, name:'Pittsburgh Pirates',    abbr:'PIT', color:'#27251F' },
+  { id:135, name:'San Diego Padres',      abbr:'SD',  color:'#2F241D' },
+  { id:137, name:'San Francisco Giants',  abbr:'SF',  color:'#C2551A' },
+  { id:136, name:'Seattle Mariners',      abbr:'SEA', color:'#0C2C56' },
+  { id:138, name:'St. Louis Cardinals',   abbr:'STL', color:'#C41E3A' },
+  { id:139, name:'Tampa Bay Rays',        abbr:'TB',  color:'#092C5C' },
+  { id:140, name:'Texas Rangers',         abbr:'TEX', color:'#003278' },
+  { id:141, name:'Toronto Blue Jays',     abbr:'TOR', color:'#134A8E' },
+  { id:120, name:'Washington Nationals',  abbr:'WSH', color:'#AB0003' },
+];
+
+var API   = 'https://statsapi.mlb.com/api/v1';
+var POS   = ['C','1B','2B','3B','SS','LF','CF','RF','DH'];
+var YEARS = [2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2021,2022,2023,2024,2025];
+
+var W     = { avg:.12, obp:.14, slg:.14, hr:.18, rbi:.13, runs:.10, tb:.12, sb:.07 };
+var CEIL  = { avg:.330, obp:.420, slg:.580, hr:295, rbi:980, runs:880, tb:2650, sb:240 };
+var FLOOR = { avg:.195, obp:.265, slg:.325, hr:0,   rbi:0,   runs:0,  tb:0,    sb:0   };
+
+// ─── State ───────────────────────────────────────────────────────────────────
+var S = {
+  round:        0,
+  lineup:       [null,null,null,null,null,null,null,null,null],
+  skips:        { team:1, year:1 },
+  spin:         null,
+  spinning:     false,
+  loading:      false,
+  allPlayers:   [],
+  loadError:    null,
+  sort:         { col:'games', dir:'desc' },
+  moveToken:    2,
+  availableOnly: false,
+  movingSlotIdx:-1,
+  recentYears:  [],   // last 3 years used — excluded from random picks
+  recentTeams:  [],   // last 3 team IDs used — excluded from random picks
+};
+
+function teamLogoUrl(abbr) {
+  // ESPN CDN — CWS is the only abbr that differs (espn uses 'chw')
+  var id = abbr.toLowerCase() === 'cws' ? 'chw' : abbr.toLowerCase();
+  return 'https://a.espncdn.com/i/teamlogos/mlb/500/' + id + '.png';
+}
+
+// ─── API ─────────────────────────────────────────────────────────────────────
+function apiFetch(path) {
+  return fetch(API + path).then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  });
+}
+
+function fetchRoster(teamId, year) {
+  return Promise.all([
+    apiFetch('/stats?stats=season&season='+year+'&group=hitting&gameType=R&teamId='+teamId+'&playerPool=All&limit=100'),
+    apiFetch('/stats?stats=season&season='+year+'&group=fielding&gameType=R&teamId='+teamId+'&playerPool=All&limit=300')
+  ]).then(function(results) {
+    var hitData = results[0], fldData = results[1];
+
+    // Build eligibility map and track pitchers separately
+    var elig = {};
+    var pitchers = {};
+    var flds = (fldData.stats && fldData.stats[0] && fldData.stats[0].splits) || [];
+    for (var i = 0; i < flds.length; i++) {
+      var fs = flds[i];
+      var pid = fs.player && fs.player.id;
+      var pp  = fs.position && fs.position.abbreviation;
+      var g   = (fs.stat && fs.stat.games) || 0;
+      if (!pid || !pp) continue;
+      if (pp === 'P' && g >= 1) {
+        pitchers[pid] = true; // mark as pitcher
+      } else if (g >= 10) {
+        if (!elig[pid]) elig[pid] = [];
+        if (elig[pid].indexOf(pp) === -1) elig[pid].push(pp);
+      }
+    }
+
+    var players = [];
+    var hits = (hitData.stats && hitData.stats[0] && hitData.stats[0].splits) || [];
+    for (var j = 0; j < hits.length; j++) {
+      var hs = hits[j];
+      var p  = hs.player;
+      var st = hs.stat;
+      if (!p || !st) continue;
+      if ((st.gamesPlayed || 0) < 1) continue;
+      if (pitchers[p.id]) continue; // exclude pitchers entirely
+
+      var positions = elig[p.id] ? elig[p.id].slice() : [];
+      // DH fallback: non-pitchers with 15+ games and no other fielding positions
+      if (positions.length === 0 && (st.gamesPlayed || 0) >= 15) {
+        positions.push('DH');
+      }
+
+      var tb = st.totalBases || ((st.hits||0) + (st.doubles||0) + 2*(st.triples||0) + 3*(st.homeRuns||0));
+
+      players.push({
+        id:   p.id,
+        name: p.fullName,
+        positions: positions,
+        stats: {
+          avg:   parseFloat(st.avg)  || 0,
+          obp:   parseFloat(st.obp)  || 0,
+          slg:   parseFloat(st.slg)  || 0,
+          hr:    st.homeRuns     || 0,
+          rbi:   st.rbi          || 0,
+          runs:  st.runs         || 0,
+          tb:    tb,
+          sb:    st.stolenBases  || 0,
+          games: st.gamesPlayed  || 0,
+        }
+      });
+    }
+    return players;
+  });
+}
+
+// ─── Simulation ──────────────────────────────────────────────────────────────
+function simulate() {
+  var hr=0,rbi=0,runs=0,tb=0,sb=0,avgS=0,obpS=0,slgS=0,n=0;
+  for (var i=0;i<9;i++) {
+    var s = S.lineup[i];
+    if (!s) continue;
+    var st = s.player.stats;
+    hr+=st.hr; rbi+=st.rbi; runs+=st.runs; tb+=st.tb; sb+=st.sb;
+    avgS+=st.avg; obpS+=st.obp; slgS+=st.slg; n++;
+  }
+  var agg = { avg:n?avgS/n:0, obp:n?obpS/n:0, slg:n?slgS/n:0, hr:hr, rbi:rbi, runs:runs, tb:tb, sb:sb };
+  var norm = {};
+  var keys = Object.keys(W);
+  for (var k=0;k<keys.length;k++) {
+    var key = keys[k];
+    norm[key] = Math.min(Math.max((agg[key]-FLOOR[key])/(CEIL[key]-FLOOR[key]),0),1);
+  }
+  var strength = 0;
+  for (var k2=0;k2<keys.length;k2++) strength += norm[keys[k2]] * W[keys[k2]];
+  var wins = Math.min(Math.round(58 + 104 * Math.pow(strength, 1.75)), 162);
+  return { wins:wins, strength:strength, norm:norm, agg:agg };
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function pick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+function sleep(ms) { return new Promise(function(r){setTimeout(r,ms);}); }
+function busy() { return S.spinning || S.loading; }
+function fmtSlash(n) { return n ? n.toFixed(3).replace(/^0\./,'.') : '.---'; }
+
+function isEligibleAt(player, pos) {
+  return pos === 'DH' ? player.stats.games >= 15 : player.positions.indexOf(pos) !== -1;
+}
+
+function eligibleSlotsFor(player) {
+  // Returns { available: [posIdx], filled: [posIdx] }
+  var available = [], filled = [];
+  for (var i = 0; i < POS.length; i++) {
+    if (!isEligibleAt(player, POS[i])) continue;
+    if (S.lineup[i] !== null) filled.push(i);
+    else available.push(i);
+  }
+  return { available: available, filled: filled };
+}
+
+function moveSlotsFor(player, currentSlotIdx) {
+  // Eligible EMPTY slots for a player being moved (excludes their current slot)
+  var result = [];
+  for (var i = 0; i < POS.length; i++) {
+    if (i === currentSlotIdx) continue;
+    if (S.lineup[i] !== null) continue;
+    if (isEligibleAt(player, POS[i])) result.push(i);
+  }
+  return result;
+}
+
+function sortedPlayers() {
+  var players = S.allPlayers.slice();
+  var col = S.sort.col, dir = S.sort.dir;
+  players.sort(function(a,b) {
+    var va, vb;
+    if (col === 'name') { va = a.name; vb = b.name; return dir==='asc' ? va.localeCompare(vb) : vb.localeCompare(va); }
+    if (col === 'ops')  { va = a.stats.obp+a.stats.slg; vb = b.stats.obp+b.stats.slg; }
+    else { va = a.stats[col] !== undefined ? a.stats[col] : 0; vb = b.stats[col] !== undefined ? b.stats[col] : 0; }
+    return dir==='asc' ? va-vb : vb-va;
+  });
+  return players;
+}
+
+// ─── Actions ─────────────────────────────────────────────────────────────────
+function assignPlayer(player, posIdx) {
+  if (S.lineup[posIdx] !== null) return;
+  S.lineup[posIdx] = { player:player, year:S.spin.year, teamName:S.spin.teamName };
+  S.round++;
+  if (S.round >= 9) { showResults(); return; }
+  renderLineup();
+  renderMoveToken();
+  // Flash the slot that was just filled
+  var slots = document.querySelectorAll('.lineup-bar .ls');
+  if (slots[posIdx]) {
+    slots[posIdx].classList.remove('just-filled');
+    void slots[posIdx].offsetWidth;
+    slots[posIdx].classList.add('just-filled');
+  }
+  doSpin(null, null);
+}
+
+function activateMove(slotIdx) {
+  if (S.moveToken <= 0 || S.movingSlotIdx !== -1) return;
+  S.movingSlotIdx = slotIdx;
+  renderLineup();
+  renderMoveBanner();
+}
+
+function completeMove(newPosIdx) {
+  if (S.movingSlotIdx === -1) return;
+  var entry = S.lineup[S.movingSlotIdx];
+  S.lineup[newPosIdx] = entry;
+  S.lineup[S.movingSlotIdx] = null;
+  S.moveToken = Math.max(0, S.moveToken - 1);
+  S.movingSlotIdx = -1;
+  renderLineup();
+  renderMoveBanner();
+  renderMoveToken();
+  renderRoster();
+}
+
+function cancelMove() {
+  S.movingSlotIdx = -1;
+  renderLineup();
+  renderMoveBanner();
+  renderRoster();
+}
+
+function skipTeam() {
+  if (S.skips.team<=0||busy()) return;
+  S.skips.team--;
+  doSpin(S.spin.year, null);
+}
+
+function skipYear() {
+  if (S.skips.year<=0||busy()) return;
+  S.skips.year--;
+  doSpin(null, S.spin.teamId);
+}
+
+// ─── Spin / Load ─────────────────────────────────────────────────────────────
+function doSpin(lockYear, lockTeamId) {
+  S.spinning = true;
+  refreshSkipBtns();
+
+  // Exclude recently used years/teams from random picks
+  var yearPool = YEARS.filter(function(y){ return S.recentYears.indexOf(y) === -1; });
+  var teamPool = TEAMS.filter(function(t){ return S.recentTeams.indexOf(t.id) === -1; });
+
+  var finalYear = lockYear   != null ? lockYear   : pick(yearPool.length ? yearPool : YEARS);
+  var finalTeam = lockTeamId != null
+    ? TEAMS.filter(function(t){return t.id===lockTeamId;})[0]
+    : pick(teamPool.length ? teamPool : TEAMS);
+  S.spin = { year:finalYear, teamId:finalTeam.id, teamName:finalTeam.name };
+
+  // Track recents (only for randomly chosen values, not locked ones)
+  if (lockYear == null) {
+    S.recentYears.push(finalYear);
+    if (S.recentYears.length > 3) S.recentYears.shift();
+  }
+  if (lockTeamId == null) {
+    S.recentTeams.push(finalTeam.id);
+    if (S.recentTeams.length > 3) S.recentTeams.shift();
+  }
+
+  var svYear  = document.getElementById('sv-year');
+  var svTeam  = document.getElementById('sv-team');
+  var svLogo  = document.getElementById('sv-team-logo');
+  var wy = document.getElementById('win-year');
+  var wt = document.getElementById('win-team');
+
+  // Hide logo and start cycling
+  svLogo.style.display = 'none';
+  wy.classList.remove('landing'); wt.classList.remove('landing');
+  wy.classList.add('cycling');    wt.classList.add('cycling');
+
+  // Build delay schedule: starts fast (~45ms), decelerates to ~220ms over 14 ticks
+  var TICKS = 14;
+  var delays = [];
+  for (var i = 0; i < TICKS; i++) {
+    var t = i / (TICKS - 1);
+    delays.push(Math.round(45 + t * t * 175));
+  }
+
+  var step = 0;
+
+  function tick() {
+    svYear.textContent = (lockYear   != null) ? finalYear      : pick(YEARS);
+    svTeam.textContent = (lockTeamId != null) ? finalTeam.name : pick(TEAMS).name;
+    step++;
+
+    if (step < TICKS) {
+      setTimeout(tick, delays[step]);
+    } else {
+      // Land on final values + reveal badge
+      svYear.textContent = finalYear;
+      svTeam.textContent = finalTeam.name;
+      svLogo.src = teamLogoUrl(finalTeam.abbr);
+      svLogo.style.display = '';
+
+      wy.classList.remove('cycling'); wt.classList.remove('cycling');
+      void wy.offsetWidth;
+      wy.classList.add('landing'); wt.classList.add('landing');
+
+      setTimeout(function() {
+        wy.classList.remove('landing'); wt.classList.remove('landing');
+        S.spinning = false;
+        loadRoster();
+      }, 380);
+    }
+  }
+
+  tick();
+}
+
+function loadRoster() {
+  S.loading = true;
+  S.allPlayers = [];
+  S.loadError = null;
+  refreshSkipBtns();
+  renderRoster();
+
+  return fetchRoster(S.spin.teamId, S.spin.year).then(function(players) {
+    S.allPlayers = players;
+  }).catch(function(e) {
+    S.loadError = 'Could not load ' + S.spin.teamName + ' ' + S.spin.year + ' roster. Try a skip.';
+  }).then(function() {
+    S.loading = false;
+    refreshSkipBtns();
+    renderRoster();
+  });
+}
+
+// ─── Render ──────────────────────────────────────────────────────────────────
+function renderLineup() {
+  var html = '';
+  for (var i=0;i<POS.length;i++) {
+    var slot = S.lineup[i];
+    var isMoving = (S.movingSlotIdx === i);
+    var cls = slot ? (isMoving ? 'ls moving' : 'ls filled') : 'ls';
+    html += '<div class="'+cls+'">';
+    html += '<div class="ls-pos">'+POS[i]+'</div>';
+    if (slot) {
+      var lastName = slot.player.name.split(' ').slice(-1)[0];
+      html += '<div class="ls-name" title="'+slot.player.name+'">'+lastName+'</div>';
+      html += '<div class="ls-year">'+slot.year+'</div>';
+      if (S.moveToken > 0 && S.movingSlotIdx === -1) {
+        html += '<div class="ls-move-icon" onclick="activateMove('+i+')" title="Move this player to a different position">↔</div>';
+      }
+      if (isMoving) {
+        html += '<div style="font-size:9px;color:var(--gold);margin-top:2px">MOVING</div>';
+      }
+    } else {
+      html += '<div class="ls-empty">–</div>';
+    }
+    html += '</div>';
+  }
+  document.getElementById('lineup-bar').innerHTML = html;
+}
+
+function renderMoveBanner() {
+  var banner = document.getElementById('move-banner');
+  if (S.movingSlotIdx === -1) { banner.style.display = 'none'; return; }
+
+  var slot   = S.lineup[S.movingSlotIdx];
+  if (!slot) { banner.style.display = 'none'; return; }
+
+  var options = moveSlotsFor(slot.player, S.movingSlotIdx);
+  var btnHtml = '';
+  for (var i=0;i<options.length;i++) {
+    btnHtml += '<button class="move-pos-btn" onclick="completeMove('+options[i]+')">'+POS[options[i]]+'</button>';
+  }
+  if (!btnHtml) {
+    btnHtml = '<span style="font-size:12px;color:var(--muted)">No other eligible open positions.</span>';
+  }
+
+  banner.style.display = 'flex';
+  banner.innerHTML = '<div class="move-banner">'
+    + '<span class="move-banner-text">Moving <strong>'+slot.player.name+'</strong> — assign to:</span>'
+    + btnHtml
+    + '<button class="move-cancel-btn" onclick="cancelMove()">Cancel</button>'
+    + '</div>';
+}
+
+function renderMoveToken() {
+  var badge = document.getElementById('move-token-badge');
+  var txt   = document.getElementById('move-token-txt');
+  var help  = document.getElementById('move-help');
+  if (S.moveToken > 0) {
+    badge.className = 'move-token available';
+    txt.textContent = S.moveToken === 1 ? '1 left' : S.moveToken + ' left';
+    if (help) help.style.display = '';
+  } else {
+    badge.className = 'move-token';
+    txt.textContent = 'Used';
+    if (help) help.style.display = 'none';
+  }
+}
+
+function refreshSkipBtns() {
+  var b = busy();
+  document.getElementById('btn-skip-team').disabled = b || S.skips.team<=0;
+  document.getElementById('btn-skip-year').disabled = b || S.skips.year<=0;
+  document.getElementById('ct-skip-team').textContent = '('+S.skips.team+')';
+  document.getElementById('ct-skip-year').textContent = '('+S.skips.year+')';
+}
+
+function renderRoster() {
+  var title = document.getElementById('roster-title');
+  var body  = document.getElementById('roster-body');
+
+  if (S.loading) {
+    title.innerHTML = 'Loading roster…';
+    body.innerHTML  = '<div class="load-state"><div class="spinner"></div>Fetching '+
+      (S.spin ? S.spin.teamName+' '+S.spin.year : '')+'…</div>';
+    return;
+  }
+  if (S.loadError) {
+    title.innerHTML = 'Error';
+    body.innerHTML  = '<div class="err-box">'+S.loadError+'</div>';
+    return;
+  }
+  if (!S.spin || !S.allPlayers) {
+    title.innerHTML = 'Spinning…';
+    body.innerHTML  = '';
+    return;
+  }
+
+  // Build set of already-picked player IDs so we can hide them from the roster
+  var pickedIds = {};
+  for (var pi = 0; pi < 9; pi++) {
+    if (S.lineup[pi]) pickedIds[S.lineup[pi].player.id] = true;
+  }
+
+  // Filter players: always exclude picked + no-slot players; optionally show only available
+  var players = sortedPlayers().filter(function(p) {
+    if (pickedIds[p.id]) return false;
+    var slots = eligibleSlotsFor(p);
+    if (slots.available.length + slots.filled.length === 0) return false;
+    if (S.availableOnly && slots.available.length === 0) return false;
+    return true;
+  });
+
+  // In move mode, only show the player being moved
+  var movingPlayer = null;
+  if (S.movingSlotIdx !== -1 && S.lineup[S.movingSlotIdx]) {
+    movingPlayer = S.lineup[S.movingSlotIdx].player;
+  }
+
+  var filterBtn = '<button onclick="toggleAvailableFilter()" style="'
+    + 'margin-left:10px;padding:3px 10px;font-size:11px;font-weight:700;cursor:pointer;'
+    + 'border-radius:12px;border:1px solid '+(S.availableOnly ? 'var(--gold)' : 'var(--border)')+';'
+    + 'background:'+(S.availableOnly ? 'var(--gold-dk)' : 'transparent')+';'
+    + 'color:'+(S.availableOnly ? 'var(--gold)' : 'var(--muted)')+';'
+    + 'transition:all .15s;">'+(S.availableOnly ? '✓ Available only' : 'Available only')+'</button>';
+  title.innerHTML = '<strong>'+S.spin.teamName+' · '+S.spin.year+'</strong>'
+    + ' <span style="color:var(--muted);font-weight:400">('+players.length+' players)</span>'
+    + filterBtn
+    + (S.movingSlotIdx !== -1 ? ' <span style="color:var(--gold);font-size:11px">— Move mode active</span>' : '');
+
+  function sortArrow(col) {
+    if (S.sort.col !== col) return '';
+    return '<span class="sort-arrow">↓</span>';
+  }
+  function thClick(col) {
+    return 'onclick="setSort(\''+col+'\')"';
+  }
+
+  var thead = '<thead><tr>'
+    + '<th '+thClick('name')+'>Player'+sortArrow('name')+'</th>'
+    + '<th '+thClick('games')+' class="'+(S.sort.col==='games'?'sorted':'')+'" style="text-align:right">G'+sortArrow('games')+'</th>'
+    + '<th '+thClick('ops')+' class="'+(S.sort.col==='ops'?'sorted':'')+'" style="text-align:right" title="Sort by OPS">OPS'+sortArrow('ops')+'</th>'
+    + '<th '+thClick('runs')+' class="'+(S.sort.col==='runs'?'sorted':'')+'" style="text-align:right">R'+sortArrow('runs')+'</th>'
+    + '<th '+thClick('hr')+' class="'+(S.sort.col==='hr'?'sorted':'')+'" style="text-align:right">HR'+sortArrow('hr')+'</th>'
+    + '<th '+thClick('rbi')+' class="'+(S.sort.col==='rbi'?'sorted':'')+'" style="text-align:right">RBI'+sortArrow('rbi')+'</th>'
+    + '<th '+thClick('tb')+' class="'+(S.sort.col==='tb'?'sorted':'')+'" style="text-align:right">TB'+sortArrow('tb')+'</th>'
+    + '<th '+thClick('sb')+' class="'+(S.sort.col==='sb'?'sorted':'')+'" style="text-align:right">SB'+sortArrow('sb')+'</th>'
+    + '<th>Assign To</th>'
+    + '</tr></thead>';
+
+  var rows = '';
+  for (var i=0;i<players.length;i++) {
+    var p  = players[i];
+    var st = p.stats;
+
+    // In move mode: only show the player being moved
+    if (movingPlayer && p.id !== movingPlayer.id) continue;
+
+    var btnHtml = '';
+    if (movingPlayer && p.id === movingPlayer.id) {
+      // Move mode: show only eligible open slots (no greyed ones needed)
+      var moveSlots = moveSlotsFor(p, S.movingSlotIdx);
+      for (var s=0;s<moveSlots.length;s++) {
+        btnHtml += '<button class="pos-assign-btn" onclick="onAssignClick('+i+','+moveSlots[s]+')">'+POS[moveSlots[s]]+'</button>';
+      }
+      if (!btnHtml) btnHtml = '<span style="font-size:10px;color:var(--muted)">No eligible open positions</span>';
+    } else {
+      // Normal mode: show all eligible positions; grey out filled ones
+      var eligSlots = eligibleSlotsFor(p);
+      for (var a=0;a<eligSlots.available.length;a++) {
+        btnHtml += '<button class="pos-assign-btn" onclick="onAssignClick('+i+','+eligSlots.available[a]+')">'+POS[eligSlots.available[a]]+'</button>';
+      }
+      for (var f=0;f<eligSlots.filled.length;f++) {
+        btnHtml += '<button class="pos-assign-btn pos-filled" disabled>'+POS[eligSlots.filled[f]]+'</button>';
+      }
+      if (!btnHtml) btnHtml = '<span style="font-size:10px;color:var(--muted)">—</span>';
+    }
+
+    var hasAvail = movingPlayer ? true : eligibleSlotsFor(p).available.length > 0;
+    var rowCls   = hasAvail ? '' : 'no-slots';
+
+    rows += '<tr class="'+rowCls+'">'
+      + '<td class="td-name">'+p.name+'</td>'
+      + '<td class="td-num">'+st.games+'</td>'
+      + '<td class="td-num">'+fmtSlash(st.obp+st.slg)+'</td>'
+      + '<td class="td-num">'+st.runs+'</td>'
+      + '<td class="td-num">'+st.hr+'</td>'
+      + '<td class="td-num">'+st.rbi+'</td>'
+      + '<td class="td-num">'+st.tb+'</td>'
+      + '<td class="td-num">'+st.sb+'</td>'
+      + '<td class="td-pos">'+btnHtml+'</td>'
+      + '</tr>';
+  }
+
+  body.innerHTML = '<div class="table-wrap"><table class="roster-table">'+thead+'<tbody>'+rows+'</tbody></table></div>';
+
+  // Store sorted players reference for click handler
+  window._sortedPlayers = players;
+}
+
+function onAssignClick(playerIdx, posIdx) {
+  var player = window._sortedPlayers[playerIdx];
+  if (!player) return;
+  if (S.movingSlotIdx !== -1) {
+    completeMove(posIdx);
+  } else {
+    assignPlayer(player, posIdx);
+  }
+}
+
+function toggleAvailableFilter() {
+  S.availableOnly = !S.availableOnly;
+  renderRoster();
+}
+
+function setSort(col) {
+  if (S.sort.col !== col) {
+    S.sort.col = col;
+    S.sort.dir = 'desc';
+    renderRoster();
+  }
+}
+
+// ─── Results ────────────────────────────────────────────────────────────────
+function showResults() {
+  showScreen('results');
+  var res = simulate();
+  var losses = 162 - res.wins;
+
+  var rec = document.getElementById('result-record');
+  rec.className = res.wins===162 ? 'result-record perfect' : res.wins>=110 ? 'result-record great' : 'result-record good';
+
+  // Animate win count up like a scoreboard
+  var counter = { val: 0 };
+  rec.textContent = '0–162';
+  if (typeof anime !== 'undefined') {
+    anime({
+      targets: counter,
+      val: res.wins,
+      round: 1,
+      duration: 1200,
+      easing: 'easeOutExpo',
+      update: function() {
+        var w = Math.round(counter.val);
+        rec.textContent = w + '–' + (162 - w);
+      }
+    });
+  } else {
+    rec.textContent = res.wins + '–' + losses;
+  }
+
+  // Confetti for great results
+  if (typeof confetti !== 'undefined') {
+    if (res.wins === 162) {
+      // Full celebration for perfect season
+      var end = Date.now() + 3000;
+      (function frame() {
+        confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#c9a44a','#f0ece2','#ffffff','#1e4d30'] });
+        confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#c9a44a','#f0ece2','#ffffff','#1e4d30'] });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+    } else if (res.wins >= 130) {
+      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#c9a44a','#f0ece2','#3a6090'] });
+    }
+  }
+
+  var tags = [
+    [162,'PERFECT SEASON. 162-0. The greatest lineup ever assembled.'],
+    [150,'Historic. This lineup would obliterate the record books.'],
+    [140,'Transcendent. A generational run.'],
+    [130,'Dominant. A top-5 offense in MLB history.'],
+    [110,'Elite. Deep October runs every single year.'],
+    [95, 'Solid contender — but short of legendary.'],
+    [82, 'Decent. You\'d sneak into the playoffs. Aim higher.'],
+    [0,  'This lineup has gaps. Try again and optimize every slot.'],
+  ];
+  var tagline = '';
+  for (var t=0;t<tags.length;t++) { if (res.wins>=tags[t][0]) { tagline=tags[t][1]; break; } }
+  document.getElementById('result-tagline').textContent = tagline;
+
+  var barDefs = [
+    {k:'avg', l:'AVG', f:fmtSlash}, {k:'obp', l:'OBP', f:fmtSlash},
+    {k:'slg', l:'SLG', f:fmtSlash}, {k:'hr',  l:'HR',  f:Math.round},
+    {k:'rbi', l:'RBI', f:Math.round},{k:'runs',l:'R',   f:Math.round},
+    {k:'tb',  l:'TB',  f:Math.round},{k:'sb',  l:'SB',  f:Math.round},
+  ];
+
+  var barsHtml = '';
+  for (var b=0;b<barDefs.length;b++) {
+    var d = barDefs[b];
+    barsHtml += '<div class="sb-row">'
+      +'<div class="sb-key">'+d.l+'</div>'
+      +'<div class="sb-track"><div class="sb-fill" style="width:'+Math.round(res.norm[d.k]*100)+'%"></div></div>'
+      +'<div class="sb-val">'+d.f(res.agg[d.k])+'</div>'
+      +'</div>';
+  }
+  document.getElementById('bars-grid').innerHTML = barsHtml;
+  document.getElementById('sb-total').innerHTML = 'Overall Strength: <strong>'+Math.round(res.strength*100)+'%</strong>';
+
+  var flHtml = '';
+  for (var r=0;r<9;r++) {
+    var slot = S.lineup[r];
+    if (!slot) continue;
+    var sst = slot.player.stats;
+    flHtml += '<div class="fl-row">'
+      +'<div class="fl-pos">'+POS[r]+'</div>'
+      +'<div style="flex:1"><div class="fl-name">'+slot.player.name+'</div><div class="fl-ctx">'+slot.year+' · '+slot.teamName+'</div></div>'
+      +'<div class="fl-stats"><div class="fl-slash">'+fmtSlash(sst.avg)+'/'+fmtSlash(sst.obp)+'/'+fmtSlash(sst.slg)+'</div>'
+      +'<div class="fl-cnt">'+sst.hr+'HR · '+sst.rbi+'RBI · '+sst.sb+'SB</div></div>'
+      +'</div>';
+  }
+  document.getElementById('fl-rows').innerHTML = flHtml;
+}
+
+// ─── Screen Mgmt ─────────────────────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('screen-'+name).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startGame() {
+  S.round=0; S.lineup=[null,null,null,null,null,null,null,null,null];
+  S.skips={team:1,year:1}; S.spin=null; S.allPlayers=[]; S.loadError=null;
+  S.spinning=false; S.loading=false; S.sort={col:'games',dir:'desc'};
+  S.moveToken=2; S.movingSlotIdx=-1; S.recentYears=[]; S.recentTeams=[]; S.availableOnly=false;
+
+  showScreen('game');
+  document.getElementById('round-num').textContent = '1';
+  renderLineup();
+  renderMoveToken();
+  refreshSkipBtns();
+  renderRoster();
+  doSpin(null, null);
+}
+
+function resetGame() { showScreen('landing'); }
+</script>
+</body>
+</html>
