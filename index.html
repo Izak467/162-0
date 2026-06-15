@@ -1037,7 +1037,7 @@ function fetchRoster(teamId, year) {
 
 // ─── Simulation ──────────────────────────────────────────────────────────────
 function simulate() {
-  var hr=0, rbi=0, runs=0, sb=0;
+  var hr=0, rbi=0, runs=0, sb=0, totalGames=0;
   var avgS=0, obpS=0, slgS=0, n=0;
 
   for (var i = 0; i < 9; i++) {
@@ -1059,6 +1059,7 @@ function simulate() {
     rbi  += st.rbi;
     runs += st.runs;
     sb   += st.sb;
+    totalGames += Math.min(st.games, 162);
     n++;
   }
 
@@ -1066,7 +1067,8 @@ function simulate() {
     avg:  n ? avgS/n : 0,
     obp:  n ? obpS/n : 0,
     slg:  n ? slgS/n : 0,
-    hr: hr, rbi: rbi, runs: runs, sb: sb
+    hr: hr, rbi: rbi, runs: runs, sb: sb,
+    games: totalGames
   };
 
   var norm = {};
@@ -1622,12 +1624,14 @@ function showResults() {
   document.getElementById('sb-total').innerHTML = 'Overall Strength: <strong>'+Math.round(res.strength*100)+'%</strong>';
 
   var a = res.agg;
+  var maxGames = 162 * 9;
   document.getElementById('agg-row').innerHTML =
     '<div class="agg-chip slash"><div class="agg-chip-val">'+fmtSlash(a.avg)+'/'+fmtSlash(a.obp)+'/'+fmtSlash(a.slg)+'</div><div class="agg-chip-lbl">Slash Line</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.hr)+'</div><div class="agg-chip-lbl">HR</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.rbi)+'</div><div class="agg-chip-lbl">RBI</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.runs)+'</div><div class="agg-chip-lbl">R</div></div>'
-    +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.sb)+'</div><div class="agg-chip-lbl">SB</div></div>';
+    +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.sb)+'</div><div class="agg-chip-lbl">SB</div></div>'
+    +'<div class="agg-chip"><div class="agg-chip-val" style="font-size:12px">'+Math.round(a.games)+'/'+maxGames+'</div><div class="agg-chip-lbl">G Played</div></div>';
 
   var flHtml = '';
   for (var r=0;r<9;r++) {
