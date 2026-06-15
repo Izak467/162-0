@@ -1017,30 +1017,113 @@ var MVP_RANKS = {
   'Shohei Ohtani|2024':1,'Freddie Freeman|2024':2,'Francisco Lindor|2024':3,
 };
 
-var _awardsCache = {}; // year → { ss: {playerId: true} }
+// Silver Slugger winners (best bat at each position, per year). Keyed "name|year".
+// Used as fallback when API doesn't return data.
+var SS_WINNERS = (function(){
+  var d = {};
+  function add(names, years) {
+    names.forEach(function(n){ years.forEach(function(y){ d[n+'|'+y]=1; }); });
+  }
+  // DH / OF / 1B perennial winners
+  add(['David Ortiz'], [2005,2006,2007,2011,2013,2015,2016]);
+  add(['Albert Pujols'], [2008,2009,2010]);
+  add(['Miguel Cabrera'], [2011,2012,2013,2014,2015]);
+  add(['Mike Trout'], [2012,2014,2015,2016,2019]);
+  add(['Alex Rodriguez'], [2005,2007]);
+  add(['Matt Kemp'], [2011]);
+  add(['Ryan Braun'], [2011,2012]);
+  add(['Andrew McCutchen'], [2013,2014]);
+  add(['Buster Posey'], [2012]);
+  add(['Hanley Ramirez'], [2007,2008,2009]);
+  add(['Troy Tulowitzki'], [2009,2011]);
+  add(['Joe Mauer'], [2006,2008,2009]);
+  add(['Adrian Gonzalez'], [2011]);
+  add(['Prince Fielder'], [2012]);
+  add(['Bryce Harper'], [2015]);
+  add(['Josh Hamilton'], [2008,2010]);
+  add(['Victor Martinez'], [2014]);
+  add(['Jose Abreu'], [2014,2019,2022]);
+  add(['Mookie Betts'], [2018,2020]);
+  add(['Christian Yelich'], [2018,2019]);
+  add(['Cody Bellinger'], [2019]);
+  add(['Freddie Freeman'], [2019,2020,2024]);
+  add(['Shohei Ohtani'], [2021,2023]);
+  add(['Bryce Harper'], [2021]);
+  add(['Aaron Judge'], [2017,2022,2024]);
+  add(['Paul Goldschmidt'], [2013,2022]);
+  add(['Nolan Arenado'], [2014,2015,2016,2017,2018,2019,2021]);
+  add(['Manny Machado'], [2018,2022]);
+  add(['Ronald Acuna Jr.','Ronald Acuña Jr.'], [2023]);
+  add(['Matt Olson'], [2023]);
+  add(['Yordan Alvarez'], [2021,2022,2023]);
+  add(['Corey Seager'], [2022,2023]);
+  add(['Gunnar Henderson'], [2024]);
+  add(['Bobby Witt Jr.'], [2024]);
+  add(['Francisco Lindor'], [2024]);
+  add(['Vladimir Guerrero Jr.'], [2021]);
+  add(['Marcus Semien'], [2021]);
+  add(['Juan Soto'], [2021,2024]);
+  add(['Nelson Cruz'], [2015,2016,2017,2019]);
+  add(['J.D. Martinez'], [2018]);
+  add(['Jose Ramirez'], [2018,2019,2022,2023]);
+  add(['Mookie Betts'], [2018]);
+  add(['Kris Bryant'], [2016]);
+  add(['Anthony Rizzo'], [2016]);
+  add(['Giancarlo Stanton'], [2017]);
+  add(['Joey Votto'], [2010,2017]);
+  add(['Derek Jeter'], [2006,2008,2012]);
+  add(['Elvis Andrus'], [2012]);
+  add(['Carlos Gonzalez'], [2010]);
+  add(['Justin Morneau'], [2006,2008,2009,2010,2013,2014]);
+  add(['Ryan Howard'], [2006,2009]);
+  add(['Chase Utley'], [2006,2007,2008,2009]);
+  add(['Jimmy Rollins'], [2007]);
+  add(['David Wright'], [2007,2008,2010]);
+  add(['Lance Berkman'], [2008]);
+  return d;
+})();
 
 function _normName(n) {
   return n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\./g,'').trim();
 }
 
+function _nameMatchesKey(playerName, keyName) {
+  if (playerName === keyName) return true;
+  return _normName(playerName) === _normName(keyName);
+}
+
 function getMvpRank(playerName, year) {
-  var direct = MVP_RANKS[playerName + '|' + year];
-  if (direct) return direct;
-  var norm = _normName(playerName);
+  var directKey = playerName + '|' + year;
+  if (MVP_RANKS[directKey]) return MVP_RANKS[directKey];
+  var normN = _normName(playerName);
   for (var k in MVP_RANKS) {
     var pipe = k.lastIndexOf('|');
-    if (k.slice(pipe + 1) == year && _normName(k.slice(0, pipe)) === norm) return MVP_RANKS[k];
+    if (+k.slice(pipe + 1) === +year && _normName(k.slice(0, pipe)) === normN) return MVP_RANKS[k];
   }
   return 0;
 }
+
+function isSilverSlugger(playerName, year) {
+  if (SS_WINNERS[playerName + '|' + year]) return true;
+  var normN = _normName(playerName);
+  for (var k in SS_WINNERS) {
+    var pipe = k.lastIndexOf('|');
+    if (+k.slice(pipe + 1) === +year && _normName(k.slice(0, pipe)) === normN) return true;
+  }
+  // Also check API data if available
+  if (S.awardData && S.awardData.ss && S.awardData.ss[playerName]) return true; // won't hit but fallback
+  return false;
+}
+
+var _awardsCache = {}; // year → { ss: {playerId: true} }
 
 function fetchAwardsForYear(year) {
   if (_awardsCache[year]) return Promise.resolve(_awardsCache[year]);
   var cache = { ss: {} };
   _awardsCache[year] = cache;
   return Promise.all([
-    fetch('https://statsapi.mlb.com/api/v1/awards/ALSS/recipients?season='+year).then(function(r){return r.json();}).catch(function(){return null;}),
-    fetch('https://statsapi.mlb.com/api/v1/awards/NLSS/recipients?season='+year).then(function(r){return r.json();}).catch(function(){return null;})
+    fetch('https://statsapi.mlb.com/api/v1/awards/ALSS/recipients?season='+year+'&hydrate=person').then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('https://statsapi.mlb.com/api/v1/awards/NLSS/recipients?season='+year+'&hydrate=person').then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(results) {
     results.forEach(function(data) {
       if (!data || !data.awards) return;
@@ -1063,8 +1146,8 @@ function getAwardBadgesHtml(player, year) {
   if (rank >= 1 && rank <= 3) {
     html += '<span class="award-badge award-mvp" title="MVP Top-3 Finisher (#'+rank+')">🏆'+rank+'</span>';
   }
-  var ad = S.awardData;
-  if (ad && ad.ss && ad.ss[player.id]) {
+  var ssApi = S.awardData && S.awardData.ss && S.awardData.ss[player.id];
+  if (ssApi || isSilverSlugger(player.name, year)) {
     html += '<span class="award-badge award-ss" title="Silver Slugger">'+_BAT_SVG+'</span>';
   }
   return html;
@@ -1458,7 +1541,10 @@ function loadRoster() {
   renderRoster();
 
   var year = S.spin.year;
-  fetchAwardsForYear(year).then(function(awards) { S.awardData = awards; });
+  fetchAwardsForYear(year).then(function(awards) {
+    S.awardData = awards;
+    if (!S.loading && !S.spinning && S.allPlayers.length) renderRoster();
+  });
 
   return fetchRoster(S.spin.teamId, year).then(function(players) {
     S.allPlayers = players;
