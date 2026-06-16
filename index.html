@@ -1868,8 +1868,10 @@ function renderLineup() {
     html += '<div class="ls-pos">'+POS[i]+'</div>';
     if (slot) {
       var nameParts = slot.player.name.split(' ');
-      var firstName = nameParts.slice(0,-1).join(' ');
-      var lastName  = nameParts.slice(-1)[0];
+      var suffixes = ['Jr.','Sr.','II','III','IV','V'];
+      var hasSuffix = nameParts.length > 1 && suffixes.indexOf(nameParts[nameParts.length-1]) !== -1;
+      var lastName  = hasSuffix ? nameParts.slice(-2).join(' ') : nameParts.slice(-1)[0];
+      var firstName = hasSuffix ? nameParts.slice(0,-2).join(' ') : nameParts.slice(0,-1).join(' ');
       html += '<div class="ls-name" title="'+slot.player.name+'">'
         +'<div class="ls-firstname">'+firstName+'</div>'
         +'<div class="ls-lastname">'+lastName+'</div>'
