@@ -1731,9 +1731,9 @@ function renderRoster() {
           '<div class="pr-stats">'
           + '<span class="pr-stat-pill pr-stat-g" style="background:'+statTint(st.games,40,110,162)+'"><span class="pr-stat-lbl">G</span>'+st.games+'</span>'
           + '<span class="pr-stat-pill pr-stat-ops" style="background:'+statTint(st.obp+st.slg,0.640,0.790,1.000)+'"><span class="pr-stat-lbl">OPS</span>'+fmtSlash(st.obp+st.slg)+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.runs,25,60,120)+'"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.runs,25,75,135)+'"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
           + '<span class="pr-stat-pill" style="background:'+statTint(st.hr,0,15,55)+'"><span class="pr-stat-lbl">HR</span>'+st.hr+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.rbi,20,60,130)+'"><span class="pr-stat-lbl">RBI</span>'+st.rbi+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.rbi,20,75,145)+'"><span class="pr-stat-lbl">RBI</span>'+st.rbi+'</span>'
           + '<span class="pr-stat-pill" style="background:'+statTint(st.sb,0,15,55)+'"><span class="pr-stat-lbl">SB</span>'+st.sb+'</span>'
           + '</div>')
         + (isPendingRow ? buildConfirmBar() : '')
@@ -1772,9 +1772,9 @@ function renderRoster() {
         + '<td class="td-name">'+p.name+(badges?'<span class="pr-award-badges">'+badges+'</span>':'')+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.games,40,110,162)+'">'+st.games+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.obp+st.slg,0.640,0.790,1.000)+'">'+fmtSlash(st.obp+st.slg)+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.runs,25,60,120)+'">'+st.runs+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.runs,25,75,135)+'">'+st.runs+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.hr,0,15,55)+'">'+st.hr+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.rbi,20,60,130)+'">'+st.rbi+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.rbi,20,75,145)+'">'+st.rbi+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.tb,80,200,370)+'">'+st.tb+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.sb,0,15,55)+'">'+st.sb+'</td>'
         + '<td class="td-pos">'+btnHtml+'</td>'
