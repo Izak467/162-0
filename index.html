@@ -1418,8 +1418,8 @@ function fetchRoster(teamId, year) {
       if (pitchers[p.id] && !elig[p.id] && p.id !== OHTANI_ID) continue;
 
       var positions = elig[p.id] ? elig[p.id].slice() : [];
-      // DH fallback: non-pitchers with 15+ games and no other fielding positions
-      if (positions.length === 0 && (st.gamesPlayed || 0) >= 15) {
+      // Any hitter with 40+ games is DH-eligible (covers pre-DH era NL teams too)
+      if ((st.gamesPlayed || 0) >= 40 && positions.indexOf('DH') === -1) {
         positions.push('DH');
       }
 
@@ -1543,7 +1543,7 @@ function statTint(value, floor, mid, ceil) {
 }
 
 function isEligibleAt(player, pos) {
-  return pos === 'DH' ? player.stats.games >= 15 : player.positions.indexOf(pos) !== -1;
+  return player.positions.indexOf(pos) !== -1;
 }
 
 function eligibleSlotsFor(player) {
