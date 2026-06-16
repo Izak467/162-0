@@ -2351,7 +2351,9 @@ function showResults() {
       +'</div>';
   }
   document.getElementById('bars-grid').innerHTML = barsHtml;
-  document.getElementById('sb-total').innerHTML = 'Overall Strength: <strong>'+Math.round(res.strength*100)+'%</strong>';
+  document.getElementById('sb-total').innerHTML = 'Overall Strength: <strong>'+Math.round(res.strength*100)+'%</strong>'
+    + ' <span style="margin:0 6px;opacity:.4">·</span> '
+    + gamesPct+'% of games played';
 
   // Achievement counts from award flags stored at pick time
   var ach = { mvp: 0, roy: 0, ss: 0, asg: 0 };
@@ -2377,7 +2379,6 @@ function showResults() {
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.rbi)+'</div><div class="agg-chip-lbl">RBI</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.runs)+'</div><div class="agg-chip-lbl">R</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.sb)+'</div><div class="agg-chip-lbl">SB</div></div>'
-    +'<div class="agg-chip"><div class="agg-chip-val">'+gamesPct+'%</div><div class="agg-chip-lbl">G Played</div></div>'
     +lbl+'Per Player</div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+(a.hr/9).toFixed(1)+'</div><div class="agg-chip-lbl">HR</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+(a.rbi/9).toFixed(1)+'</div><div class="agg-chip-lbl">RBI</div></div>'
