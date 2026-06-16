@@ -2350,19 +2350,6 @@ function showResults() {
   document.getElementById('bars-grid').innerHTML = barsHtml;
   document.getElementById('sb-total').innerHTML = 'Overall Strength: <strong>'+Math.round(res.strength*100)+'%</strong>';
 
-  // Per-162 projections (scale each player's counting stats to a full 162-game season)
-  var p162 = { hr: 0, rbi: 0, runs: 0, sb: 0 };
-  for (var p = 0; p < 9; p++) {
-    var ps = S.lineup[p]; if (!ps) continue;
-    var pg = Math.min(ps.player.stats.games, 162);
-    if (pg > 0) {
-      p162.hr   += ps.player.stats.hr   / pg * 162;
-      p162.rbi  += ps.player.stats.rbi  / pg * 162;
-      p162.runs += ps.player.stats.runs / pg * 162;
-      p162.sb   += ps.player.stats.sb   / pg * 162;
-    }
-  }
-
   // Achievement counts from award flags stored at pick time
   var ach = { mvp: 0, roy: 0, ss: 0, asg: 0 };
   for (var ai = 0; ai < 9; ai++) {
@@ -2376,18 +2363,23 @@ function showResults() {
   var a = res.agg;
   var maxGames = 162 * 9;
   var gamesPct = Math.round(a.games / maxGames * 100);
+  var lbl = '<div style="flex-basis:100%;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding-top:6px">';
   document.getElementById('agg-row').innerHTML =
-    '<div class="agg-chip slash" style="flex-basis:100%"><div class="agg-chip-val">'+fmtSlash(a.avg)+' / '+fmtSlash(a.obp)+' / '+fmtSlash(a.slg)+'</div><div class="agg-chip-lbl">AVG / OBP / SLG</div></div>'
+    '<div class="agg-chip"><div class="agg-chip-val">'+fmtSlash(a.avg)+'</div><div class="agg-chip-lbl">AVG</div></div>'
+    +'<div class="agg-chip"><div class="agg-chip-val">'+fmtSlash(a.obp)+'</div><div class="agg-chip-lbl">OBP</div></div>'
+    +'<div class="agg-chip"><div class="agg-chip-val">'+fmtSlash(a.slg)+'</div><div class="agg-chip-lbl">SLG</div></div>'
+    +'<div class="agg-chip"><div class="agg-chip-val">'+fmtSlash(a.obp+a.slg)+'</div><div class="agg-chip-lbl">OPS</div></div>'
+    +lbl+'Totals</div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.hr)+'</div><div class="agg-chip-lbl">HR</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.rbi)+'</div><div class="agg-chip-lbl">RBI</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.runs)+'</div><div class="agg-chip-lbl">R</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(a.sb)+'</div><div class="agg-chip-lbl">SB</div></div>'
     +'<div class="agg-chip"><div class="agg-chip-val">'+gamesPct+'%</div><div class="agg-chip-lbl">G Played</div></div>'
-    +'<div style="flex-basis:100%;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding-top:4px">Per 162 Projected</div>'
-    +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(p162.hr)+'</div><div class="agg-chip-lbl">HR / 162</div></div>'
-    +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(p162.rbi)+'</div><div class="agg-chip-lbl">RBI / 162</div></div>'
-    +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(p162.runs)+'</div><div class="agg-chip-lbl">R / 162</div></div>'
-    +'<div class="agg-chip"><div class="agg-chip-val">'+Math.round(p162.sb)+'</div><div class="agg-chip-lbl">SB / 162</div></div>';
+    +lbl+'Per Player</div>'
+    +'<div class="agg-chip"><div class="agg-chip-val">'+(a.hr/9).toFixed(1)+'</div><div class="agg-chip-lbl">HR</div></div>'
+    +'<div class="agg-chip"><div class="agg-chip-val">'+(a.rbi/9).toFixed(1)+'</div><div class="agg-chip-lbl">RBI</div></div>'
+    +'<div class="agg-chip"><div class="agg-chip-val">'+(a.runs/9).toFixed(1)+'</div><div class="agg-chip-lbl">R</div></div>'
+    +'<div class="agg-chip"><div class="agg-chip-val">'+(a.sb/9).toFixed(1)+'</div><div class="agg-chip-lbl">SB</div></div>';
 
   var achDefs = [
     { key:'mvp', icon:'🏆', label:'MVP'  },
