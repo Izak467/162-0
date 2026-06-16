@@ -864,46 +864,46 @@ body::before {
 }
 .era-start-btn:hover { background: var(--gold-lt); }
 
-/* ─── Era theme: Steroid (purple) ──────────────────────────── */
+/* ─── Era theme: Steroid (muted indigo) ─────────────────────── */
 body.era-steroid {
-  --bg: #120826;
-  --surface: #1a0f38;
-  --surface2: #281850;
-  --border: #3d2a6a;
-  --border-lt: #5a3d8a;
-  --muted: #7a6aaa;
-  --navy-lt: #7a5aaa;
+  --bg: #0f0c1e;
+  --surface: #160f2c;
+  --surface2: #1e163c;
+  --border: #302655;
+  --border-lt: #42366a;
+  --muted: #706690;
+  --navy-lt: #6052a0;
 }
 body.era-steroid .roster-card-header,
 body.era-steroid .roster-table th,
-body.era-steroid .sort-bar { background: #0f0820; }
-body.era-steroid .roster-table td { border-color: #2a1050; }
-body.era-steroid .ls.filled { background: #1a0a3a; }
-body.era-steroid .ls.moving { background: #251060; }
+body.era-steroid .sort-bar { background: #0c0918; }
+body.era-steroid .roster-table td { border-color: #262048; }
+body.era-steroid .ls.filled { background: #130c26; }
+body.era-steroid .ls.moving { background: #1c1438; }
 body.era-steroid .move-banner,
-body.era-steroid .confirm-bar { background: #1a0a38; border-color: var(--gold-dk); }
-body.era-steroid .lb-row { border-color: #2a1050; }
+body.era-steroid .confirm-bar { background: #130c24; border-color: var(--gold-dk); }
+body.era-steroid .lb-row { border-color: #262048; }
 body.era-steroid .roster-table tr:hover td { background: var(--surface2); }
 
-/* ─── Era theme: Nostalgia (green) ─────────────────────────── */
+/* ─── Era theme: Nostalgia (muted forest) ───────────────────── */
 body.era-nostalgia {
-  --bg: #0a1a0e;
-  --surface: #0f2618;
-  --surface2: #183020;
-  --border: #2a4a2c;
-  --border-lt: #3d6a40;
-  --muted: #6a8a6c;
-  --navy-lt: #5a8a5c;
+  --bg: #0a1410;
+  --surface: #0e1c14;
+  --surface2: #132018;
+  --border: #1e3224;
+  --border-lt: #2a4430;
+  --muted: #5e7862;
+  --navy-lt: #4a6e50;
 }
 body.era-nostalgia .roster-card-header,
 body.era-nostalgia .roster-table th,
-body.era-nostalgia .sort-bar { background: #0a1a0c; }
-body.era-nostalgia .roster-table td { border-color: #1a3020; }
-body.era-nostalgia .ls.filled { background: #0e2a12; }
-body.era-nostalgia .ls.moving { background: #124a18; }
+body.era-nostalgia .sort-bar { background: #080e0a; }
+body.era-nostalgia .roster-table td { border-color: #1a2c1e; }
+body.era-nostalgia .ls.filled { background: #0b1810; }
+body.era-nostalgia .ls.moving { background: #0e2614; }
 body.era-nostalgia .move-banner,
-body.era-nostalgia .confirm-bar { background: #0e2a10; border-color: var(--gold-dk); }
-body.era-nostalgia .lb-row { border-color: #1a3020; }
+body.era-nostalgia .confirm-bar { background: #0b180e; border-color: var(--gold-dk); }
+body.era-nostalgia .lb-row { border-color: #1a2c1e; }
 body.era-nostalgia .roster-table tr:hover td { background: var(--surface2); }
 </style>
 </head>
@@ -1548,8 +1548,8 @@ function applyEraTheme(era) {
   var root = document.documentElement;
   var themes = {
     modern:   { bg:'#0d1b2a', surface:'#132540', surface2:'#1c3355', border:'#2c4a6a', borderLt:'#3d6080', muted:'#6a82a0' },
-    steroid:  { bg:'#120826', surface:'#1a0f38', surface2:'#281850', border:'#3d2a6a', borderLt:'#5a3d8a', muted:'#7a6aaa' },
-    nostalgia:{ bg:'#0a1a0e', surface:'#0f2618', surface2:'#183020', border:'#2a4a2c', borderLt:'#3d6a40', muted:'#6a8a6c' }
+    steroid:  { bg:'#0f0c1e', surface:'#160f2c', surface2:'#1e163c', border:'#302655', borderLt:'#42366a', muted:'#706690' },
+    nostalgia:{ bg:'#0a1410', surface:'#0e1c14', surface2:'#132018', border:'#1e3224', borderLt:'#2a4430', muted:'#5e7862' }
   };
   var t = themes[era] || themes.modern;
   root.style.setProperty('--bg',        t.bg);
