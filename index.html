@@ -1313,7 +1313,7 @@ function statTint(value, floor, mid, ceil) {
     t = (ceil === mid) ? 1 : (clamped - mid) / (ceil - mid);
     rgb = [Math.round(YEL[0]+(GRN[0]-YEL[0])*t), Math.round(YEL[1]+(GRN[1]-YEL[1])*t), Math.round(YEL[2]+(GRN[2]-YEL[2])*t)];
   }
-  return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0.40)';
+  return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0.48)';
 }
 
 function isEligibleAt(player, pos) {
