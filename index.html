@@ -792,6 +792,80 @@ body::before {
   .fl-row { gap: 8px; }
   .fl-name { font-size: 13px; }
 }
+
+/* ─── Era Selector ─────────────────────────────────────────── */
+.era-selector { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+@media (max-width: 640px) { .era-selector { grid-template-columns: 1fr; } }
+.era-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px; padding: 20px 18px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: border-color .2s, transform .15s;
+}
+.era-card:hover { border-color: var(--gold-dk); transform: translateY(-2px); }
+.era-card-icon { font-size: 26px; line-height: 1; }
+.era-card-name { font-family: Georgia, serif; font-size: 18px; font-weight: 700; color: var(--gold); }
+.era-card-years { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-top: -2px; }
+.era-card-desc { font-size: 12px; color: var(--cream-dim); line-height: 1.6; flex: 1; margin-top: 4px; }
+.era-play-row { display: flex; gap: 8px; margin-top: 10px; }
+.era-play-btn {
+  flex: 1; padding: 11px 8px;
+  background: var(--gold); color: #0d1b2a;
+  border: none; border-radius: 6px; font-weight: 700; font-size: 13px;
+  cursor: pointer; transition: background .15s;
+}
+.era-play-btn:hover { background: var(--gold-lt); }
+.era-hard-btn {
+  padding: 11px 12px;
+  background: transparent; color: #f08080;
+  border: 1px solid rgba(220,80,80,0.4); border-radius: 6px;
+  font-weight: 700; font-size: 11px; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.era-hard-btn:hover { background: rgba(180,60,60,0.15); border-color: #c05050; }
+
+/* ─── Era theme: Steroid (purple) ──────────────────────────── */
+body.era-steroid {
+  --bg: #120826;
+  --surface: #1a0f38;
+  --surface2: #281850;
+  --border: #3d2a6a;
+  --border-lt: #5a3d8a;
+  --muted: #7a6aaa;
+  --navy-lt: #7a5aaa;
+}
+body.era-steroid .roster-card-header,
+body.era-steroid .roster-table th,
+body.era-steroid .sort-bar { background: #0f0820; }
+body.era-steroid .roster-table td { border-color: #2a1050; }
+body.era-steroid .ls.filled { background: #1a0a3a; }
+body.era-steroid .ls.moving { background: #251060; }
+body.era-steroid .move-banner,
+body.era-steroid .confirm-bar { background: #1a0a38; border-color: var(--gold-dk); }
+body.era-steroid .lb-row { border-color: #2a1050; }
+body.era-steroid .roster-table tr:hover td { background: var(--surface2); }
+
+/* ─── Era theme: Nostalgia (green) ─────────────────────────── */
+body.era-nostalgia {
+  --bg: #0a1a0e;
+  --surface: #0f2618;
+  --surface2: #183020;
+  --border: #2a4a2c;
+  --border-lt: #3d6a40;
+  --muted: #6a8a6c;
+  --navy-lt: #5a8a5c;
+}
+body.era-nostalgia .roster-card-header,
+body.era-nostalgia .roster-table th,
+body.era-nostalgia .sort-bar { background: #0a1a0c; }
+body.era-nostalgia .roster-table td { border-color: #1a3020; }
+body.era-nostalgia .ls.filled { background: #0e2a12; }
+body.era-nostalgia .ls.moving { background: #124a18; }
+body.era-nostalgia .move-banner,
+body.era-nostalgia .confirm-bar { background: #0e2a10; border-color: var(--gold-dk); }
+body.era-nostalgia .lb-row { border-color: #1a3020; }
+body.era-nostalgia .roster-table tr:hover td { background: var(--surface2); }
 </style>
 </head>
 <body>
@@ -802,27 +876,52 @@ body::before {
   <div class="hero">
     <div class="hero-title"><span>Murderers'</span> Row</div>
     <div class="hero-tagline">Can you go 162-0?</div>
-    <div class="hero-sub">Build the most feared lineup in baseball history · 2005–2025</div>
+    <div class="hero-sub">Build the most feared lineup in baseball history · Choose your era</div>
   </div>
 
-  <div class="landing-btns">
-    <div class="mode-selector">
-      <button class="mode-btn active" id="mode-normal" onclick="selectMode('normal')">Normal</button>
-      <button class="mode-btn hard-mode-btn" id="mode-hard" onclick="selectMode('hard')">☠ Stats Hidden</button>
+  <!-- Era selector -->
+  <div class="era-selector">
+    <div class="era-card">
+      <div class="era-card-icon">📺</div>
+      <div class="era-card-name">Nostalgia Era</div>
+      <div class="era-card-years">1969 – 1993</div>
+      <div class="era-card-desc">From the Big Red Machine to the Iron Man. Rickey Henderson stole bases before you could blink, Tony Gwynn made .300 look like a down year, and the stolen base was a legitimate weapon of war. Your grandfather's game at its absolute finest.</div>
+      <div class="era-play-row">
+        <button class="era-play-btn" onclick="startGameWithEra('nostalgia')">▶ Play</button>
+        <button class="era-hard-btn" onclick="startGameWithEra('nostalgia', true)">☠ Hard</button>
+      </div>
     </div>
-    <div id="mode-desc" style="text-align:center;font-size:11px;color:var(--muted);margin-bottom:14px">Stat cards visible · shared leaderboard</div>
-    <button class="start-btn" onclick="startGame()">Start Game</button>
+    <div class="era-card">
+      <div class="era-card-icon">💉</div>
+      <div class="era-card-name">Steroid Era</div>
+      <div class="era-card-years">1995 – 2004</div>
+      <div class="era-card-desc">McGwire hit 70. Sosa hit 66. Bonds hit 73. Nobody in the commissioner's office was asking too many questions. The most historically offensive stretch in baseball history — and we mean that both ways.</div>
+      <div class="era-play-row">
+        <button class="era-play-btn" onclick="startGameWithEra('steroid')">▶ Play</button>
+        <button class="era-hard-btn" onclick="startGameWithEra('steroid', true)">☠ Hard</button>
+      </div>
+    </div>
+    <div class="era-card">
+      <div class="era-card-icon">📊</div>
+      <div class="era-card-name">Modern Era</div>
+      <div class="era-card-years">2005 – 2025</div>
+      <div class="era-card-desc">Launch angles are optimized, the shift is banned, and every front office has a MIT grad running the numbers. From Pujols to Ohtani, the deepest and most statistically analyzed player pool in history. Build wisely.</div>
+      <div class="era-play-row">
+        <button class="era-play-btn" onclick="startGameWithEra('modern')">▶ Play</button>
+        <button class="era-hard-btn" onclick="startGameWithEra('modern', true)">☠ Hard</button>
+      </div>
+    </div>
   </div>
 
   <div class="card">
     <div class="card-header">How to Play</div>
     <ul class="rules-list">
-      <li>Each round, the slot machine spins a random <strong>MLB team + year</strong> (2005–2025, no 2020). Don't like what you got? You have <strong>one team skip</strong> and <strong>one year skip</strong> per game.</li>
+      <li>Pick an era, then each round the slot machine spins a random <strong>MLB team + year</strong> from that era's window. Don't like what you got? You have <strong>one team skip</strong> and <strong>one year skip</strong> per game.</li>
       <li>Browse the full roster of everyone who suited up that season. Stat cards are color-coded <strong>red → green</strong> so the studs stand out. Badge guide: <strong>🏆</strong> MVP · <strong>🐣</strong> Rookie of the Year · <strong>⚡</strong> Silver Slugger · <strong>⭐</strong> All-Star.</li>
       <li>A player needs <strong>10+ games at a position</strong> to be eligible there.</li>
       <li>Fill all 9 slots: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong>. Use <strong>Available Only</strong> or the <strong>Position</strong> filter to find the right fits fast.</li>
       <li>Slots lock once filled — but you get one <strong>↔ Move Token</strong> to reassign any placed player to another open position they qualify for.</li>
-      <li>Scored on <strong>AVG, OBP, SLG, HR, RBI, R, and SB</strong> — era- and park-adjusted, weighted by games played. Durability counts. 162-0 takes elite production everywhere.</li>
+      <li>Scored on <strong>AVG, OBP, SLG, HR, RBI, R, and SB</strong> — era-adjusted, weighted by games played. Durability counts. 162-0 takes elite production everywhere.</li>
     </ul>
   </div>
 
@@ -909,7 +1008,7 @@ body::before {
       <button class="rules-close" onclick="toggleRulesModal()">✕</button>
     </div>
     <ul class="rules-list">
-      <li>Each round, a slot machine spins a random <strong>MLB team + year</strong> (2005–2025, excluding 2020).</li>
+      <li>Each round, a slot machine spins a random <strong>MLB team + year</strong> from your chosen era.</li>
       <li>You see the <strong>full roster</strong> sorted by games. Pick any player and assign them to an eligible open position.</li>
       <li>A player needs <strong>10+ games at a position</strong> that season to be eligible there.</li>
       <li>Fill all 9 slots: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong>.</li>
@@ -921,8 +1020,11 @@ body::before {
 
 <!-- ═══════════ RESULTS ═══════════ -->
 <div id="screen-results" class="screen">
-  <div id="hard-mode-badge" style="display:none;text-align:center;padding:8px 0 4px">
-    <span style="background:rgba(180,60,60,0.22);border:1px solid rgba(220,80,80,0.55);color:#f08080;padding:4px 16px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:2px">☠ HARD MODE</span>
+  <div style="display:flex;gap:8px;justify-content:center;padding:8px 0 4px;flex-wrap:wrap">
+    <div id="hard-mode-badge" style="display:none">
+      <span style="background:rgba(180,60,60,0.22);border:1px solid rgba(220,80,80,0.55);color:#f08080;padding:4px 16px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:2px">☠ HARD MODE</span>
+    </div>
+    <div id="era-badge" style="display:none;background:rgba(201,164,74,0.12);border:1px solid var(--gold-dk);color:var(--gold);padding:4px 16px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:1.5px"></div>
   </div>
   <div class="results-hero">
     <div class="result-record" id="result-record"></div>
@@ -1014,6 +1116,68 @@ var API   = 'https://statsapi.mlb.com/api/v1';
 var POS   = ['C','1B','2B','3B','SS','LF','CF','RF','DH'];
 var YEARS = [2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2021,2022,2023,2024,2025];
 
+// ─── Era Configuration ───────────────────────────────────────────────────────
+var ERA_CONFIG = {
+  modern: {
+    name: 'Modern Era',
+    yearPool: [2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2021,2022,2023,2024,2025],
+    seasonScale: {}, // no shortened seasons in pool (2020 excluded)
+    showSS: true, showASG: true, showROY: true, showMVP: true,
+    fbColl: 'scores', fbCollHard: 'hardScores',
+    statRanges: {
+      g:[40,110,162], avg:[0.220,0.270,0.330], ops:[0.640,0.790,0.975],
+      r:[25,60,108],  hr:[0,15,44],            rbi:[20,60,115],
+      tb:[80,200,355],sb:[0,10,34]
+    }
+  },
+  steroid: {
+    name: 'Steroid Era',
+    // 1994 removed (strike ended Aug 12); 1995 kept with 144-game scaling
+    yearPool: [1995,1996,1997,1998,1999,2000,2001,2002,2003,2004],
+    seasonScale: { 1995: 144/162 },
+    showSS: true, showASG: true, showROY: true, showMVP: true,
+    fbColl: 'scores_steroid', fbCollHard: 'hardScores_steroid',
+    statRanges: {
+      g:[40,110,162], avg:[0.220,0.275,0.360], ops:[0.640,0.820,1.100],
+      r:[25,65,130],  hr:[0,20,60],            rbi:[20,70,145],
+      tb:[80,210,380],sb:[0,10,40]
+    }
+  },
+  nostalgia: {
+    name: 'Nostalgia Era',
+    // 1972 and 1981 removed (strike-shortened)
+    yearPool: [1969,1970,1971,1973,1974,1975,1976,1977,1978,1979,1980,
+               1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993],
+    seasonScale: {},
+    showSS: false, showASG: false, showROY: true, showMVP: true,
+    fbColl: 'scores_nostalgia', fbCollHard: 'hardScores_nostalgia',
+    statRanges: {
+      g:[40,110,162], avg:[0.220,0.275,0.375], ops:[0.600,0.750,0.960],
+      r:[20,55,120],  hr:[0,12,50],            rbi:[15,55,120],
+      tb:[60,185,340],sb:[0,20,100]
+    }
+  }
+};
+
+// ─── Era-specific scoring (ceiling/floor for final lineup totals) ─────────────
+var ERA_SCORING = {
+  modern: {
+    W:     { avg:.10, obp:.22, slg:.20, hr:.18, rbi:.14, runs:.10, sb:.06 },
+    CEIL:  { avg:.290, obp:.375, slg:.480, hr:265, rbi:880, runs:840, sb:210 },
+    FLOOR: { avg:.220, obp:.290, slg:.340, hr:30,  rbi:300, runs:300, sb:0   }
+  },
+  steroid: {
+    W:     { avg:.10, obp:.22, slg:.20, hr:.18, rbi:.14, runs:.10, sb:.06 },
+    CEIL:  { avg:.295, obp:.385, slg:.510, hr:280, rbi:940, runs:880, sb:185 },
+    FLOOR: { avg:.225, obp:.295, slg:.350, hr:35,  rbi:320, runs:310, sb:0   }
+  },
+  nostalgia: {
+    W:     { avg:.10, obp:.22, slg:.20, hr:.16, rbi:.12, runs:.10, sb:.10 },
+    CEIL:  { avg:.310, obp:.390, slg:.480, hr:215, rbi:810, runs:800, sb:340 },
+    FLOOR: { avg:.220, obp:.280, slg:.330, hr:20,  rbi:260, runs:260, sb:0   }
+  }
+};
+
 // Scoring weights — AVG/OBP/SLG are rate stats (lineup avg), HR/RBI/R/SB are counting (summed)
 var W     = { avg:.10, obp:.22, slg:.20, hr:.18, rbi:.14, runs:.10, sb:.06 };
 var CEIL  = { avg:.290, obp:.375, slg:.480, hr:265, rbi:880, runs:840, sb:210 };
@@ -1021,6 +1185,7 @@ var FLOOR = { avg:.220, obp:.290, slg:.340, hr:30,  rbi:300, runs:300, sb:0   };
 
 // MLB league averages by season — rate stats used for durability-adjusted normalization
 var SEASON_AVG = {
+  // Modern era
   2005:{avg:.264,obp:.330,slg:.421}, 2006:{avg:.269,obp:.334,slg:.432},
   2007:{avg:.268,obp:.332,slg:.423}, 2008:{avg:.264,obp:.331,slg:.416},
   2009:{avg:.262,obp:.332,slg:.418}, 2010:{avg:.257,obp:.325,slg:.403},
@@ -1030,7 +1195,26 @@ var SEASON_AVG = {
   2017:{avg:.255,obp:.326,slg:.426}, 2018:{avg:.248,obp:.318,slg:.409},
   2019:{avg:.252,obp:.323,slg:.435}, 2021:{avg:.244,obp:.317,slg:.411},
   2022:{avg:.243,obp:.310,slg:.394}, 2023:{avg:.248,obp:.320,slg:.414},
-  2024:{avg:.243,obp:.317,slg:.399}, 2025:{avg:.244,obp:.316,slg:.400}
+  2024:{avg:.243,obp:.317,slg:.399}, 2025:{avg:.244,obp:.316,slg:.400},
+  // Steroid era
+  1995:{avg:.267,obp:.337,slg:.408}, 1996:{avg:.270,obp:.340,slg:.432},
+  1997:{avg:.267,obp:.335,slg:.424}, 1998:{avg:.266,obp:.334,slg:.420},
+  1999:{avg:.271,obp:.345,slg:.437}, 2000:{avg:.270,obp:.345,slg:.437},
+  2001:{avg:.264,obp:.332,slg:.425}, 2002:{avg:.261,obp:.331,slg:.418},
+  2003:{avg:.264,obp:.332,slg:.417}, 2004:{avg:.266,obp:.334,slg:.428},
+  // Nostalgia era
+  1969:{avg:.248,obp:.321,slg:.369}, 1970:{avg:.258,obp:.331,slg:.388},
+  1971:{avg:.249,obp:.320,slg:.368}, 1973:{avg:.256,obp:.328,slg:.381},
+  1974:{avg:.257,obp:.327,slg:.371}, 1975:{avg:.258,obp:.330,slg:.379},
+  1976:{avg:.256,obp:.321,slg:.361}, 1977:{avg:.264,obp:.330,slg:.399},
+  1978:{avg:.261,obp:.326,slg:.381}, 1979:{avg:.270,obp:.334,slg:.408},
+  1980:{avg:.269,obp:.332,slg:.399}, 1982:{avg:.258,obp:.323,slg:.384},
+  1983:{avg:.261,obp:.327,slg:.391}, 1984:{avg:.260,obp:.323,slg:.384},
+  1985:{avg:.261,obp:.325,slg:.391}, 1986:{avg:.262,obp:.330,slg:.401},
+  1987:{avg:.265,obp:.333,slg:.413}, 1988:{avg:.259,obp:.326,slg:.384},
+  1989:{avg:.261,obp:.329,slg:.389}, 1990:{avg:.259,obp:.328,slg:.388},
+  1991:{avg:.256,obp:.326,slg:.387}, 1992:{avg:.255,obp:.323,slg:.376},
+  1993:{avg:.267,obp:.336,slg:.408}
 };
 
 // ─── Awards ──────────────────────────────────────────────────────────────────
@@ -1056,6 +1240,17 @@ var MVP_RANKS = {
   'Aaron Judge|2022':1,    'Paul Goldschmidt|2022':1,
   'Shohei Ohtani|2023':1,  'Ronald Acuna Jr.|2023':1,
   'Aaron Judge|2024':1,    'Shohei Ohtani|2024':1,
+  // Steroid Era
+  'Mo Vaughn|1995':1,         'Barry Larkin|1995':1,
+  'Juan Gonzalez|1996':1,     'Ken Caminiti|1996':1,
+  'Ken Griffey Jr.|1997':1,   'Larry Walker|1997':1,
+  'Juan Gonzalez|1998':1,     'Sammy Sosa|1998':1,
+  'Ivan Rodriguez|1999':1,    'Chipper Jones|1999':1,
+  'Jason Giambi|2000':1,      'Jeff Kent|2000':1,
+  'Ichiro Suzuki|2001':1,     'Barry Bonds|2001':1,
+  'Miguel Tejada|2002':1,     'Barry Bonds|2002':1,
+  'Alex Rodriguez|2003':1,    'Barry Bonds|2003':1,
+  'Vladimir Guerrero|2004':1, 'Barry Bonds|2004':1,
 };
 
 function _normName(n) {
@@ -1073,23 +1268,22 @@ function getMvpRank(playerName, year) {
   return 0;
 }
 
-var _awardsCache = {}; // year → { allStars:{}, silverSluggers:{}, roys:{}, mvpWinners:{} }
+var _awardsCache = {}; // "year|era" → { allStars:{}, silverSluggers:{}, roys:{}, mvpWinners:{} }
 
-function fetchAwardsForYear(year) {
-  if (_awardsCache[year]) return Promise.resolve(_awardsCache[year]);
+function fetchAwardsForYear(year, era) {
+  era = era || 'modern';
+  var cacheKey = year + '|' + era;
+  if (_awardsCache[cacheKey]) return Promise.resolve(_awardsCache[cacheKey]);
   var cache = { allStars: {}, silverSluggers: {}, roys: {}, mvpWinners: {} };
-  _awardsCache[year] = cache;
+  _awardsCache[cacheKey] = cache;
+  var eraCfg = ERA_CONFIG[era] || ERA_CONFIG.modern;
   var base = 'https://statsapi.mlb.com/api/v1/awards/';
   var endpoints = [
-    ['ALAS',  'allStars'],
-    ['NLAS',  'allStars'],
-    ['ALSS',  'silverSluggers'],
-    ['NLSS',  'silverSluggers'],
-    ['ALROY', 'roys'],
-    ['NLROY', 'roys'],
-    ['ALMVP', 'mvpWinners'],
-    ['NLMVP', 'mvpWinners'],
+    ['ALROY', 'roys'], ['NLROY', 'roys'],
+    ['ALMVP', 'mvpWinners'], ['NLMVP', 'mvpWinners'],
   ];
+  if (eraCfg.showASG) { endpoints.push(['ALAS','allStars']); endpoints.push(['NLAS','allStars']); }
+  if (eraCfg.showSS)  { endpoints.push(['ALSS','silverSluggers']); endpoints.push(['NLSS','silverSluggers']); }
   var fetches = endpoints.map(function(ep) {
     var awardId = ep[0], key = ep[1];
     return fetch(base + awardId + '/recipients?season=' + year)
@@ -1104,22 +1298,39 @@ function fetchAwardsForYear(year) {
   return Promise.all(fetches).then(function() { return cache; });
 }
 
+function getStatRanges(era, year) {
+  var cfg = ERA_CONFIG[era] || ERA_CONFIG.modern;
+  var sr = cfg.statRanges;
+  var scale = cfg.seasonScale[year] || 1;
+  if (scale >= 1) return sr;
+  // Scale counting stat ceilings for shortened seasons (e.g. 1995: 144 games)
+  return {
+    g:   [sr.g[0],   Math.round(sr.g[1]*scale),   Math.round(sr.g[2]*scale)],
+    avg: sr.avg, ops: sr.ops,
+    r:   [sr.r[0],   Math.round(sr.r[1]*scale),   Math.round(sr.r[2]*scale)],
+    hr:  [sr.hr[0],  Math.round(sr.hr[1]*scale),  Math.round(sr.hr[2]*scale)],
+    rbi: [sr.rbi[0], Math.round(sr.rbi[1]*scale), Math.round(sr.rbi[2]*scale)],
+    tb:  [sr.tb[0],  Math.round(sr.tb[1]*scale),  Math.round(sr.tb[2]*scale)],
+    sb:  [sr.sb[0],  Math.round(sr.sb[1]*scale),  Math.round(sr.sb[2]*scale)],
+  };
+}
+
 function getAwardBadgesHtml(player, year) {
   var html = '';
   var ad = S.awardData;
+  var eraCfg = ERA_CONFIG[S.era || 'modern'];
   // MVP: API winner (by ID) or hardcoded fallback (by name)
-  var isMvp = (ad && ad.mvpWinners && ad.mvpWinners[player.id]) || getMvpRank(player.name, year) === 1;
-  if (isMvp) html += '<span class="award-badge award-mvp" title="MVP">🏆</span>';
-  // ROY
-  if (ad && ad.roys && ad.roys[player.id]) {
+  if (eraCfg.showMVP) {
+    var isMvp = (ad && ad.mvpWinners && ad.mvpWinners[player.id]) || getMvpRank(player.name, year) === 1;
+    if (isMvp) html += '<span class="award-badge award-mvp" title="MVP">🏆</span>';
+  }
+  if (eraCfg.showROY && ad && ad.roys && ad.roys[player.id]) {
     html += '<span class="award-badge award-roy" title="Rookie of the Year">🐣</span>';
   }
-  // Silver Slugger
-  if (ad && ad.silverSluggers && ad.silverSluggers[player.id]) {
+  if (eraCfg.showSS && ad && ad.silverSluggers && ad.silverSluggers[player.id]) {
     html += '<span class="award-badge award-ss" title="Silver Slugger">⚡</span>';
   }
-  // All-Star
-  if (ad && ad.allStars && ad.allStars[player.id]) {
+  if (eraCfg.showASG && ad && ad.allStars && ad.allStars[player.id]) {
     html += '<span class="award-badge award-as" title="All-Star">⭐</span>';
   }
   return html;
@@ -1127,6 +1338,7 @@ function getAwardBadgesHtml(player, year) {
 
 // ─── State ───────────────────────────────────────────────────────────────────
 var S = {
+  era:          'modern', // 'modern' | 'steroid' | 'nostalgia'
   round:        0,
   lineup:       [null,null,null,null,null,null,null,null,null],
   skips:        { team:1, year:1 },
@@ -1142,7 +1354,7 @@ var S = {
   recentYears:  [],   // last 3 years used — excluded from random picks
   recentTeams:  [],   // last 3 team IDs used — excluded from random picks
   pendingAssign: null, // { playerIdx, posIdx, playerName, posName }
-  awardData:    null, // { ss: {playerId: true} } — fetched per round
+  awardData:    null, // fetched per round
   hardMode:     false,
   posFilter:    [],   // position names to show; empty = all
   _pendingPos:  [],   // staged in dropdown before OK
@@ -1236,6 +1448,7 @@ function fetchRoster(teamId, year) {
 
 // ─── Simulation ──────────────────────────────────────────────────────────────
 function simulate() {
+  var SC = ERA_SCORING[S.era || 'modern'];
   var hr=0, rbi=0, runs=0, sb=0, totalGames=0;
   var avgS=0, obpS=0, slgS=0, n=0;
 
@@ -1271,14 +1484,14 @@ function simulate() {
   };
 
   var norm = {};
-  var keys = Object.keys(W);
+  var keys = Object.keys(SC.W);
   for (var k = 0; k < keys.length; k++) {
     var key = keys[k];
-    norm[key] = Math.min(Math.max((agg[key] - FLOOR[key]) / (CEIL[key] - FLOOR[key]), 0), 1);
+    norm[key] = Math.min(Math.max((agg[key] - SC.FLOOR[key]) / (SC.CEIL[key] - SC.FLOOR[key]), 0), 1);
   }
 
   var strength = 0;
-  for (var k2 = 0; k2 < keys.length; k2++) strength += norm[keys[k2]] * W[keys[k2]];
+  for (var k2 = 0; k2 < keys.length; k2++) strength += norm[keys[k2]] * SC.W[keys[k2]];
   var wins = Math.min(Math.round(58 + 104 * Math.pow(strength, 1.75)), 162);
   return { wins: wins, strength: strength, norm: norm, agg: agg };
 }
@@ -1289,16 +1502,29 @@ function sleep(ms) { return new Promise(function(r){setTimeout(r,ms);}); }
 function busy() { return S.spinning || S.loading; }
 function fmtSlash(n) { return n ? n.toFixed(3).replace(/^0\./,'.') : '.---'; }
 
-// ─── Mode selector ────────────────────────────────────────────────────────────
-var _selectedMode = 'normal';
-function selectMode(m) {
-  _selectedMode = m;
-  document.getElementById('mode-normal').classList.toggle('active', m === 'normal');
-  document.getElementById('mode-hard').classList.toggle('active', m === 'hard');
-  var desc = document.getElementById('mode-desc');
-  if (desc) desc.textContent = m === 'hard'
-    ? 'Stats hidden · separate leaderboard'
-    : 'Stats visible · shared leaderboard';
+// ─── Era theme application ────────────────────────────────────────────────────
+function applyEraTheme(era) {
+  document.body.classList.remove('era-modern','era-steroid','era-nostalgia');
+  if (era !== 'modern') document.body.classList.add('era-' + era);
+  var root = document.documentElement;
+  var themes = {
+    modern:   { bg:'#0d1b2a', surface:'#132540', surface2:'#1c3355', border:'#2c4a6a', borderLt:'#3d6080', muted:'#6a82a0' },
+    steroid:  { bg:'#120826', surface:'#1a0f38', surface2:'#281850', border:'#3d2a6a', borderLt:'#5a3d8a', muted:'#7a6aaa' },
+    nostalgia:{ bg:'#0a1a0e', surface:'#0f2618', surface2:'#183020', border:'#2a4a2c', borderLt:'#3d6a40', muted:'#6a8a6c' }
+  };
+  var t = themes[era] || themes.modern;
+  root.style.setProperty('--bg',        t.bg);
+  root.style.setProperty('--surface',   t.surface);
+  root.style.setProperty('--surface2',  t.surface2);
+  root.style.setProperty('--border',    t.border);
+  root.style.setProperty('--border-lt', t.borderLt);
+  root.style.setProperty('--muted',     t.muted);
+}
+
+function startGameWithEra(eraKey, hard) {
+  S.era = eraKey || 'modern';
+  applyEraTheme(S.era);
+  startGame(hard === true);
 }
 
 // ─── Stat color tint (red→yellow→green gradient, dynamic alpha) ──────────────
@@ -1428,10 +1654,11 @@ function doSpin(lockYear, lockTeamId) {
   refreshSkipBtns();
 
   // Exclude recently used years/teams from random picks
-  var yearPool = YEARS.filter(function(y){ return S.recentYears.indexOf(y) === -1; });
+  var eraYears = ERA_CONFIG[S.era || 'modern'].yearPool;
+  var yearPool = eraYears.filter(function(y){ return S.recentYears.indexOf(y) === -1; });
   var teamPool = TEAMS.filter(function(t){ return S.recentTeams.indexOf(t.id) === -1; });
 
-  var finalYear = lockYear   != null ? lockYear   : pick(yearPool.length ? yearPool : YEARS);
+  var finalYear = lockYear   != null ? lockYear   : pick(yearPool.length ? yearPool : eraYears);
   var finalTeam = lockTeamId != null
     ? TEAMS.filter(function(t){return t.id===lockTeamId;})[0]
     : pick(teamPool.length ? teamPool : TEAMS);
@@ -1473,7 +1700,7 @@ function doSpin(lockYear, lockTeamId) {
   function tick() {
     // Year: lock after YEAR_LOCK_TICK
     if (step < YEAR_LOCK_TICK) {
-      svYear.textContent = (lockYear != null) ? finalYear : pick(YEARS);
+      svYear.textContent = (lockYear != null) ? finalYear : pick(eraYears);
     } else if (step === YEAR_LOCK_TICK) {
       // Year lands — animate it
       svYear.textContent = finalYear;
@@ -1547,7 +1774,7 @@ function loadRoster() {
   renderRoster();
 
   var year = S.spin.year;
-  fetchAwardsForYear(year).then(function(awards) {
+  fetchAwardsForYear(year, S.era).then(function(awards) {
     S.awardData = awards;
     if (!S.loading && !S.spinning && S.allPlayers.length) renderRoster();
   });
@@ -1698,6 +1925,7 @@ function renderRoster() {
   updateFilterBar(true);
 
   var mobile = window.innerWidth <= 640;
+  var SR = getStatRanges(S.era || 'modern', S.spin ? S.spin.year : 2024);
 
   if (mobile) {
     // ── Mobile: card layout + sort bar ──────────────────────────
@@ -1727,12 +1955,12 @@ function renderRoster() {
         + '</div>'
         + (S.hardMode ? '' :
           '<div class="pr-stats">'
-          + '<span class="pr-stat-pill pr-stat-g" style="background:'+statTint(st.games,40,110,162)+'"><span class="pr-stat-lbl">G</span>'+st.games+'</span>'
-          + '<span class="pr-stat-pill pr-stat-ops" style="background:'+statTint(st.obp+st.slg,0.640,0.790,0.975)+'"><span class="pr-stat-lbl">OPS</span>'+fmtSlash(st.obp+st.slg)+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.runs,25,60,108)+'"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.hr,0,15,44)+'"><span class="pr-stat-lbl">HR</span>'+st.hr+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.rbi,20,60,115)+'"><span class="pr-stat-lbl">RBI</span>'+st.rbi+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.sb,0,10,34)+'"><span class="pr-stat-lbl">SB</span>'+st.sb+'</span>'
+          + '<span class="pr-stat-pill pr-stat-g" style="background:'+statTint(st.games,SR.g[0],SR.g[1],SR.g[2])+'"><span class="pr-stat-lbl">G</span>'+st.games+'</span>'
+          + '<span class="pr-stat-pill pr-stat-ops" style="background:'+statTint(st.obp+st.slg,SR.ops[0],SR.ops[1],SR.ops[2])+'"><span class="pr-stat-lbl">OPS</span>'+fmtSlash(st.obp+st.slg)+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.runs,SR.r[0],SR.r[1],SR.r[2])+'"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.hr,SR.hr[0],SR.hr[1],SR.hr[2])+'"><span class="pr-stat-lbl">HR</span>'+st.hr+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.rbi,SR.rbi[0],SR.rbi[1],SR.rbi[2])+'"><span class="pr-stat-lbl">RBI</span>'+st.rbi+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.sb,SR.sb[0],SR.sb[1],SR.sb[2])+'"><span class="pr-stat-lbl">SB</span>'+st.sb+'</span>'
           + '</div>')
         + (isPendingRow ? buildConfirmBar() : '')
         + '</div>';
@@ -1769,14 +1997,14 @@ function renderRoster() {
       var badges = getAwardBadgesHtml(p, S.spin.year);
       rows += '<tr class="'+(hasAvail?'':'no-slots')+'">'
         + '<td class="td-name">'+p.name+(badges?'<span class="pr-award-badges">'+badges+'</span>':'')+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.games,40,110,162)+'">'+st.games+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.avg,0.220,0.270,0.330)+'">'+fmtSlash(st.avg)+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.obp+st.slg,0.640,0.790,0.975)+'">'+fmtSlash(st.obp+st.slg)+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.runs,25,60,108)+'">'+st.runs+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.hr,0,15,44)+'">'+st.hr+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.rbi,20,60,115)+'">'+st.rbi+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.tb,80,200,355)+'">'+st.tb+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.sb,0,10,34)+'">'+st.sb+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.games,SR.g[0],SR.g[1],SR.g[2])+'">'+st.games+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.avg,SR.avg[0],SR.avg[1],SR.avg[2])+'">'+fmtSlash(st.avg)+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.obp+st.slg,SR.ops[0],SR.ops[1],SR.ops[2])+'">'+fmtSlash(st.obp+st.slg)+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.runs,SR.r[0],SR.r[1],SR.r[2])+'">'+st.runs+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.hr,SR.hr[0],SR.hr[1],SR.hr[2])+'">'+st.hr+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.rbi,SR.rbi[0],SR.rbi[1],SR.rbi[2])+'">'+st.rbi+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.tb,SR.tb[0],SR.tb[1],SR.tb[2])+'">'+st.tb+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.sb,SR.sb[0],SR.sb[1],SR.sb[2])+'">'+st.sb+'</td>'
         + '<td class="td-pos">'+btnHtml+'</td>'
         + '</tr>';
     }
@@ -1953,6 +2181,12 @@ function showResults() {
   var rec = document.getElementById('result-record');
   rec.className = res.wins===162 ? 'result-record perfect' : res.wins>=110 ? 'result-record great' : 'result-record good';
   document.getElementById('hard-mode-badge').style.display = S.hardMode ? 'block' : 'none';
+  var eraBadgeEl = document.getElementById('era-badge');
+  if (eraBadgeEl) {
+    var eraCfgR = ERA_CONFIG[S.era || 'modern'];
+    eraBadgeEl.textContent = eraCfgR.name;
+    eraBadgeEl.style.display = 'block';
+  }
 
   // Animate win count up like a scoreboard
   var counter = { val: 0 };
@@ -2058,7 +2292,8 @@ function showResults() {
   }).filter(Boolean).join(' · ');
 
   if (typeof window._fbSaveScore === 'function') {
-    var _fbColl = S.hardMode ? 'hardScores' : 'scores';
+    var _eraCfg = ERA_CONFIG[S.era || 'modern'];
+    var _fbColl = S.hardMode ? _eraCfg.fbCollHard : _eraCfg.fbColl;
 
     // Pre-show leaderboard card with loading state so it never pops in
     document.getElementById('fb-leaderboard-title').textContent = S.hardMode ? '☠ Hard Mode Leaderboard' : 'Leaderboard';
@@ -2249,13 +2484,13 @@ function buildScoreInsight(norm) {
   return 'Your ' + cats[0].l + ' was elite — but ' + cats[cats.length - 1].l + ' held you back.';
 }
 
-function startGame(lockTeamId, lockYear) {
+function startGame(hard, lockTeamId, lockYear) {
   S.round=0; S.lineup=[null,null,null,null,null,null,null,null,null];
   S.skips={team:1,year:1}; S.spin=null; S.allPlayers=[]; S.loadError=null;
   S.spinning=false; S.loading=false; S.sort={col:'games',dir:'desc'};
   S.moveToken=1; S.movingSlotIdx=-1; S.recentYears=[]; S.recentTeams=[]; S.availableOnly=false;
   S.posFilter=[]; S._pendingPos=[];
-  S.hardMode = (_selectedMode === 'hard');
+  S.hardMode = (hard === true);
 
   showScreen('game');
   document.getElementById('round-num').textContent = '1';
@@ -2268,7 +2503,13 @@ function startGame(lockTeamId, lockYear) {
   doSpin(lockYear || null, lockTeamId || null);
 }
 
-function resetGame() { showScreen('landing'); }
+
+function resetGame() {
+  showScreen('landing');
+  // Reset era badge visibility for next game
+  var eraBadgeEl = document.getElementById('era-badge');
+  if (eraBadgeEl) eraBadgeEl.style.display = 'none';
+}
 
 function shareScore() {
   if (!S.lastResult) return;
