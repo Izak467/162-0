@@ -1313,7 +1313,7 @@ function statTint(value, floor, mid, ceil) {
     t = (ceil === mid) ? 1 : (clamped - mid) / (ceil - mid);
     rgb = [Math.round(YEL[0]+(GRN[0]-YEL[0])*t), Math.round(YEL[1]+(GRN[1]-YEL[1])*t), Math.round(YEL[2]+(GRN[2]-YEL[2])*t)];
   }
-  return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0.48)';
+  return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0.38)';
 }
 
 function isEligibleAt(player, pos) {
@@ -1728,11 +1728,11 @@ function renderRoster() {
         + (S.hardMode ? '' :
           '<div class="pr-stats">'
           + '<span class="pr-stat-pill pr-stat-g" style="background:'+statTint(st.games,40,110,162)+'"><span class="pr-stat-lbl">G</span>'+st.games+'</span>'
-          + '<span class="pr-stat-pill pr-stat-ops" style="background:'+statTint(st.obp+st.slg,0.640,0.790,1.050)+'"><span class="pr-stat-lbl">OPS</span>'+fmtSlash(st.obp+st.slg)+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.runs,25,75,140)+'"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.hr,0,15,60)+'"><span class="pr-stat-lbl">HR</span>'+st.hr+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.rbi,20,75,150)+'"><span class="pr-stat-lbl">RBI</span>'+st.rbi+'</span>'
-          + '<span class="pr-stat-pill" style="background:'+statTint(st.sb,0,15,60)+'"><span class="pr-stat-lbl">SB</span>'+st.sb+'</span>'
+          + '<span class="pr-stat-pill pr-stat-ops" style="background:'+statTint(st.obp+st.slg,0.640,0.790,0.975)+'"><span class="pr-stat-lbl">OPS</span>'+fmtSlash(st.obp+st.slg)+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.runs,25,60,108)+'"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.hr,0,15,44)+'"><span class="pr-stat-lbl">HR</span>'+st.hr+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.rbi,20,60,115)+'"><span class="pr-stat-lbl">RBI</span>'+st.rbi+'</span>'
+          + '<span class="pr-stat-pill" style="background:'+statTint(st.sb,0,10,34)+'"><span class="pr-stat-lbl">SB</span>'+st.sb+'</span>'
           + '</div>')
         + (isPendingRow ? buildConfirmBar() : '')
         + '</div>';
@@ -1769,12 +1769,12 @@ function renderRoster() {
       rows += '<tr class="'+(hasAvail?'':'no-slots')+'">'
         + '<td class="td-name">'+p.name+(badges?'<span class="pr-award-badges">'+badges+'</span>':'')+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.games,40,110,162)+'">'+st.games+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.obp+st.slg,0.640,0.790,1.050)+'">'+fmtSlash(st.obp+st.slg)+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.runs,25,75,140)+'">'+st.runs+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.hr,0,15,60)+'">'+st.hr+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.rbi,20,75,150)+'">'+st.rbi+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.tb,80,200,390)+'">'+st.tb+'</td>'
-        + '<td class="td-num" style="background:'+statTint(st.sb,0,15,60)+'">'+st.sb+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.obp+st.slg,0.640,0.790,0.975)+'">'+fmtSlash(st.obp+st.slg)+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.runs,25,60,108)+'">'+st.runs+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.hr,0,15,44)+'">'+st.hr+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.rbi,20,60,115)+'">'+st.rbi+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.tb,80,200,355)+'">'+st.tb+'</td>'
+        + '<td class="td-num" style="background:'+statTint(st.sb,0,10,34)+'">'+st.sb+'</td>'
         + '<td class="td-pos">'+btnHtml+'</td>'
         + '</tr>';
     }
