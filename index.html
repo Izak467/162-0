@@ -300,7 +300,7 @@ body::before {
   display: flex; flex-direction: column; gap: 14px;
 }
 .slot-machine-header {
-  display: flex; align-items: center; gap: 8px;
+  display: flex; align-items: center; justify-content: space-between;
 }
 .slot-machine-icon {
   font-size: 18px; line-height: 1;
@@ -312,7 +312,6 @@ body::before {
 .slot-machine-record {
   font-size: 14px; font-weight: 700; color: var(--muted);
   text-transform: uppercase; letter-spacing: 1.5px;
-  text-align: center;
 }
 .slot-displays { display: flex; gap: 10px; }
 .slot-col { display: flex; flex-direction: column; gap: 5px; }
@@ -1103,7 +1102,7 @@ body.era-deadball::after {
     <div class="card-header">How to Play</div>
     <ul class="rules-list">
       <li>Pick an era, then each round the slot machine spins a random <strong>MLB team + year</strong> from that era's window. Don't like what you got? You have <strong>one team skip</strong> and <strong>one year skip</strong> per game.</li>
-      <li>Browse the full roster of everyone who suited up that season. Stat cards are color-coded <strong>red → green</strong> so the studs stand out. Badge guide: <strong>🏆</strong> MVP · <strong>🐣</strong> Rookie of the Year · <strong>⚡</strong> Silver Slugger · <strong>⭐</strong> All-Star.</li>
+      <li>Browse the full roster of everyone who suited up that season. Stat cards are color-coded <strong>red → green</strong> so the studs stand out. Badge guide: <span id="bgmvp"></span> MVP · <span id="bgroy"></span> Rookie of the Year · <span id="bgss"></span> Silver Slugger · <span id="bgas"></span> All-Star.</li>
       <li>A player needs <strong>10+ games at a position</strong> to be eligible there.</li>
       <li>Fill all 9 slots: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong>. Use <strong>Available Only</strong> or the <strong>Position</strong> filter to find the right fits fast.</li>
       <li>Slots lock once filled — but you get one <strong>↔ Move Token</strong> to reassign any placed player to another open position they qualify for.</li>
@@ -1146,7 +1145,7 @@ body.era-deadball::after {
         <span class="slot-machine-icon">⚾</span>
         <span class="slot-machine-label">The Pull</span>
       </div>
-      <span id="sm-record" class="slot-machine-record" style="flex:1;text-align:center"></span>
+      <span id="sm-record" class="slot-machine-record"></span>
     </div>
     <div class="slot-displays">
       <div class="slot-col">
@@ -4674,6 +4673,7 @@ function copyScore() {
     setTimeout(function() { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
   }
 }
+(function(){var _bg;_bg=document.getElementById('bgmvp');if(_bg)_bg.innerHTML=_svgTrophy(1,14);_bg=document.getElementById('bgroy');if(_bg)_bg.innerHTML=_svgFlame(14);_bg=document.getElementById('bgss');if(_bg)_bg.innerHTML=_svgBall(14);_bg=document.getElementById('bgas');if(_bg)_bg.innerHTML=_svgStar(14);})();
 </script>
 </body>
 </html>
