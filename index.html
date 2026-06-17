@@ -582,7 +582,7 @@ body::before {
 .hm-cell { text-align: center; padding: 5px 2px; font-size: 10px; font-weight: 700; font-family: monospace; border-radius: 4px; width: 100%; box-sizing: border-box; }
 
 /* Scatter plot */
-.sc-wrap { display: flex; justify-content: center; padding: 4px 0; overflow-x: auto; }
+.sc-wrap { padding: 4px 0; }
 
 /* Win contribution */
 .wc-stack { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin-bottom: 14px; }
@@ -4338,48 +4338,74 @@ function showResults() {
   (function() {
     var SR_sc = getStatRanges(S.era||'modern', S.spin ? S.spin.year : 2024);
     var ERA_BASE = {modern:{obp:.320,slg:.415},steroid:{obp:.335,slg:.430},nostalgia:{obp:.325,slg:.385}};
-    var base = ERA_BASE[S.era||'modern'];
-    var W=280,H=230,ML=44,MB=34,MT=14,MR=16,pw=W-ML-MR,ph=H-MB-MT;
+    var base = ERA_BASE[S.era||'modern'] || ERA_BASE.modern;
+    // Responsive: use viewBox, all coords in virtual space
+    var VW=360,VH=270,ML=42,MB=36,MT=28,MR=14,pw=VW-ML-MR,ph=VH-MB-MT;
     var pts = [];
     for (var i=0;i<9;i++) {
       var slot = S.lineup[i]; if (!slot) continue;
       var st = slot.player.stats;
       pts.push({name:slot.player.name.split(' ').slice(-1)[0],obp:st.obp||0,slg:st.slg||0,hr:st.hr||0,ops:(st.obp||0)+(st.slg||0)});
     }
-    var obpMin=Math.max(0.230,Math.min.apply(null,pts.map(function(p){return p.obp;}))-0.022);
-    var obpMax=Math.min(0.540,Math.max.apply(null,pts.map(function(p){return p.obp;}))+0.028);
-    var slgMin=Math.max(0.280,Math.min.apply(null,pts.map(function(p){return p.slg;}))-0.032);
-    var slgMax=Math.min(0.840,Math.max.apply(null,pts.map(function(p){return p.slg;}))+0.038);
+    if (!pts.length) { document.getElementById('dash-plot').innerHTML = ''; return; }
+    var obpMin=Math.max(0.220,Math.min.apply(null,pts.map(function(p){return p.obp;}))-0.030);
+    var obpMax=Math.min(0.560,Math.max.apply(null,pts.map(function(p){return p.obp;}))+0.030);
+    var slgMin=Math.max(0.260,Math.min.apply(null,pts.map(function(p){return p.slg;}))-0.040);
+    var slgMax=Math.min(0.860,Math.max.apply(null,pts.map(function(p){return p.slg;}))+0.040);
     function xp(v){return ML+(v-obpMin)/(obpMax-obpMin)*pw;}
     function yp(v){return MT+ph-(v-slgMin)/(slgMax-slgMin)*ph;}
-    var svg='<div class="sc-wrap"><svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg">';
-    // grid
-    var ob=+(Math.ceil(obpMin*50)/50).toFixed(3);
-    while(ob<=obpMax){var x=xp(ob);svg+='<line x1="'+x.toFixed(1)+'" y1="'+MT+'" x2="'+x.toFixed(1)+'" y2="'+(MT+ph)+'" stroke="rgba(255,255,255,0.05)" stroke-width="1"/><text x="'+x.toFixed(1)+'" y="'+(MT+ph+14)+'" text-anchor="middle" fill="rgba(255,255,255,0.28)" font-size="9" font-family="monospace">'+ob.toFixed(3).slice(1)+'</text>';ob=+(ob+0.020).toFixed(3);}
-    var sl=+(Math.ceil(slgMin*25)/25).toFixed(3);
-    while(sl<=slgMax){var y=yp(sl);svg+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+pw)+'" y2="'+y.toFixed(1)+'" stroke="rgba(255,255,255,0.05)" stroke-width="1"/><text x="'+(ML-6)+'" y="'+y.toFixed(1)+'" text-anchor="end" dominant-baseline="middle" fill="rgba(255,255,255,0.28)" font-size="9" font-family="monospace">'+sl.toFixed(3).slice(1)+'</text>';sl=+(sl+0.040).toFixed(3);}
-    svg+='<rect x="'+ML+'" y="'+MT+'" width="'+pw+'" height="'+ph+'" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>';
+    var svg='<div class="sc-wrap"><svg viewBox="0 0 '+VW+' '+VH+'" style="width:100%;max-width:520px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">';
+    // background
+    svg+='<rect x="0" y="0" width="'+VW+'" height="'+VH+'" fill="var(--surface)" rx="0"/>';
+    svg+='<rect x="'+ML+'" y="'+MT+'" width="'+pw+'" height="'+ph+'" fill="var(--bg)" rx="2"/>';
+    // grid lines + axis tick labels
+    var ob=+(Math.ceil(obpMin*40)/40).toFixed(3);
+    while(ob<=obpMax){
+      var x=xp(ob);
+      svg+='<line x1="'+x.toFixed(1)+'" y1="'+MT+'" x2="'+x.toFixed(1)+'" y2="'+(MT+ph)+'" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>';
+      svg+='<text x="'+x.toFixed(1)+'" y="'+(MT+ph+13)+'" text-anchor="middle" fill="rgba(180,170,150,0.55)" font-size="9" font-family="monospace">'+ob.toFixed(3).slice(1)+'</text>';
+      ob=+(ob+0.020).toFixed(3);
+    }
+    var sl=+(Math.ceil(slgMin*20)/20).toFixed(3);
+    while(sl<=slgMax){
+      var y=yp(sl);
+      svg+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+pw)+'" y2="'+y.toFixed(1)+'" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>';
+      svg+='<text x="'+(ML-5)+'" y="'+y.toFixed(1)+'" text-anchor="end" dominant-baseline="middle" fill="rgba(180,170,150,0.55)" font-size="9" font-family="monospace">'+sl.toFixed(3).slice(1)+'</text>';
+      sl=+(sl+0.040).toFixed(3);
+    }
+    svg+='<rect x="'+ML+'" y="'+MT+'" width="'+pw+'" height="'+ph+'" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>';
     // era avg crosshairs
     var bx=xp(base.obp),by=yp(base.slg);
-    svg+='<line x1="'+bx.toFixed(1)+'" y1="'+MT+'" x2="'+bx.toFixed(1)+'" y2="'+(MT+ph)+'" stroke="rgba(201,164,74,0.28)" stroke-width="1" stroke-dasharray="3,3"/>';
-    svg+='<line x1="'+ML+'" y1="'+by.toFixed(1)+'" x2="'+(ML+pw)+'" y2="'+by.toFixed(1)+'" stroke="rgba(201,164,74,0.28)" stroke-width="1" stroke-dasharray="3,3"/>';
-    svg+='<text x="'+(bx+4)+'" y="'+(MT+10)+'" fill="rgba(201,164,74,0.45)" font-size="8" font-family="Georgia,serif" font-style="italic">ELITE</text>';
-    svg+='<text x="'+(ML+4)+'" y="'+(MT+10)+'" fill="rgba(255,255,255,0.18)" font-size="8" font-family="Georgia,serif" font-style="italic">CONTACT</text>';
+    svg+='<line x1="'+bx.toFixed(1)+'" y1="'+MT+'" x2="'+bx.toFixed(1)+'" y2="'+(MT+ph)+'" stroke="rgba(201,164,74,0.35)" stroke-width="1" stroke-dasharray="4,3"/>';
+    svg+='<line x1="'+ML+'" y1="'+by.toFixed(1)+'" x2="'+(ML+pw)+'" y2="'+by.toFixed(1)+'" stroke="rgba(201,164,74,0.35)" stroke-width="1" stroke-dasharray="4,3"/>';
     // axis labels
-    svg+='<text x="'+(ML+pw/2)+'" y="'+(H-3)+'" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Georgia,serif">OBP</text>';
-    svg+='<text x="9" y="'+(MT+ph/2)+'" text-anchor="middle" dominant-baseline="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Georgia,serif" transform="rotate(-90,9,'+(MT+ph/2)+')">SLG</text>';
-    // dots (smallest HR first so large dots don't obscure small)
+    svg+='<text x="'+(ML+pw/2)+'" y="'+(VH-4)+'" text-anchor="middle" fill="rgba(180,170,150,0.65)" font-size="10.5" font-family="Georgia,serif" font-style="italic">OBP</text>';
+    svg+='<text x="11" y="'+(MT+ph/2)+'" text-anchor="middle" dominant-baseline="middle" fill="rgba(180,170,150,0.65)" font-size="10.5" font-family="Georgia,serif" font-style="italic" transform="rotate(-90,11,'+(MT+ph/2)+')">SLG</text>';
+    // dots — smallest HR first so big dots don't hide small ones
     pts.sort(function(a,b){return a.hr-b.hr;});
     for (var p=0;p<pts.length;p++) {
-      var pt=pts[p],px2=xp(pt.obp),py2=yp(pt.slg),r=Math.max(6,Math.min(15,6+pt.hr/50*9)),col=statTextColor(pt.ops,SR_sc.ops[0],SR_sc.ops[1],SR_sc.ops[2]);
-      svg+='<circle cx="'+px2.toFixed(1)+'" cy="'+py2.toFixed(1)+'" r="'+r+'" fill="'+col+'" fill-opacity="0.85" stroke="#0d1b2a" stroke-width="1.2"/>';
-      var lx=px2+r+3; if(lx+38>W-MR)lx=px2-r-3;
-      svg+='<text x="'+lx.toFixed(1)+'" y="'+py2.toFixed(1)+'" dominant-baseline="middle" fill="rgba(240,236,226,0.82)" font-size="8.5" font-family="Georgia,serif">'+esc(pt.name)+'</text>';
+      var pt=pts[p];
+      var cx=xp(pt.obp),cy=yp(pt.slg);
+      var r=Math.max(7,Math.min(14,7+pt.hr/55*7));
+      var col=statTextColor(pt.ops,SR_sc.ops[0],SR_sc.ops[1],SR_sc.ops[2]);
+      // dot with glow ring
+      svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+(r+2)+'" fill="'+col+'" fill-opacity="0.18"/>';
+      svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+r+'" fill="'+col+'" fill-opacity="0.90" stroke="rgba(13,27,42,0.8)" stroke-width="1.5"/>';
+      // name label — above dot by default, below if near top
+      var lw=Math.min(pt.name.length*5.6+10, 72);
+      var ly=cy-r-5, anchor='middle', lx2=cx;
+      // clamp horizontally
+      if (lx2-lw/2 < ML+2) lx2=ML+2+lw/2;
+      if (lx2+lw/2 > VW-MR-2) lx2=VW-MR-2-lw/2;
+      // flip below if too close to top
+      var rectY = ly-11;
+      if (rectY < MT+1) { ly=cy+r+13; rectY=ly-11; }
+      svg+='<rect x="'+(lx2-lw/2).toFixed(1)+'" y="'+rectY.toFixed(1)+'" width="'+lw.toFixed(1)+'" height="13" rx="3" fill="rgba(13,27,42,0.78)"/>';
+      svg+='<text x="'+lx2.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+anchor+'" dominant-baseline="auto" fill="rgba(240,236,226,0.95)" font-size="9.5" font-family="Segoe UI,Georgia,sans-serif" font-weight="600">'+esc(pt.name)+'</text>';
     }
     svg+='</svg></div>';
     document.getElementById('dash-plot').innerHTML = svg;
   })();
-
   // ── Leaders ───────────────────────────────────────────────────────────────
   (function() {
     var cats=[
