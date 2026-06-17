@@ -3198,7 +3198,7 @@ function _svgBall(w) {
 }
 
 // ─── Stat text color (same ramp as statTint but full-opacity for text) ────────
-function 'var(--cream)' {
+function statTextColor(value, floor, mid, ceil) {
   var clamped = Math.max(floor, Math.min(ceil, +value||0));
   var RED=[220,70,70], YEL=[210,185,50], GRN=[50,175,80], rgb, t;
   if (clamped<=mid) {
