@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Award Badge SVG Test</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d1b2a; color: #f0ece2; font-family: Georgia, serif; padding: 32px; }
+  h1  { font-size: 22px; color: #c9a44a; margin-bottom: 6px; }
+  p   { font-size: 13px; color: #8899aa; margin-bottom: 32px; }
+  h2  { font-size: 13px; font-weight: 700; letter-spacing: 2px; color: #8899aa; text-transform: uppercase;
+        margin: 36px 0 16px; border-bottom: 1px solid #1a3050; padding-bottom: 8px; }
+  .row  { display: flex; align-items: flex-end; gap: 28px; flex-wrap: wrap; margin-bottom: 20px; }
+  .cell { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .lbl  { font-size: 10px; color: #445566; letter-spacing: 1px; text-align: center; max-width: 110px; }
+  .sz-row { display: flex; align-items: flex-end; gap: 7px; }
+
+  .sim-card {
+    background: #111e2d; border: 1px solid #1a3050; border-radius: 8px;
+    padding: 11px 13px; display: flex; flex-direction: column; gap: 3px;
+  }
+  .sim-pos    { font-size: 9px; font-weight: 800; color: #445566; letter-spacing: 1.5px; }
+  .sim-name   { font-size: 13px; font-weight: 700; color: #f0ece2; display: flex; align-items: center; gap: 3px; }
+  .sim-ctx    { font-size: 10px; color: #445566; }
+  .sim-slash  { font-size: 11px; color: #a0b0be; font-family: monospace; margin-top: 3px; }
+  .sim-counts { font-size: 10px; color: #445566; }
+</style>
+</head>
+<body>
+
+<h1>Award Badge SVG Options v2</h1>
+<p>Open in browser. All icons use SVG gradients for depth. Pick what you like — or mix and match per icon.</p>
+
+<!-- ═══════════════════════════════════════════
+     TROPHY  —  MVP  (with gradient depth)
+════════════════════════════════════════════ -->
+<h2>Trophy — MVP · Gold / Silver / Bronze</h2>
+<div class="row">
+
+  <!-- Gold -->
+  <div class="cell">
+    <svg width="36" height="36" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g-gold" x1="20%" y1="0%" x2="80%" y2="100%">
+          <stop offset="0%"   stop-color="#fff0a0"/>
+          <stop offset="40%"  stop-color="#f0c040"/>
+          <stop offset="100%" stop-color="#906010"/>
+        </linearGradient>
+        <linearGradient id="g-gold-stem" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#c8a030"/>
+          <stop offset="50%"  stop-color="#f0d060"/>
+          <stop offset="100%" stop-color="#a07020"/>
+        </linearGradient>
+      </defs>
+      <!-- Cup body -->
+      <path d="M5 2h10v7c0 3.3-2.2 5.4-5 5.9C7.2 14.4 5 12.3 5 9V2z" fill="url(#g-gold)"/>
+      <path d="M7 2.5h2v6c0 2-1 3.5-2 4.2V2.5z" fill="white" opacity="0.12"/>
+      <path d="M5 4.5C3.3 4.5 2 5.5 2 7s1.3 2.5 3 2.5" fill="none" stroke="url(#g-gold)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M15 4.5c1.7 0 3 1 3 2.5s-1.3 2.5-3 2.5" fill="none" stroke="url(#g-gold)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M8.5 15l-1 2.5h5l-1-2.5z" fill="url(#g-gold-stem)"/>
+      <rect x="5.5" y="17.5" width="9" height="1.5" rx="0.6" fill="url(#g-gold-stem)"/>
+      <text x="10" y="8" text-anchor="middle" dominant-baseline="middle" fill="rgba(80,40,0,0.6)" font-size="6" font-weight="900" font-family="Georgia,serif">1</text>
+    </svg>
+    <span class="lbl">1st — Gold</span>
+  </div>
+
+  <!-- Silver -->
+  <div class="cell">
+    <svg width="36" height="36" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g-silver" x1="20%" y1="0%" x2="80%" y2="100%">
+          <stop offset="0%"   stop-color="#f0f0f8"/>
+          <stop offset="40%"  stop-color="#c0c0cc"/>
+          <stop offset="100%" stop-color="#606070"/>
+        </linearGradient>
+        <linearGradient id="g-silver-stem" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#888898"/>
+          <stop offset="50%"  stop-color="#d0d0dc"/>
+          <stop offset="100%" stop-color="#707080"/>
+        </linearGradient>
+      </defs>
+      <path d="M5 2h10v7c0 3.3-2.2 5.4-5 5.9C7.2 14.4 5 12.3 5 9V2z" fill="url(#g-silver)"/>
+      <path d="M7 2.5h2v6c0 2-1 3.5-2 4.2V2.5z" fill="white" opacity="0.15"/>
+      <path d="M5 4.5C3.3 4.5 2 5.5 2 7s1.3 2.5 3 2.5" fill="none" stroke="url(#g-silver)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M15 4.5c1.7 0 3 1 3 2.5s-1.3 2.5-3 2.5" fill="none" stroke="url(#g-silver)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M8.5 15l-1 2.5h5l-1-2.5z" fill="url(#g-silver-stem)"/>
+      <rect x="5.5" y="17.5" width="9" height="1.5" rx="0.6" fill="url(#g-silver-stem)"/>
+      <text x="10" y="8" text-anchor="middle" dominant-baseline="middle" fill="rgba(40,40,60,0.55)" font-size="6" font-weight="900" font-family="Georgia,serif">2</text>
+    </svg>
+    <span class="lbl">2nd — Silver</span>
+  </div>
+
+  <!-- Bronze -->
+  <div class="cell">
+    <svg width="36" height="36" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g-bronze" x1="20%" y1="0%" x2="80%" y2="100%">
+          <stop offset="0%"   stop-color="#f0c090"/>
+          <stop offset="40%"  stop-color="#c07840"/>
+          <stop offset="100%" stop-color="#6a3810"/>
+        </linearGradient>
+        <linearGradient id="g-bronze-stem" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#904020"/>
+          <stop offset="50%"  stop-color="#d09050"/>
+          <stop offset="100%" stop-color="#703010"/>
+        </linearGradient>
+      </defs>
+      <path d="M5 2h10v7c0 3.3-2.2 5.4-5 5.9C7.2 14.4 5 12.3 5 9V2z" fill="url(#g-bronze)"/>
+      <path d="M7 2.5h2v6c0 2-1 3.5-2 4.2V2.5z" fill="white" opacity="0.12"/>
+      <path d="M5 4.5C3.3 4.5 2 5.5 2 7s1.3 2.5 3 2.5" fill="none" stroke="url(#g-bronze)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M15 4.5c1.7 0 3 1 3 2.5s-1.3 2.5-3 2.5" fill="none" stroke="url(#g-bronze)" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M8.5 15l-1 2.5h5l-1-2.5z" fill="url(#g-bronze-stem)"/>
+      <rect x="5.5" y="17.5" width="9" height="1.5" rx="0.6" fill="url(#g-bronze-stem)"/>
+      <text x="10" y="8" text-anchor="middle" dominant-baseline="middle" fill="rgba(60,25,5,0.55)" font-size="6" font-weight="900" font-family="Georgia,serif">3</text>
+    </svg>
+    <span class="lbl">3rd — Bronze</span>
+  </div>
+
+  <!-- Size scale -->
+  <div class="cell">
+    <div class="sz-row">
+      <svg width="12" height="12" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-gs1" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#fff0a0"/><stop offset="40%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></linearGradient></defs><path d="M5 2h10v7c0 3.3-2.2 5.4-5 5.9C7.2 14.4 5 12.3 5 9V2z" fill="url(#g-gs1)"/><path d="M5 4.5C3.3 4.5 2 5.5 2 7s1.3 2.5 3 2.5" fill="none" stroke="#f0c040" stroke-width="1.6" stroke-linecap="round"/><path d="M15 4.5c1.7 0 3 1 3 2.5s-1.3 2.5-3 2.5" fill="none" stroke="#f0c040" stroke-width="1.6" stroke-linecap="round"/><path d="M8.5 15l-1 2.5h5l-1-2.5z" fill="#c8a030"/><rect x="5.5" y="17.5" width="9" height="1.5" rx="0.6" fill="#c8a030"/></svg>
+      <svg width="16" height="16" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-gs2" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#fff0a0"/><stop offset="40%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></linearGradient></defs><path d="M5 2h10v7c0 3.3-2.2 5.4-5 5.9C7.2 14.4 5 12.3 5 9V2z" fill="url(#g-gs2)"/><path d="M5 4.5C3.3 4.5 2 5.5 2 7s1.3 2.5 3 2.5" fill="none" stroke="#f0c040" stroke-width="1.6" stroke-linecap="round"/><path d="M15 4.5c1.7 0 3 1 3 2.5s-1.3 2.5-3 2.5" fill="none" stroke="#f0c040" stroke-width="1.6" stroke-linecap="round"/><path d="M8.5 15l-1 2.5h5l-1-2.5z" fill="#c8a030"/><rect x="5.5" y="17.5" width="9" height="1.5" rx="0.6" fill="#c8a030"/></svg>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-gs3" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#fff0a0"/><stop offset="40%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></linearGradient></defs><path d="M5 2h10v7c0 3.3-2.2 5.4-5 5.9C7.2 14.4 5 12.3 5 9V2z" fill="url(#g-gs3)"/><path d="M7 2.5h2v6c0 2-1 3.5-2 4.2V2.5z" fill="white" opacity="0.12"/><path d="M5 4.5C3.3 4.5 2 5.5 2 7s1.3 2.5 3 2.5" fill="none" stroke="#f0c040" stroke-width="1.6" stroke-linecap="round"/><path d="M15 4.5c1.7 0 3 1 3 2.5s-1.3 2.5-3 2.5" fill="none" stroke="#f0c040" stroke-width="1.6" stroke-linecap="round"/><path d="M8.5 15l-1 2.5h5l-1-2.5z" fill="#c8a030"/><rect x="5.5" y="17.5" width="9" height="1.5" rx="0.6" fill="#c8a030"/></svg>
+      <svg width="28" height="28" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-gs4" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#fff0a0"/><stop offset="40%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></linearGradient></defs><path d="M5 2h10v7c0 3.3-2.2 5.4-5 5.9C7.2 14.4 5 12.3 5 9V2z" fill="url(#g-gs4)"/><path d="M7 2.5h2v6c0 2-1 3.5-2 4.2V2.5z" fill="white" opacity="0.12"/><path d="M5 4.5C3.3 4.5 2 5.5 2 7s1.3 2.5 3 2.5" fill="none" stroke="#f0c040" stroke-width="1.6" stroke-linecap="round"/><path d="M15 4.5c1.7 0 3 1 3 2.5s-1.3 2.5-3 2.5" fill="none" stroke="#f0c040" stroke-width="1.6" stroke-linecap="round"/><path d="M8.5 15l-1 2.5h5l-1-2.5z" fill="#c8a030"/><rect x="5.5" y="17.5" width="9" height="1.5" rx="0.6" fill="#c8a030"/></svg>
+    </div>
+    <span class="lbl">12 · 16 · 20 · 28px</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STAR  —  All-Star  (era color variants)
+════════════════════════════════════════════ -->
+<h2>Star — All-Star · Gold gradient · "In-between" roundness</h2>
+<p style="margin-bottom:14px">Inner radius 4.2 — between original (3.5) and "slightly rounder" (5). Gold gradient, same across all eras.</p>
+<div class="row">
+
+  <!-- Main display -->
+  <div class="cell">
+    <svg width="46" height="46" viewBox="1.9 1.5 16.2 15.5" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="star-gold" cx="38%" cy="30%" r="68%">
+          <stop offset="0%"   stop-color="#fff8c0"/>
+          <stop offset="45%"  stop-color="#f0c040"/>
+          <stop offset="100%" stop-color="#906010"/>
+        </radialGradient>
+      </defs>
+      <path d="M10,2 L12.47,6.60 L17.61,7.53 L13.99,11.30 L14.70,16.47 L10,14.2 L5.30,16.47 L6.01,11.30 L2.39,7.53 L7.53,6.60 Z" fill="url(#star-gold)"/>
+      <path d="M10,3.5 L12.0,6.9 L16.2,7.7 L13.5,10.6 L14.1,15 L10,13.2 L5.9,15 L6.5,10.6 L3.8,7.7 L8.0,6.9 Z" fill="white" opacity="0.1"/>
+    </svg>
+    <span class="lbl">In-between · Gold</span>
+  </div>
+
+  <!-- Sizes -->
+  <div class="cell">
+    <div class="sz-row">
+      <svg width="14" height="14" viewBox="1.9 1.5 16.2 15.5" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="sg1" cx="38%" cy="30%" r="68%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10,2 L12.47,6.60 L17.61,7.53 L13.99,11.30 L14.70,16.47 L10,14.2 L5.30,16.47 L6.01,11.30 L2.39,7.53 L7.53,6.60 Z" fill="url(#sg1)"/></svg>
+      <svg width="18" height="18" viewBox="1.9 1.5 16.2 15.5" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="sg2" cx="38%" cy="30%" r="68%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10,2 L12.47,6.60 L17.61,7.53 L13.99,11.30 L14.70,16.47 L10,14.2 L5.30,16.47 L6.01,11.30 L2.39,7.53 L7.53,6.60 Z" fill="url(#sg2)"/></svg>
+      <svg width="22" height="22" viewBox="1.9 1.5 16.2 15.5" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="sg3" cx="38%" cy="30%" r="68%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10,2 L12.47,6.60 L17.61,7.53 L13.99,11.30 L14.70,16.47 L10,14.2 L5.30,16.47 L6.01,11.30 L2.39,7.53 L7.53,6.60 Z" fill="url(#sg3)"/></svg>
+      <svg width="30" height="30" viewBox="1.9 1.5 16.2 15.5" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="sg4" cx="38%" cy="30%" r="68%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10,2 L12.47,6.60 L17.61,7.53 L13.99,11.30 L14.70,16.47 L10,14.2 L5.30,16.47 L6.01,11.30 L2.39,7.53 L7.53,6.60 Z" fill="url(#sg4)"/></svg>
+    </div>
+    <span class="lbl">14 · 18 · 22 · 30px</span>
+  </div>
+
+  <!-- Side-by-side comparison: original / in-between / much rounder -->
+  <div class="cell">
+    <div class="sz-row" style="gap:14px;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <svg width="28" height="28" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="cmp1" cx="38%" cy="30%" r="68%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10 2l2.2 6.3H18l-5 3.6 1.9 6.1-5-3.5-5 3.5 1.9-6.1-5-3.6h5.8z" fill="url(#cmp1)"/></svg>
+        <span class="lbl">Original</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <svg width="28" height="28" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="cmp2" cx="38%" cy="30%" r="68%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10,2 L12.47,6.60 L17.61,7.53 L13.99,11.30 L14.70,16.47 L10,14.2 L5.30,16.47 L6.01,11.30 L2.39,7.53 L7.53,6.60 Z" fill="url(#cmp2)"/></svg>
+        <span class="lbl" style="color:#f0c040">← Pick this?</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+        <svg width="28" height="28" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="cmp3" cx="38%" cy="30%" r="68%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10,2 L12.94,5.96 L17.61,7.53 L14.76,11.55 L14.70,16.47 L10,15 L5.30,16.47 L5.25,11.55 L2.39,7.53 L7.06,5.96 Z" fill="url(#cmp3)"/></svg>
+        <span class="lbl">Rounder</span>
+      </div>
+    </div>
+    <span class="lbl">Comparison at 28px</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SILVER SLUGGER  —  alternatives to bat
+════════════════════════════════════════════ -->
+<h2>Silver Slugger — 3 alternatives to the bat</h2>
+<div class="row">
+
+  <!-- Option A: Baseball (silver/white metallic) -->
+  <div class="cell">
+    <svg width="36" height="36" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="ball-a" cx="35%" cy="30%" r="65%">
+          <stop offset="0%"   stop-color="#f0f4f8"/>
+          <stop offset="50%"  stop-color="#c8d4de"/>
+          <stop offset="100%" stop-color="#7090a8"/>
+        </radialGradient>
+      </defs>
+      <circle cx="10" cy="10" r="8.5" fill="url(#ball-a)"/>
+      <path d="M5.5 3.5 C8 7 8 13 5.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/>
+      <path d="M14.5 3.5 C12 7 12 13 14.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/>
+      <!-- Stitch ticks — perpendicular to seam at t=0.2,0.35,0.5,0.65,0.8 -->
+      <path d="M5.9,6.1 L7.5,5.6 M6.5,8.0 L7.9,7.8 M6.7,10 L8.1,10 M6.5,12.0 L7.9,12.2 M6.0,13.9 L7.4,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/>
+      <path d="M14.1,6.1 L12.5,5.6 M13.5,8.0 L12.1,7.8 M13.3,10 L11.9,10 M13.5,12.0 L12.1,12.2 M14.0,13.9 L12.6,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/>
+    </svg>
+    <span class="lbl">Option A — Baseball</span>
+  </div>
+
+  <!-- Option B: Crown (silver) -->
+  <div class="cell">
+    <svg width="36" height="36" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="crown-b" x1="20%" y1="0%" x2="80%" y2="100%">
+          <stop offset="0%"   stop-color="#f0f4f8"/>
+          <stop offset="40%"  stop-color="#c0ccd8"/>
+          <stop offset="100%" stop-color="#607080"/>
+        </linearGradient>
+      </defs>
+      <!-- Crown body + 3 points -->
+      <path d="M2 17 L2 9 L6 13.5 L10 5.5 L14 13.5 L18 9 L18 17 Z" fill="url(#crown-b)"/>
+      <!-- Crown base bar -->
+      <rect x="2" y="15.5" width="16" height="2.5" rx="0.8" fill="#a0b0c0"/>
+      <!-- Highlight on top band -->
+      <rect x="2" y="15.5" width="16" height="1" rx="0.5" fill="white" opacity="0.2"/>
+      <!-- Three gems on points -->
+      <circle cx="10" cy="6.5" r="1.2" fill="white" opacity="0.5"/>
+      <circle cx="4"  cy="11" r="0.9" fill="white" opacity="0.4"/>
+      <circle cx="16" cy="11" r="0.9" fill="white" opacity="0.4"/>
+    </svg>
+    <span class="lbl">Option B — Crown</span>
+  </div>
+
+  <!-- Option C: Flame (power hitter, "hot bat") -->
+  <div class="cell">
+    <svg width="36" height="36" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="flame-c" x1="30%" y1="0%" x2="70%" y2="100%">
+          <stop offset="0%"   stop-color="#fff0a0"/>
+          <stop offset="35%"  stop-color="#ff9020"/>
+          <stop offset="80%"  stop-color="#cc3010"/>
+          <stop offset="100%" stop-color="#881010"/>
+        </linearGradient>
+      </defs>
+      <!-- Outer flame -->
+      <path d="M10 1.5 C10 5 8 6.5 7 9 C6 11.5 7 14 8.5 15 C7 12.5 9 11 9 8.5 C10 10.5 10.5 12 10 14.5 C11.5 13 12 11 11.5 9 C13 10.5 13.5 12.5 12.5 15 C14.5 13.5 15 11 14 9 C13 7 11.5 6 12 3 C11 4.5 10.5 3 10 1.5Z" fill="url(#flame-c)"/>
+      <!-- Inner bright core -->
+      <path d="M10 8 C10 10 9 11 9 12.5 C10 11.5 11 11 10.5 9 C11 10 11 11 10.5 12.5 C12 11.5 12 9.5 11 8.5 C10.5 7 11 5.5 10 4 C10 6 9 7 10 8Z" fill="#fff8c0" opacity="0.7"/>
+      <!-- Base -->
+      <ellipse cx="10" cy="16.5" rx="3.5" ry="1.5" fill="#cc3010" opacity="0.5"/>
+    </svg>
+    <span class="lbl">Option C — Flame</span>
+  </div>
+
+  <!-- Sizes — Baseball -->
+  <div class="cell">
+    <div class="sz-row">
+      <svg width="12" height="12" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bsz1" cx="35%" cy="30%" r="65%"><stop offset="0%" stop-color="#f0f4f8"/><stop offset="50%" stop-color="#c8d4de"/><stop offset="100%" stop-color="#7090a8"/></radialGradient></defs><circle cx="10" cy="10" r="8.5" fill="url(#bsz1)"/><path d="M5.5 3.5 C8 7 8 13 5.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/><path d="M14.5 3.5 C12 7 12 13 14.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/><path d="M5.9,6.1 L7.5,5.6 M6.5,8.0 L7.9,7.8 M6.7,10 L8.1,10 M6.5,12.0 L7.9,12.2 M6.0,13.9 L7.4,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/><path d="M14.1,6.1 L12.5,5.6 M13.5,8.0 L12.1,7.8 M13.3,10 L11.9,10 M13.5,12.0 L12.1,12.2 M14.0,13.9 L12.6,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/></svg>
+      <svg width="16" height="16" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bsz2" cx="35%" cy="30%" r="65%"><stop offset="0%" stop-color="#f0f4f8"/><stop offset="50%" stop-color="#c8d4de"/><stop offset="100%" stop-color="#7090a8"/></radialGradient></defs><circle cx="10" cy="10" r="8.5" fill="url(#bsz2)"/><path d="M5.5 3.5 C8 7 8 13 5.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/><path d="M14.5 3.5 C12 7 12 13 14.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/><path d="M5.9,6.1 L7.5,5.6 M6.5,8.0 L7.9,7.8 M6.7,10 L8.1,10 M6.5,12.0 L7.9,12.2 M6.0,13.9 L7.4,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/><path d="M14.1,6.1 L12.5,5.6 M13.5,8.0 L12.1,7.8 M13.3,10 L11.9,10 M13.5,12.0 L12.1,12.2 M14.0,13.9 L12.6,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/></svg>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bsz3" cx="35%" cy="30%" r="65%"><stop offset="0%" stop-color="#f0f4f8"/><stop offset="50%" stop-color="#c8d4de"/><stop offset="100%" stop-color="#7090a8"/></radialGradient></defs><circle cx="10" cy="10" r="8.5" fill="url(#bsz3)"/><path d="M5.5 3.5 C8 7 8 13 5.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/><path d="M14.5 3.5 C12 7 12 13 14.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/><path d="M5.9,6.1 L7.5,5.6 M6.5,8.0 L7.9,7.8 M6.7,10 L8.1,10 M6.5,12.0 L7.9,12.2 M6.0,13.9 L7.4,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/><path d="M14.1,6.1 L12.5,5.6 M13.5,8.0 L12.1,7.8 M13.3,10 L11.9,10 M13.5,12.0 L12.1,12.2 M14.0,13.9 L12.6,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/></svg>
+      <svg width="28" height="28" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bsz4" cx="35%" cy="30%" r="65%"><stop offset="0%" stop-color="#f0f4f8"/><stop offset="50%" stop-color="#c8d4de"/><stop offset="100%" stop-color="#7090a8"/></radialGradient></defs><circle cx="10" cy="10" r="8.5" fill="url(#bsz4)"/><path d="M5.5 3.5 C8 7 8 13 5.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/><path d="M14.5 3.5 C12 7 12 13 14.5 16.5" fill="none" stroke="#c04444" stroke-width="1.1" stroke-linecap="round"/><path d="M5.9,6.1 L7.5,5.6 M6.5,8.0 L7.9,7.8 M6.7,10 L8.1,10 M6.5,12.0 L7.9,12.2 M6.0,13.9 L7.4,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/><path d="M14.1,6.1 L12.5,5.6 M13.5,8.0 L12.1,7.8 M13.3,10 L11.9,10 M13.5,12.0 L12.1,12.2 M14.0,13.9 L12.6,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/></svg>
+    </div>
+    <span class="lbl">Baseball · 12–28px</span>
+  </div>
+
+  <!-- Sizes — Crown -->
+  <div class="cell">
+    <div class="sz-row">
+      <svg width="12" height="12" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="csz1" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#f0f4f8"/><stop offset="40%" stop-color="#c0ccd8"/><stop offset="100%" stop-color="#607080"/></linearGradient></defs><path d="M2 17 L2 9 L6 13.5 L10 5.5 L14 13.5 L18 9 L18 17 Z" fill="url(#csz1)"/><rect x="2" y="15.5" width="16" height="2.5" rx="0.8" fill="#a0b0c0"/></svg>
+      <svg width="16" height="16" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="csz2" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#f0f4f8"/><stop offset="40%" stop-color="#c0ccd8"/><stop offset="100%" stop-color="#607080"/></linearGradient></defs><path d="M2 17 L2 9 L6 13.5 L10 5.5 L14 13.5 L18 9 L18 17 Z" fill="url(#csz2)"/><rect x="2" y="15.5" width="16" height="2.5" rx="0.8" fill="#a0b0c0"/></svg>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="csz3" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#f0f4f8"/><stop offset="40%" stop-color="#c0ccd8"/><stop offset="100%" stop-color="#607080"/></linearGradient></defs><path d="M2 17 L2 9 L6 13.5 L10 5.5 L14 13.5 L18 9 L18 17 Z" fill="url(#csz3)"/><rect x="2" y="15.5" width="16" height="2.5" rx="0.8" fill="#a0b0c0"/></svg>
+      <svg width="28" height="28" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="csz4" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#f0f4f8"/><stop offset="40%" stop-color="#c0ccd8"/><stop offset="100%" stop-color="#607080"/></linearGradient></defs><path d="M2 17 L2 9 L6 13.5 L10 5.5 L14 13.5 L18 9 L18 17 Z" fill="url(#csz4)"/><rect x="2" y="15.5" width="16" height="2.5" rx="0.8" fill="#a0b0c0"/></svg>
+    </div>
+    <span class="lbl">Crown · 12–28px</span>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ROY BADGE
+════════════════════════════════════════════ -->
+<h2>ROY Badge · Rookie of the Year · Flame ✓</h2>
+<p style="margin-bottom:14px">Flame — blazing debut, "on fire" is universal sports language for a standout rookie.</p>
+
+<div class="row">
+
+  <!-- Main display -->
+  <div class="cell">
+    <svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="roy-flame" x1="30%" y1="0%" x2="70%" y2="100%">
+          <stop offset="0%"   stop-color="#fff0a0"/>
+          <stop offset="35%"  stop-color="#ff9020"/>
+          <stop offset="80%"  stop-color="#cc3010"/>
+          <stop offset="100%" stop-color="#881010"/>
+        </linearGradient>
+      </defs>
+      <path d="M10 1.5 C10 5 8 6.5 7 9 C6 11.5 7 14 8.5 15 C7 12.5 9 11 9 8.5 C10 10.5 10.5 12 10 14.5 C11.5 13 12 11 11.5 9 C13 10.5 13.5 12.5 12.5 15 C14.5 13.5 15 11 14 9 C13 7 11.5 6 12 3 C11 4.5 10.5 3 10 1.5Z" fill="url(#roy-flame)"/>
+      <path d="M10 8 C10 10 9 11 9 12.5 C10 11.5 11 11 10.5 9 C11 10 11 11 10.5 12.5 C12 11.5 12 9.5 11 8.5 C10.5 7 11 5.5 10 4 C10 6 9 7 10 8Z" fill="#fff8c0" opacity="0.7"/>
+      <ellipse cx="10" cy="16.5" rx="3.5" ry="1.5" fill="#cc3010" opacity="0.5"/>
+    </svg>
+    <span class="lbl">ROY — Flame</span>
+  </div>
+
+  <!-- Sizes -->
+  <div class="cell">
+    <div class="sz-row">
+      <svg width="12" height="12" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rfsz1" x1="30%" y1="0%" x2="70%" y2="100%"><stop offset="0%" stop-color="#fff0a0"/><stop offset="35%" stop-color="#ff9020"/><stop offset="80%" stop-color="#cc3010"/><stop offset="100%" stop-color="#881010"/></linearGradient></defs><path d="M10 1.5 C10 5 8 6.5 7 9 C6 11.5 7 14 8.5 15 C7 12.5 9 11 9 8.5 C10 10.5 10.5 12 10 14.5 C11.5 13 12 11 11.5 9 C13 10.5 13.5 12.5 12.5 15 C14.5 13.5 15 11 14 9 C13 7 11.5 6 12 3 C11 4.5 10.5 3 10 1.5Z" fill="url(#rfsz1)"/></svg>
+      <svg width="16" height="16" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rfsz2" x1="30%" y1="0%" x2="70%" y2="100%"><stop offset="0%" stop-color="#fff0a0"/><stop offset="35%" stop-color="#ff9020"/><stop offset="80%" stop-color="#cc3010"/><stop offset="100%" stop-color="#881010"/></linearGradient></defs><path d="M10 1.5 C10 5 8 6.5 7 9 C6 11.5 7 14 8.5 15 C7 12.5 9 11 9 8.5 C10 10.5 10.5 12 10 14.5 C11.5 13 12 11 11.5 9 C13 10.5 13.5 12.5 12.5 15 C14.5 13.5 15 11 14 9 C13 7 11.5 6 12 3 C11 4.5 10.5 3 10 1.5Z" fill="url(#rfsz2)"/></svg>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rfsz3" x1="30%" y1="0%" x2="70%" y2="100%"><stop offset="0%" stop-color="#fff0a0"/><stop offset="35%" stop-color="#ff9020"/><stop offset="80%" stop-color="#cc3010"/><stop offset="100%" stop-color="#881010"/></linearGradient></defs><path d="M10 1.5 C10 5 8 6.5 7 9 C6 11.5 7 14 8.5 15 C7 12.5 9 11 9 8.5 C10 10.5 10.5 12 10 14.5 C11.5 13 12 11 11.5 9 C13 10.5 13.5 12.5 12.5 15 C14.5 13.5 15 11 14 9 C13 7 11.5 6 12 3 C11 4.5 10.5 3 10 1.5Z" fill="url(#rfsz3)"/></svg>
+      <svg width="28" height="28" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rfsz4" x1="30%" y1="0%" x2="70%" y2="100%"><stop offset="0%" stop-color="#fff0a0"/><stop offset="35%" stop-color="#ff9020"/><stop offset="80%" stop-color="#cc3010"/><stop offset="100%" stop-color="#881010"/></linearGradient></defs><path d="M10 1.5 C10 5 8 6.5 7 9 C6 11.5 7 14 8.5 15 C7 12.5 9 11 9 8.5 C10 10.5 10.5 12 10 14.5 C11.5 13 12 11 11.5 9 C13 10.5 13.5 12.5 12.5 15 C14.5 13.5 15 11 14 9 C13 7 11.5 6 12 3 C11 4.5 10.5 3 10 1.5Z" fill="url(#rfsz4)"/></svg>
+    </div>
+    <span class="lbl">Flame · 12–28px</span>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════
+     IN-CONTEXT PREVIEW
+════════════════════════════════════════════ -->
+<h2>In-Context Preview — All badges together (Modern era)</h2>
+<p style="margin-bottom:16px">Trophy (gradient) + Star (gold gradient, all eras) + Silver Slugger bat</p>
+
+<div style="background:#111e2d;border:1px solid #1a3050;border-radius:10px;padding:16px;max-width:360px">
+
+  <!-- Row 1 – MVP Gold + ASG + SS bat -->
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #152030">
+    <span style="font-size:10px;font-weight:800;color:#445566;width:26px">CF</span>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px">
+        Mike Trout
+        <!-- Gold trophy -->
+        <svg width="14" height="14" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="p-g1" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#fff0a0"/><stop offset="40%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></linearGradient></defs><path d="M5 2h10v7c0 3.3-2.2 5.4-5 5.9C7.2 14.4 5 12.3 5 9V2z" fill="url(#p-g1)"/><path d="M7 2.5h2v6c0 2-1 3.5-2 4.2V2.5z" fill="white" opacity="0.12"/><path d="M5 4.5C3.3 4.5 2 5.5 2 7s1.3 2.5 3 2.5" fill="none" stroke="#f0c040" stroke-width="1.5" stroke-linecap="round"/><path d="M15 4.5c1.7 0 3 1 3 2.5s-1.3 2.5-3 2.5" fill="none" stroke="#f0c040" stroke-width="1.5" stroke-linecap="round"/><path d="M8.5 15l-1 2.5h5l-1-2.5z" fill="#c8a030"/><rect x="5.5" y="17.5" width="9" height="1.5" rx="0.5" fill="#c8a030"/></svg>
+        <!-- Blue star -->
+        <svg width="12" height="12" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="p-s1" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10 2l2.2 6.3H18l-5 3.6 1.9 6.1-5-3.5-5 3.5 1.9-6.1-5-3.6h5.8z" fill="url(#p-s1)"/></svg>
+        <!-- Silver bat -->
+        <svg width="11" height="11" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="p-b1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8090a0"/><stop offset="50%" stop-color="#f0f4f8"/><stop offset="100%" stop-color="#607080"/></linearGradient></defs><path d="M7 2 Q10 1.2 13 2 Q14.5 5 14 9 L12.5 10 L7.5 10 L6 9 Q5.5 5 7 2Z" fill="url(#p-b1)"/><path d="M7.5 10 L8.2 15 L11.8 15 L12.5 10Z" fill="url(#p-b1)"/><path d="M8.2 15 L8.6 18 L11.4 18 L11.8 15Z" fill="url(#p-b1)"/><path d="M8.6 18 Q10 19 11.4 18 L11 19.5 Q10 20 9 19.5Z" fill="url(#p-b1)"/></svg>
+      </div>
+      <div style="font-size:11px;color:#445566">2019 · Angels</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:12px;color:#a0b0be;font-family:monospace">.291/.438/.645</div>
+      <div style="font-size:10px;color:#445566">45 HR · 104 RBI</div>
+    </div>
+  </div>
+
+  <!-- Row 2 – MVP Silver + ASG -->
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #152030">
+    <span style="font-size:10px;font-weight:800;color:#445566;width:26px">SS</span>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px">
+        F. Lindor
+        <!-- Silver trophy -->
+        <svg width="14" height="14" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="p-g2" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#f0f0f8"/><stop offset="40%" stop-color="#c0c0cc"/><stop offset="100%" stop-color="#606070"/></linearGradient></defs><path d="M5 2h10v7c0 3.3-2.2 5.4-5 5.9C7.2 14.4 5 12.3 5 9V2z" fill="url(#p-g2)"/><path d="M7 2.5h2v6c0 2-1 3.5-2 4.2V2.5z" fill="white" opacity="0.15"/><path d="M5 4.5C3.3 4.5 2 5.5 2 7s1.3 2.5 3 2.5" fill="none" stroke="#c0c0cc" stroke-width="1.5" stroke-linecap="round"/><path d="M15 4.5c1.7 0 3 1 3 2.5s-1.3 2.5-3 2.5" fill="none" stroke="#c0c0cc" stroke-width="1.5" stroke-linecap="round"/><path d="M8.5 15l-1 2.5h5l-1-2.5z" fill="#909098"/><rect x="5.5" y="17.5" width="9" height="1.5" rx="0.5" fill="#909098"/></svg>
+        <!-- Blue star -->
+        <svg width="12" height="12" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="p-s2" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10 2l2.2 6.3H18l-5 3.6 1.9 6.1-5-3.5-5 3.5 1.9-6.1-5-3.6h5.8z" fill="url(#p-s2)"/></svg>
+        <!-- Silver bat -->
+        <svg width="11" height="11" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="p-b2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8090a0"/><stop offset="50%" stop-color="#f0f4f8"/><stop offset="100%" stop-color="#607080"/></linearGradient></defs><path d="M7 2 Q10 1.2 13 2 Q14.5 5 14 9 L12.5 10 L7.5 10 L6 9 Q5.5 5 7 2Z" fill="url(#p-b2)"/><path d="M7.5 10 L8.2 15 L11.8 15 L12.5 10Z" fill="url(#p-b2)"/><path d="M8.2 15 L8.6 18 L11.4 18 L11.8 15Z" fill="url(#p-b2)"/><path d="M8.6 18 Q10 19 11.4 18 L11 19.5 Q10 20 9 19.5Z" fill="url(#p-b2)"/></svg>
+      </div>
+      <div style="font-size:11px;color:#445566">2018 · Cleveland</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:12px;color:#a0b0be;font-family:monospace">.277/.352/.519</div>
+      <div style="font-size:10px;color:#445566">38 HR · 92 RBI</div>
+    </div>
+  </div>
+
+  <!-- Row 3 – ASG only -->
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 0">
+    <span style="font-size:10px;font-weight:800;color:#445566;width:26px">3B</span>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px">
+        N. Arenado
+        <!-- Blue star -->
+        <svg width="12" height="12" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="p-s3" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#fff8c0"/><stop offset="45%" stop-color="#f0c040"/><stop offset="100%" stop-color="#906010"/></radialGradient></defs><path d="M10 2l2.2 6.3H18l-5 3.6 1.9 6.1-5-3.5-5 3.5 1.9-6.1-5-3.6h5.8z" fill="url(#p-s3)"/></svg>
+      </div>
+      <div style="font-size:11px;color:#445566">2015 · Rockies</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:12px;color:#a0b0be;font-family:monospace">.287/.323/.575</div>
+      <div style="font-size:10px;color:#445566">42 HR · 130 RBI</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
