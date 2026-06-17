@@ -512,26 +512,68 @@ body::before {
   text-align: center; padding: 16px 0 8px;
   border-bottom: 1px solid var(--border);
 }
+@keyframes recordLand {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.13); }
+  65%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
 .result-record {
   font-family: Georgia, serif;
-  font-size: clamp(56px, 12vw, 92px);
-  font-weight: 700; line-height: 1; letter-spacing: -2px;
+  font-size: clamp(88px, 20vw, 148px);
+  font-weight: 700; line-height: 1; letter-spacing: -3px;
+  display: inline-block;
 }
-.result-record.perfect { color: var(--gold); }
-.result-record.great   { color: #7abaff; }
-.result-record.good    { color: var(--cream); }
+.result-record.landed { animation: recordLand 0.55s cubic-bezier(.3,1.5,.5,1) forwards; }
+.result-record.perfect      { color: var(--gold); text-shadow: 0 0 40px rgba(201,164,74,0.5); }
+.result-record.transcendent { color: var(--gold); }
+.result-record.dominant     { color: #e8d080; }
+.result-record.great        { color: #7abaff; }
+.result-record.good         { color: var(--cream); }
+.result-record.mediocre     { color: var(--cream-dim); }
+.result-record.bad          { color: #c07070; }
 .result-tagline { font-size: 16px; color: var(--cream-dim); margin-top: 8px; }
 
-.bars-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-}
-.sb-row   { display: flex; align-items: center; gap: 10px; }
-.sb-key   { width: 34px; font-size: 11px; color: var(--muted); font-weight: 700; text-align: right; }
-.sb-track { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-.sb-fill  { height: 100%; background: var(--gold); border-radius: 3px; }
-.sb-val   { width: 52px; font-size: 11px; color: var(--cream-dim); text-align: right; }
-.sb-total { text-align: right; font-size: 12px; color: var(--muted); padding-top: 10px; border-top: 1px solid var(--border); margin-top: 6px; }
+.sb-total { text-align: right; font-size: 12px; color: var(--muted); padding-top: 10px; border-top: 1px solid var(--border); margin-top: 12px; }
 .sb-total strong { color: var(--gold); font-size: 15px; }
+
+/* Dashboard tabs */
+.dash-tabs { display: flex; gap: 4px; }
+.dash-tab { padding: 3px 13px; border-radius: 12px; font-size: 11px; font-weight: 700; background: transparent; border: 1px solid var(--border); color: var(--muted); cursor: pointer; letter-spacing: 0.5px; }
+.dash-tab.active { background: var(--gold); color: #1a1200; border-color: var(--gold); }
+.dash-tab:hover:not(.active) { border-color: var(--cream-dim); color: var(--cream-dim); }
+
+/* Player card grid */
+.pc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.pc-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 10px 8px; position: relative; overflow: hidden; }
+.pc-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.tier-elite::before  { background: linear-gradient(90deg,#f0c040,#ffe090); }
+.tier-great::before  { background: #7abaff; }
+.tier-solid::before  { background: #4caf76; }
+.tier-avg::before    { background: #e09050; }
+.tier-weak::before   { background: #c07070; }
+.pc-pos   { font-size: 9px; font-weight: 800; color: var(--muted); letter-spacing: 1.5px; }
+.pc-name  { font-size: 12px; font-weight: 700; color: var(--cream); margin: 2px 0 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pc-ctx   { font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+.pc-slash { font-size: 11px; color: var(--cream-dim); font-family: monospace; letter-spacing: -0.3px; }
+.pc-counts { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.pc-badges { margin-top: 5px; }
+
+/* Radar chart */
+.radar-wrap { display: flex; justify-content: center; padding: 8px 0 4px; }
+
+/* Leaderboard */
+.ld-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; }
+.ld-col  { }
+.ld-head { font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 1.5px; padding-bottom: 6px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+.ld-row  { display: flex; align-items: center; gap: 5px; padding: 3px 0; font-size: 11px; }
+.ld-rank { width: 14px; text-align: center; font-size: 10px; color: var(--muted); flex-shrink: 0; }
+.ld-name { flex: 1; color: var(--cream-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ld-val  { font-size: 11px; color: var(--cream); font-weight: 700; flex-shrink: 0; }
+.ld-gold   .ld-rank { color: #f0c040; font-weight: 800; }
+.ld-gold   .ld-name { color: var(--cream); font-weight: 600; }
+.ld-silver .ld-rank { color: #b8b8c0; font-weight: 700; }
+.ld-bronze .ld-rank { color: #b07040; font-weight: 700; }
 .agg-row {
   display: flex; flex-wrap: wrap; gap: 6px;
   padding-top: 12px; margin-top: 4px;
@@ -572,15 +614,6 @@ body::before {
   background: var(--bg); border: 1px solid var(--border);
   border-radius: 4px; padding: 2px 7px;
 }
-.fl-spotlight {
-  display: flex; gap: 12px; flex-wrap: wrap;
-  padding-top: 10px; margin-top: 4px;
-  border-top: 1px solid var(--border);
-  font-size: 12px;
-}
-.fl-spotlight-best { color: #4caf76; }
-.fl-spotlight-worst { color: var(--muted); }
-.fl-spotlight strong { color: inherit; }
 
 .results-btns { display: flex; gap: 12px; align-self: center; flex-wrap: wrap; justify-content: center; }
 .play-again-btn {
@@ -747,7 +780,8 @@ body::before {
   .wrap { padding: 0 10px 32px; gap: 14px; }
   .card { padding: 14px; }
   .hero-sub { font-size: 13px; }
-  .bars-grid { grid-template-columns: 1fr; }
+  .pc-grid { grid-template-columns: repeat(2, 1fr); }
+  .ld-grid { grid-template-columns: repeat(2, 1fr); }
 
   /* Lineup bar: horizontal scroll so all 9 slots stay visible */
   .lineup-bar {
@@ -1061,8 +1095,17 @@ body.era-nostalgia .roster-table tr:hover td { background: var(--surface2); }
   </div>
 
   <div class="card">
-    <div class="card-header">Team Strength</div>
-    <div class="bars-grid" id="bars-grid"></div>
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      Team Stats
+      <div class="dash-tabs">
+        <button class="dash-tab active" data-tab="cards" onclick="switchDashTab('cards')">Cards</button>
+        <button class="dash-tab" data-tab="radar" onclick="switchDashTab('radar')">Radar</button>
+        <button class="dash-tab" data-tab="leaders" onclick="switchDashTab('leaders')">Leaders</button>
+      </div>
+    </div>
+    <div id="dash-cards"></div>
+    <div id="dash-radar" style="display:none"></div>
+    <div id="dash-leaders" style="display:none"></div>
     <div class="sb-total" id="sb-total"></div>
     <div class="agg-row" id="agg-row"></div>
     <div class="achieve-row" id="achieve-row"></div>
@@ -1072,7 +1115,6 @@ body.era-nostalgia .roster-table tr:hover td { background: var(--surface2); }
     <div class="card-header">Final Lineup</div>
     <div id="fl-origins"></div>
     <div id="fl-rows"></div>
-    <div id="fl-spotlight"></div>
   </div>
   <div class="results-btns">
     <button class="play-again-btn" onclick="resetGame()">Play Again</button>
@@ -3940,7 +3982,8 @@ function showResults() {
   saveToHistory(res.wins);
 
   var rec = document.getElementById('result-record');
-  rec.className = res.wins===162 ? 'result-record perfect' : res.wins>=110 ? 'result-record great' : 'result-record good';
+  var recClass = res.wins===162 ? 'perfect' : res.wins>=150 ? 'transcendent' : res.wins>=130 ? 'dominant' : res.wins>=110 ? 'great' : res.wins>=95 ? 'good' : res.wins>=82 ? 'mediocre' : 'bad';
+  rec.className = 'result-record ' + recClass;
   document.getElementById('hard-mode-badge').style.display = S.hardMode ? 'block' : 'none';
   var eraBadgeEl = document.getElementById('era-badge');
   if (eraBadgeEl) {
@@ -3949,7 +3992,25 @@ function showResults() {
     eraBadgeEl.style.display = 'block';
   }
 
-  // Animate win count up like a scoreboard
+  function _fireCelebration(wins) {
+    if (typeof confetti === 'undefined') return;
+    if (wins === 162) {
+      var end = Date.now() + 3500;
+      (function frame() {
+        confetti({ particleCount: 8, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#c9a44a','#f0ece2','#ffffff','#1e4d30'] });
+        confetti({ particleCount: 8, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#c9a44a','#f0ece2','#ffffff','#1e4d30'] });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+    } else if (wins >= 150) {
+      confetti({ particleCount: 140, spread: 100, origin: { y: 0.5 }, colors: ['#c9a44a','#f0ece2','#3a6090','#ffffff'] });
+    } else if (wins >= 130) {
+      confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 }, colors: ['#c9a44a','#f0ece2','#3a6090'] });
+    } else if (wins >= 110) {
+      confetti({ particleCount: 45, spread: 60, origin: { y: 0.6 }, colors: ['#c9a44a','#f0ece2'] });
+    }
+  }
+
+  // Animate win count up — slow dramatic deceleration into the final number
   var counter = { val: 0 };
   rec.textContent = '0–162';
   if (typeof anime !== 'undefined') {
@@ -3957,30 +4018,21 @@ function showResults() {
       targets: counter,
       val: res.wins,
       round: 1,
-      duration: 1200,
+      duration: 2200,
       easing: 'easeOutExpo',
       update: function() {
         var w = Math.round(counter.val);
         rec.textContent = w + '–' + (162 - w);
+      },
+      complete: function() {
+        rec.textContent = res.wins + '–' + losses;
+        rec.classList.add('landed');
+        setTimeout(function() { _fireCelebration(res.wins); }, 200);
       }
     });
   } else {
     rec.textContent = res.wins + '–' + losses;
-  }
-
-  // Confetti for great results
-  if (typeof confetti !== 'undefined') {
-    if (res.wins === 162) {
-      // Full celebration for perfect season
-      var end = Date.now() + 3000;
-      (function frame() {
-        confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#c9a44a','#f0ece2','#ffffff','#1e4d30'] });
-        confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#c9a44a','#f0ece2','#ffffff','#1e4d30'] });
-        if (Date.now() < end) requestAnimationFrame(frame);
-      })();
-    } else if (res.wins >= 130) {
-      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#c9a44a','#f0ece2','#3a6090'] });
-    }
+    _fireCelebration(res.wins);
   }
 
   var tags = [
@@ -3997,25 +4049,104 @@ function showResults() {
   for (var t=0;t<tags.length;t++) { if (res.wins>=tags[t][0]) { tagline=tags[t][1]; break; } }
   document.getElementById('result-tagline').textContent = tagline;
 
-  var barDefs = [
-    {k:'avg', l:'AVG', f:fmtSlash}, {k:'obp', l:'OBP', f:fmtSlash},
-    {k:'slg', l:'SLG', f:fmtSlash}, {k:'hr',  l:'HR',  f:Math.round},
-    {k:'rbi', l:'RBI', f:Math.round},{k:'runs',l:'R',   f:Math.round},
-    {k:'sb',  l:'SB',  f:Math.round},
-  ];
+  // --- Player card grid ---
+  (function() {
+    var html = '<div class="pc-grid">';
+    for (var i = 0; i < 9; i++) {
+      var slot = S.lineup[i]; if (!slot) continue;
+      var st = slot.player.stats;
+      var ops = (st.obp || 0) + (st.slg || 0);
+      var tier = ops >= 1.0 ? 'tier-elite' : ops >= .870 ? 'tier-great' : ops >= .800 ? 'tier-solid' : ops >= .720 ? 'tier-avg' : 'tier-weak';
+      var bdg = '';
+      if (slot.awards) {
+        if (slot.awards.mvp) bdg += _mvpBadgeHtml(slot.awards.mvp, 'fl-award-badge mvp-badge');
+        if (slot.awards.roy) bdg += '<span class="fl-award-badge">&#128035;</span>';
+        if (slot.awards.ss)  bdg += '<span class="fl-award-badge">&#9889;</span>';
+        if (slot.awards.asg) bdg += '<span class="fl-award-badge">&#11088;</span>';
+      }
+      html += '<div class="pc-card '+tier+'">'
+        +'<div class="pc-pos">'+POS[i]+'</div>'
+        +'<div class="pc-name" title="'+esc(slot.player.name)+'">'+esc(slot.player.name)+'</div>'
+        +'<div class="pc-ctx">'+slot.year+' · '+esc(slot.teamName)+'</div>'
+        +'<div class="pc-slash">'+fmtSlash(st.avg)+'/'+fmtSlash(st.obp)+'/'+fmtSlash(st.slg)+'</div>'
+        +'<div class="pc-counts">'+Math.round(st.hr)+'HR · '+Math.round(st.rbi)+'RBI · '+Math.round(st.sb)+'SB</div>'
+        +(bdg ? '<div class="pc-badges">'+bdg+'</div>' : '')
+        +'</div>';
+    }
+    document.getElementById('dash-cards').innerHTML = html + '</div>';
+  })();
 
-  var barsHtml = '';
-  for (var b=0;b<barDefs.length;b++) {
-    var d = barDefs[b];
-    var n = res.norm[d.k];
-    var barColor = n >= .65 ? '#4caf76' : n >= .38 ? 'var(--gold)' : n >= .18 ? '#e09050' : '#c05050';
-    barsHtml += '<div class="sb-row">'
-      +'<div class="sb-key">'+d.l+'</div>'
-      +'<div class="sb-track"><div class="sb-fill" style="width:'+Math.round(n*100)+'%;background:'+barColor+'"></div></div>'
-      +'<div class="sb-val">'+d.f(res.agg[d.k])+'</div>'
-      +'</div>';
-  }
-  document.getElementById('bars-grid').innerHTML = barsHtml;
+  // --- Radar chart ---
+  (function() {
+    var axes = [
+      {k:'avg',l:'AVG'},{k:'obp',l:'OBP'},{k:'slg',l:'SLG'},
+      {k:'hr',l:'HR'},{k:'rbi',l:'RBI'},{k:'sb',l:'SB'},
+    ];
+    var n = axes.length, cx = 130, cy = 125, r = 88;
+    var svg = '<div class="radar-wrap"><svg width="260" height="250" xmlns="http://www.w3.org/2000/svg">';
+    for (var ring = 1; ring <= 4; ring++) {
+      var rr = r * ring / 4, rpts = [];
+      for (var i = 0; i < n; i++) {
+        var a = (Math.PI*2*i/n) - Math.PI/2;
+        rpts.push(+(cx+rr*Math.cos(a)).toFixed(1)+','+ +(cy+rr*Math.sin(a)).toFixed(1));
+      }
+      svg += '<polygon points="'+rpts.join(' ')+'" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>';
+    }
+    for (var i = 0; i < n; i++) {
+      var a = (Math.PI*2*i/n) - Math.PI/2;
+      svg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+ +(cx+r*Math.cos(a)).toFixed(1)+'" y2="'+ +(cy+r*Math.sin(a)).toFixed(1)+'" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>';
+    }
+    var dpts = [];
+    for (var i = 0; i < n; i++) {
+      var a = (Math.PI*2*i/n) - Math.PI/2;
+      var v = Math.min(1, Math.max(0, res.norm[axes[i].k] || 0));
+      dpts.push(+(cx+r*v*Math.cos(a)).toFixed(1)+','+ +(cy+r*v*Math.sin(a)).toFixed(1));
+    }
+    svg += '<polygon points="'+dpts.join(' ')+'" fill="rgba(201,164,74,0.18)" stroke="rgba(201,164,74,0.85)" stroke-width="2"/>';
+    for (var i = 0; i < n; i++) {
+      var p = dpts[i].split(',');
+      svg += '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="#c9a44a" stroke="#1a1200" stroke-width="1"/>';
+    }
+    for (var i = 0; i < n; i++) {
+      var a = (Math.PI*2*i/n) - Math.PI/2;
+      var lx = +(cx+(r+20)*Math.cos(a)).toFixed(1), ly = +(cy+(r+20)*Math.sin(a)).toFixed(1);
+      svg += '<text x="'+lx+'" y="'+ly+'" text-anchor="middle" dominant-baseline="middle" fill="rgba(240,236,226,0.55)" font-size="11" font-family="Georgia,serif">'+axes[i].l+'</text>';
+    }
+    svg += '</svg></div>';
+    document.getElementById('dash-radar').innerHTML = svg;
+  })();
+
+  // --- Leaderboard ---
+  (function() {
+    var cats = [
+      {k:'hr', l:'HR', f:function(v){return Math.round(v);}},
+      {k:'rbi',l:'RBI',f:function(v){return Math.round(v);}},
+      {k:'sb', l:'SB', f:function(v){return Math.round(v);}},
+      {k:'ops',l:'OPS',f:fmtSlash},
+    ];
+    var players = [];
+    for (var i = 0; i < 9; i++) {
+      var slot = S.lineup[i]; if (!slot) continue;
+      var st = slot.player.stats;
+      players.push({ name: slot.player.name, pos: POS[i], hr: st.hr, rbi: st.rbi, sb: st.sb, ops: (st.obp||0)+(st.slg||0) });
+    }
+    var html = '<div class="ld-grid">';
+    for (var c = 0; c < cats.length; c++) {
+      var cat = cats[c];
+      var sorted = players.slice().sort(function(a,b){ return b[cat.k]-a[cat.k]; });
+      html += '<div class="ld-col"><div class="ld-head">'+cat.l+'</div>';
+      for (var p = 0; p < sorted.length; p++) {
+        var medal = p===0?'ld-gold':p===1?'ld-silver':p===2?'ld-bronze':'';
+        html += '<div class="ld-row '+medal+'">'
+          +'<span class="ld-rank">'+(p+1)+'</span>'
+          +'<span class="ld-name" title="'+esc(sorted[p].name)+'">'+esc(sorted[p].name.split(' ').pop())+'</span>'
+          +'<span class="ld-val">'+cat.f(sorted[p][cat.k])+'</span>'
+          +'</div>';
+      }
+      html += '</div>';
+    }
+    document.getElementById('dash-leaders').innerHTML = html + '</div>';
+  })();
 
   var a = res.agg;
   var maxGames = 162 * 9;
@@ -4083,20 +4214,6 @@ function showResults() {
       + '</span>';
   }).join('');
 
-  // Best / worst slot by OPS
-  var bestSlot = null, worstSlot = null, bestOps = -1, worstOps = 999;
-  for (var rs = 0; rs < 9; rs++) {
-    var rsl = S.lineup[rs]; if (!rsl) continue;
-    var rops = rsl.player.stats.obp + rsl.player.stats.slg;
-    if (rops > bestOps)  { bestOps  = rops;  bestSlot  = { name: esc(rsl.player.name), pos: POS[rs], ops: rops }; }
-    if (rops < worstOps) { worstOps = rops; worstSlot = { name: esc(rsl.player.name), pos: POS[rs], ops: rops }; }
-  }
-  var spotHtml = '';
-  if (bestSlot)  spotHtml += '<span class="fl-spotlight-best">&#9650; <strong>' + bestSlot.name  + '</strong> (' + bestSlot.pos  + ') · ' + fmtSlash(bestSlot.ops)  + ' OPS</span>';
-  if (worstSlot && bestSlot && worstSlot.pos !== bestSlot.pos)
-    spotHtml += '<span class="fl-spotlight-worst">&#9660; <strong>' + worstSlot.name + '</strong> (' + worstSlot.pos + ') · ' + fmtSlash(worstSlot.ops) + ' OPS</span>';
-  document.getElementById('fl-spotlight').innerHTML = spotHtml;
-  document.getElementById('fl-spotlight').className = 'fl-spotlight' + (spotHtml ? '' : ' hidden');
 
   var flHtml = '';
   for (var r=0;r<9;r++) {
@@ -4263,6 +4380,18 @@ function resetGame() {
   // Reset era badge visibility for next game
   var eraBadgeEl = document.getElementById('era-badge');
   if (eraBadgeEl) eraBadgeEl.style.display = 'none';
+}
+
+function switchDashTab(tab) {
+  var tabs = ['cards','radar','leaders'];
+  for (var t = 0; t < tabs.length; t++) {
+    var el = document.getElementById('dash-'+tabs[t]);
+    if (el) el.style.display = tabs[t] === tab ? '' : 'none';
+  }
+  var btns = document.querySelectorAll('.dash-tab');
+  for (var b = 0; b < btns.length; b++) {
+    btns[b].classList.toggle('active', btns[b].dataset.tab === tab);
+  }
 }
 
 function shareScore() {
