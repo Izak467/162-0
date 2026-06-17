@@ -541,32 +541,52 @@ body::before {
 .sb-total strong { color: var(--gold); font-size: 15px; }
 
 /* Dashboard tabs */
-.dash-tabs { display: flex; gap: 4px; }
-.dash-tab { padding: 3px 13px; border-radius: 12px; font-size: 11px; font-weight: 700; background: transparent; border: 1px solid var(--border); color: var(--muted); cursor: pointer; letter-spacing: 0.5px; }
+.dash-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.dash-tab { padding: 3px 11px; border-radius: 12px; font-size: 11px; font-weight: 700; background: transparent; border: 1px solid var(--border); color: var(--muted); cursor: pointer; letter-spacing: 0.5px; }
 .dash-tab.active { background: var(--gold); color: #1a1200; border-color: var(--gold); }
 .dash-tab:hover:not(.active) { border-color: var(--cream-dim); color: var(--cream-dim); }
 
-/* Player card grid */
-.pc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
-.pc-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 10px 8px; position: relative; overflow: hidden; }
-.pc-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-.tier-elite::before  { background: linear-gradient(90deg,#f0c040,#ffe090); }
-.tier-great::before  { background: #7abaff; }
-.tier-solid::before  { background: #4caf76; }
-.tier-avg::before    { background: #e09050; }
-.tier-weak::before   { background: #c07070; }
-.pc-pos   { font-size: 9px; font-weight: 800; color: var(--muted); letter-spacing: 1.5px; }
-.pc-name  { font-size: 12px; font-weight: 700; color: var(--cream); margin: 2px 0 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pc-ctx   { font-size: 10px; color: var(--muted); margin-bottom: 6px; }
-.pc-slash { font-size: 11px; color: var(--cream-dim); font-family: monospace; letter-spacing: -0.3px; }
-.pc-counts { font-size: 10px; color: var(--muted); margin-top: 3px; }
-.pc-badges { margin-top: 5px; }
+/* Lineup tab */
+.lu-list { margin-top: 8px; }
+.lu-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.lu-row:last-child { border-bottom: none; }
+.lu-stripe { width: 3px; border-radius: 2px; align-self: stretch; min-height: 36px; flex-shrink: 0; }
+.lu-pos { font-size: 9px; font-weight: 800; color: var(--muted); width: 20px; text-align: center; letter-spacing: 1px; flex-shrink: 0; }
+.lu-body { flex: 1; min-width: 0; }
+.lu-name { font-size: 13px; font-weight: 700; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lu-ctx  { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.lu-right { text-align: right; flex-shrink: 0; }
+.lu-slash  { font-size: 11px; font-family: monospace; color: var(--cream-dim); letter-spacing: -0.3px; }
+.lu-counts { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
-/* Radar chart */
-.radar-wrap { display: flex; justify-content: center; padding: 8px 0 4px; }
+/* Heat map */
+.hm-wrap { margin-top: 8px; overflow-x: auto; }
+.hm-table { width: 100%; border-collapse: collapse; }
+.hm-th { font-size: 9px; font-weight: 800; color: var(--muted); letter-spacing: 1px; text-align: center; padding: 0 2px 6px; }
+.hm-th-row { font-size: 9px; color: var(--muted); padding: 3px 8px 3px 0; white-space: nowrap; text-align: right; }
+.hm-pos { font-weight: 800; color: var(--muted); font-size: 8px; letter-spacing: 0.5px; }
+.hm-cell-wrap { padding: 2px; }
+.hm-cell { text-align: center; padding: 4px 3px; font-size: 10px; font-weight: 700; font-family: monospace; border-radius: 4px; }
+
+/* Scatter plot */
+.sc-wrap { display: flex; justify-content: center; padding: 4px 0; overflow-x: auto; }
+
+/* Win contribution */
+.wc-stack { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin-bottom: 14px; }
+.wc-seg { display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: default; transition: filter .15s; }
+.wc-seg:hover { filter: brightness(1.18); }
+.wc-rows { }
+.wc-row { display: flex; align-items: center; gap: 7px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+.wc-row:last-child { border-bottom: none; }
+.wc-pos  { font-size: 9px; font-weight: 800; color: var(--muted); width: 22px; text-align: center; flex-shrink: 0; }
+.wc-name { font-size: 11px; color: var(--cream-dim); width: 76px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wc-bar-wrap { flex: 1; height: 10px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.wc-bar-fill { height: 100%; border-radius: 3px; }
+.wc-pct { font-size: 10px; color: var(--muted); width: 32px; text-align: right; font-family: monospace; flex-shrink: 0; }
+.wc-ops { font-size: 10px; color: var(--cream-dim); width: 38px; text-align: right; font-family: monospace; flex-shrink: 0; }
 
 /* Leaderboard */
-.ld-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; }
+.ld-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 8px; }
 .ld-col  { }
 .ld-head { font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 1.5px; padding-bottom: 6px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
 .ld-row  { display: flex; align-items: center; gap: 5px; padding: 3px 0; font-size: 11px; }
@@ -766,7 +786,6 @@ body::before {
   .wrap { padding: 0 10px 32px; gap: 14px; }
   .card { padding: 14px; }
   .hero-sub { font-size: 13px; }
-  .pc-grid { grid-template-columns: repeat(2, 1fr); }
   .ld-grid { grid-template-columns: repeat(2, 1fr); }
 
   /* Lineup bar: horizontal scroll so all 9 slots stay visible */
@@ -1087,13 +1106,17 @@ body.era-nostalgia .roster-table tr:hover td { background: var(--surface2); }
     <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       Team Stats
       <div class="dash-tabs">
-        <button class="dash-tab active" data-tab="cards" onclick="switchDashTab('cards')">Cards</button>
-        <button class="dash-tab" data-tab="radar" onclick="switchDashTab('radar')">Radar</button>
-        <button class="dash-tab" data-tab="leaders" onclick="switchDashTab('leaders')">Leaders</button>
+        <button class="dash-tab active" data-tab="lineup"  onclick="switchDashTab('lineup')">Lineup</button>
+        <button class="dash-tab"        data-tab="matrix"  onclick="switchDashTab('matrix')">Matrix</button>
+        <button class="dash-tab"        data-tab="plot"    onclick="switchDashTab('plot')">Plot</button>
+        <button class="dash-tab"        data-tab="wins"    onclick="switchDashTab('wins')">Wins</button>
+        <button class="dash-tab"        data-tab="leaders" onclick="switchDashTab('leaders')">Leaders</button>
       </div>
     </div>
-    <div id="dash-cards"></div>
-    <div id="dash-radar" style="display:none"></div>
+    <div id="dash-lineup"></div>
+    <div id="dash-matrix"  style="display:none"></div>
+    <div id="dash-plot"    style="display:none"></div>
+    <div id="dash-wins"    style="display:none"></div>
     <div id="dash-leaders" style="display:none"></div>
     <div class="sb-total" id="sb-total"></div>
     <div class="agg-row" id="agg-row"></div>
@@ -4058,103 +4081,192 @@ function showResults() {
   for (var t=0;t<tags.length;t++) { if (res.wins>=tags[t][0]) { tagline=tags[t][1]; break; } }
   document.getElementById('result-tagline').textContent = tagline;
 
-  // --- Player card grid ---
+  var SC = ERA_SCORING[S.era || 'modern'];
+  function _normStat(val, floor, ceil) { return Math.min(Math.max((val-floor)/(ceil-floor),0),1); }
+  function _playerScore(st) {
+    var s = SC;
+    return s.W.avg*_normStat(st.avg,s.FLOOR.avg,s.CEIL.avg)
+          +s.W.obp*_normStat(st.obp,s.FLOOR.obp,s.CEIL.obp)
+          +s.W.slg*_normStat(st.slg,s.FLOOR.slg,s.CEIL.slg)
+          +s.W.hr*_normStat(st.hr,s.FLOOR.hr/9,s.CEIL.hr/9)
+          +s.W.rbi*_normStat(st.rbi,s.FLOOR.rbi/9,s.CEIL.rbi/9)
+          +s.W.runs*_normStat(st.runs||0,s.FLOOR.runs/9,s.CEIL.runs/9)
+          +s.W.sb*_normStat(st.sb,s.FLOOR.sb/9,s.CEIL.sb/9);
+  }
+  function _tierCol(ops) { return ops>=1.0?'#c9a44a':ops>=.870?'#7abaff':ops>=.800?'#4caf76':ops>=.720?'#e09050':'#c07070'; }
+
+  // ── Tab 1: Lineup ─────────────────────────────────────────────────────────
   (function() {
-    var html = '<div class="pc-grid">';
+    var html = '<div class="lu-list">';
     for (var i = 0; i < 9; i++) {
       var slot = S.lineup[i]; if (!slot) continue;
       var st = slot.player.stats;
-      var ops = (st.obp || 0) + (st.slg || 0);
-      var tier = ops >= 1.0 ? 'tier-elite' : ops >= .870 ? 'tier-great' : ops >= .800 ? 'tier-solid' : ops >= .720 ? 'tier-avg' : 'tier-weak';
+      var ops = (st.obp||0)+(st.slg||0);
+      var sc = _tierCol(ops);
       var bdg = '';
       if (slot.awards) {
-        if (slot.awards.mvp) bdg += _mvpBadgeHtml(slot.awards.mvp, 'fl-award-badge mvp-badge');
-        if (slot.awards.roy) bdg += '<span class="fl-award-badge">&#128035;</span>';
+        if (slot.awards.mvp) bdg += _mvpBadgeHtml(slot.awards.mvp,'fl-award-badge mvp-badge');
+        if (slot.awards.roy) bdg += '<span class="fl-award-badge">&#128293;</span>';
         if (slot.awards.asg) bdg += '<span class="fl-award-badge">&#11088;</span>';
         if (slot.awards.ss)  bdg += '<span class="fl-award-badge">&#9889;</span>';
       }
-      html += '<div class="pc-card '+tier+'">'
-        +'<div class="pc-pos">'+POS[i]+'</div>'
-        +'<div class="pc-name" title="'+esc(slot.player.name)+'">'+esc(slot.player.name)+'</div>'
-        +'<div class="pc-ctx">'+slot.year+' · '+esc(slot.teamName)+'</div>'
-        +'<div class="pc-slash">'+fmtSlash(st.avg)+'/'+fmtSlash(st.obp)+'/'+fmtSlash(st.slg)+'</div>'
-        +'<div class="pc-counts">'+Math.round(st.hr)+'HR · '+Math.round(st.rbi)+'RBI · '+Math.round(st.sb)+'SB</div>'
-        +(bdg ? '<div class="pc-badges">'+bdg+'</div>' : '')
-        +'</div>';
+      html += '<div class="lu-row">'
+        +'<div class="lu-stripe" style="background:'+sc+'"></div>'
+        +'<div class="lu-pos">'+POS[i]+'</div>'
+        +'<div class="lu-body">'
+          +'<div class="lu-name">'+esc(slot.player.name)+(bdg?' <span style="margin-left:3px">'+bdg+'</span>':'')+'</div>'
+          +'<div class="lu-ctx">'+slot.year+' · '+esc(slot.teamName)+'</div>'
+        +'</div>'
+        +'<div class="lu-right">'
+          +'<div class="lu-slash">'+fmtSlash(st.avg)+'/'+fmtSlash(st.obp)+'/'+fmtSlash(st.slg)+'</div>'
+          +'<div class="lu-counts">'+Math.round(st.hr)+'HR · '+Math.round(st.rbi)+'RBI · '+Math.round(st.runs||0)+'R</div>'
+        +'</div>'
+      +'</div>';
     }
-    document.getElementById('dash-cards').innerHTML = html + '</div>';
+    document.getElementById('dash-lineup').innerHTML = html+'</div>';
   })();
 
-  // --- Radar chart ---
+  // ── Tab 2: Matrix (heat map) ─────────────────────────────────────────────
   (function() {
-    var axes = [
-      {k:'avg',l:'AVG'},{k:'obp',l:'OBP'},{k:'slg',l:'SLG'},
-      {k:'hr',l:'HR'},{k:'rbi',l:'RBI'},{k:'sb',l:'SB'},
+    var cols = [
+      {k:'avg', l:'AVG',floor:SC.FLOOR.avg,  ceil:SC.CEIL.avg,  fmt:fmtSlash},
+      {k:'obp', l:'OBP',floor:SC.FLOOR.obp,  ceil:SC.CEIL.obp,  fmt:fmtSlash},
+      {k:'slg', l:'SLG',floor:SC.FLOOR.slg,  ceil:SC.CEIL.slg,  fmt:fmtSlash},
+      {k:'hr',  l:'HR', floor:SC.FLOOR.hr/9, ceil:SC.CEIL.hr/9, fmt:function(v){return Math.round(v);}},
+      {k:'rbi', l:'RBI',floor:SC.FLOOR.rbi/9,ceil:SC.CEIL.rbi/9,fmt:function(v){return Math.round(v);}},
+      {k:'r',   l:'R',  floor:SC.FLOOR.runs/9,ceil:SC.CEIL.runs/9,fmt:function(v){return Math.round(v);}},
     ];
-    var n = axes.length, cx = 130, cy = 125, r = 88;
-    var svg = '<div class="radar-wrap"><svg width="260" height="250" xmlns="http://www.w3.org/2000/svg">';
-    for (var ring = 1; ring <= 4; ring++) {
-      var rr = r * ring / 4, rpts = [];
-      for (var i = 0; i < n; i++) {
-        var a = (Math.PI*2*i/n) - Math.PI/2;
-        rpts.push(+(cx+rr*Math.cos(a)).toFixed(1)+','+ +(cy+rr*Math.sin(a)).toFixed(1));
-      }
-      svg += '<polygon points="'+rpts.join(' ')+'" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>';
-    }
-    for (var i = 0; i < n; i++) {
-      var a = (Math.PI*2*i/n) - Math.PI/2;
-      svg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+ +(cx+r*Math.cos(a)).toFixed(1)+'" y2="'+ +(cy+r*Math.sin(a)).toFixed(1)+'" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>';
-    }
-    var dpts = [];
-    for (var i = 0; i < n; i++) {
-      var a = (Math.PI*2*i/n) - Math.PI/2;
-      var v = Math.min(1, Math.max(0, res.norm[axes[i].k] || 0));
-      dpts.push(+(cx+r*v*Math.cos(a)).toFixed(1)+','+ +(cy+r*v*Math.sin(a)).toFixed(1));
-    }
-    svg += '<polygon points="'+dpts.join(' ')+'" fill="rgba(201,164,74,0.18)" stroke="rgba(201,164,74,0.85)" stroke-width="2"/>';
-    for (var i = 0; i < n; i++) {
-      var p = dpts[i].split(',');
-      svg += '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="#c9a44a" stroke="#1a1200" stroke-width="1"/>';
-    }
-    for (var i = 0; i < n; i++) {
-      var a = (Math.PI*2*i/n) - Math.PI/2;
-      var lx = +(cx+(r+20)*Math.cos(a)).toFixed(1), ly = +(cy+(r+20)*Math.sin(a)).toFixed(1);
-      svg += '<text x="'+lx+'" y="'+ly+'" text-anchor="middle" dominant-baseline="middle" fill="rgba(240,236,226,0.55)" font-size="11" font-family="Georgia,serif">'+axes[i].l+'</text>';
-    }
-    svg += '</svg></div>';
-    document.getElementById('dash-radar').innerHTML = svg;
-  })();
-
-  // --- Leaderboard ---
-  (function() {
-    var cats = [
-      {k:'hr', l:'HR', f:function(v){return Math.round(v);}},
-      {k:'rbi',l:'RBI',f:function(v){return Math.round(v);}},
-      {k:'sb', l:'SB', f:function(v){return Math.round(v);}},
-      {k:'ops',l:'OPS',f:fmtSlash},
-    ];
-    var players = [];
-    for (var i = 0; i < 9; i++) {
+    var html = '<div class="hm-wrap"><table class="hm-table"><thead><tr><th class="hm-th-row"></th>';
+    for (var c=0;c<cols.length;c++) html += '<th class="hm-th">'+cols[c].l+'</th>';
+    html += '</tr></thead><tbody>';
+    for (var i=0;i<9;i++) {
       var slot = S.lineup[i]; if (!slot) continue;
       var st = slot.player.stats;
-      players.push({ name: slot.player.name, pos: POS[i], hr: st.hr, rbi: st.rbi, sb: st.sb, ops: (st.obp||0)+(st.slg||0) });
-    }
-    var html = '<div class="ld-grid">';
-    for (var c = 0; c < cats.length; c++) {
-      var cat = cats[c];
-      var sorted = players.slice().sort(function(a,b){ return b[cat.k]-a[cat.k]; });
-      html += '<div class="ld-col"><div class="ld-head">'+cat.l+'</div>';
-      for (var p = 0; p < sorted.length; p++) {
-        var medal = p===0?'ld-gold':p===1?'ld-silver':p===2?'ld-bronze':'';
-        html += '<div class="ld-row '+medal+'">'
-          +'<span class="ld-rank">'+(p+1)+'</span>'
-          +'<span class="ld-name" title="'+esc(sorted[p].name)+'">'+esc(sorted[p].name.split(' ').pop())+'</span>'
-          +'<span class="ld-val">'+cat.f(sorted[p][cat.k])+'</span>'
-          +'</div>';
+      var last = slot.player.name.split(' ').slice(-1)[0];
+      html += '<tr><td class="hm-th-row"><span class="hm-pos">'+POS[i]+'</span> '+esc(last)+'</td>';
+      for (var c=0;c<cols.length;c++) {
+        var col = cols[c];
+        var val = col.k==='r' ? (st.runs||0) : (st[col.k]||0);
+        var n = _normStat(val,col.floor,col.ceil);
+        var bg,fg;
+        if      (n>=0.75){bg='rgba(201,164,74,0.38)';fg='#f5e898';}
+        else if (n>=0.55){bg='rgba(122,186,255,0.25)';fg='#a8d8ff';}
+        else if (n>=0.35){bg='rgba(255,255,255,0.05)';fg='var(--cream-dim)';}
+        else if (n>=0.15){bg='rgba(224,144,80,0.22)'; fg='#e8a060';}
+        else             {bg='rgba(192,112,112,0.28)';fg='#d88888';}
+        html += '<td class="hm-cell-wrap"><div class="hm-cell" style="background:'+bg+';color:'+fg+'">'+col.fmt(val)+'</div></td>';
       }
-      html += '</div>';
+      html += '</tr>';
     }
-    document.getElementById('dash-leaders').innerHTML = html + '</div>';
+    html += '</tbody></table></div>';
+    document.getElementById('dash-matrix').innerHTML = html;
+  })();
+
+  // ── Tab 3: Scatter (OBP vs SLG) ─────────────────────────────────────────
+  (function() {
+    var ERA_BASE = {modern:{obp:.320,slg:.415},steroid:{obp:.335,slg:.430},nostalgia:{obp:.325,slg:.385}};
+    var base = ERA_BASE[S.era||'modern'];
+    var W=280,H=230,ML=44,MB=34,MT=14,MR=16,pw=W-ML-MR,ph=H-MB-MT;
+    var pts = [];
+    for (var i=0;i<9;i++) {
+      var slot = S.lineup[i]; if (!slot) continue;
+      var st = slot.player.stats;
+      pts.push({name:slot.player.name.split(' ').slice(-1)[0],obp:st.obp||0,slg:st.slg||0,hr:st.hr||0,ops:(st.obp||0)+(st.slg||0)});
+    }
+    var obpMin=Math.max(0.230,Math.min.apply(null,pts.map(function(p){return p.obp;}))-0.022);
+    var obpMax=Math.min(0.540,Math.max.apply(null,pts.map(function(p){return p.obp;}))+0.028);
+    var slgMin=Math.max(0.280,Math.min.apply(null,pts.map(function(p){return p.slg;}))-0.032);
+    var slgMax=Math.min(0.840,Math.max.apply(null,pts.map(function(p){return p.slg;}))+0.038);
+    function xp(v){return ML+(v-obpMin)/(obpMax-obpMin)*pw;}
+    function yp(v){return MT+ph-(v-slgMin)/(slgMax-slgMin)*ph;}
+    var svg='<div class="sc-wrap"><svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg">';
+    // grid
+    var ob=+(Math.ceil(obpMin*50)/50).toFixed(3);
+    while(ob<=obpMax){var x=xp(ob);svg+='<line x1="'+x.toFixed(1)+'" y1="'+MT+'" x2="'+x.toFixed(1)+'" y2="'+(MT+ph)+'" stroke="rgba(255,255,255,0.05)" stroke-width="1"/><text x="'+x.toFixed(1)+'" y="'+(MT+ph+14)+'" text-anchor="middle" fill="rgba(255,255,255,0.28)" font-size="9" font-family="monospace">'+ob.toFixed(3).slice(1)+'</text>';ob=+(ob+0.020).toFixed(3);}
+    var sl=+(Math.ceil(slgMin*25)/25).toFixed(3);
+    while(sl<=slgMax){var y=yp(sl);svg+='<line x1="'+ML+'" y1="'+y.toFixed(1)+'" x2="'+(ML+pw)+'" y2="'+y.toFixed(1)+'" stroke="rgba(255,255,255,0.05)" stroke-width="1"/><text x="'+(ML-6)+'" y="'+y.toFixed(1)+'" text-anchor="end" dominant-baseline="middle" fill="rgba(255,255,255,0.28)" font-size="9" font-family="monospace">'+sl.toFixed(3).slice(1)+'</text>';sl=+(sl+0.040).toFixed(3);}
+    svg+='<rect x="'+ML+'" y="'+MT+'" width="'+pw+'" height="'+ph+'" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>';
+    // era avg crosshairs
+    var bx=xp(base.obp),by=yp(base.slg);
+    svg+='<line x1="'+bx.toFixed(1)+'" y1="'+MT+'" x2="'+bx.toFixed(1)+'" y2="'+(MT+ph)+'" stroke="rgba(201,164,74,0.28)" stroke-width="1" stroke-dasharray="3,3"/>';
+    svg+='<line x1="'+ML+'" y1="'+by.toFixed(1)+'" x2="'+(ML+pw)+'" y2="'+by.toFixed(1)+'" stroke="rgba(201,164,74,0.28)" stroke-width="1" stroke-dasharray="3,3"/>';
+    svg+='<text x="'+(bx+4)+'" y="'+(MT+10)+'" fill="rgba(201,164,74,0.45)" font-size="8" font-family="Georgia,serif" font-style="italic">ELITE</text>';
+    svg+='<text x="'+(ML+4)+'" y="'+(MT+10)+'" fill="rgba(255,255,255,0.18)" font-size="8" font-family="Georgia,serif" font-style="italic">CONTACT</text>';
+    // axis labels
+    svg+='<text x="'+(ML+pw/2)+'" y="'+(H-3)+'" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Georgia,serif">OBP</text>';
+    svg+='<text x="9" y="'+(MT+ph/2)+'" text-anchor="middle" dominant-baseline="middle" fill="rgba(255,255,255,0.35)" font-size="10" font-family="Georgia,serif" transform="rotate(-90,9,'+(MT+ph/2)+')">SLG</text>';
+    // dots (smallest HR first so large dots don't obscure small)
+    pts.sort(function(a,b){return a.hr-b.hr;});
+    for (var p=0;p<pts.length;p++) {
+      var pt=pts[p],px2=xp(pt.obp),py2=yp(pt.slg),r=Math.max(6,Math.min(15,6+pt.hr/50*9)),col=_tierCol(pt.ops);
+      svg+='<circle cx="'+px2.toFixed(1)+'" cy="'+py2.toFixed(1)+'" r="'+r+'" fill="'+col+'" fill-opacity="0.85" stroke="#0d1b2a" stroke-width="1.2"/>';
+      var lx=px2+r+3; if(lx+38>W-MR)lx=px2-r-3;
+      svg+='<text x="'+lx.toFixed(1)+'" y="'+py2.toFixed(1)+'" dominant-baseline="middle" fill="rgba(240,236,226,0.82)" font-size="8.5" font-family="Georgia,serif">'+esc(pt.name)+'</text>';
+    }
+    svg+='</svg></div>';
+    document.getElementById('dash-plot').innerHTML = svg;
+  })();
+
+  // ── Tab 4: Wins (contribution bars) ──────────────────────────────────────
+  (function() {
+    var players=[],totalScore=0;
+    for (var i=0;i<9;i++) {
+      var slot=S.lineup[i]; if(!slot) continue;
+      var st=slot.player.stats, score=_playerScore(st), ops=(st.obp||0)+(st.slg||0);
+      players.push({idx:i,name:slot.player.name,last:slot.player.name.split(' ').slice(-1)[0],score:score,ops:ops,col:_tierCol(ops)});
+      totalScore+=score;
+    }
+    var html='<div style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:10px;margin-bottom:5px">Team Contribution</div>';
+    html+='<div class="wc-stack">';
+    for(var p=0;p<players.length;p++){
+      var pl=players[p],w=totalScore>0?(pl.score/totalScore*100).toFixed(1):+(100/players.length).toFixed(1);
+      html+='<div class="wc-seg" style="width:'+w+'%;background:'+pl.col+'" title="'+esc(pl.name)+' · '+w+'%">'
+        +(parseFloat(w)>=9?'<span style="font-size:8px;font-weight:800;color:rgba(0,0,0,0.65);padding:0 2px;overflow:hidden;white-space:nowrap">'+esc(pl.last)+'</span>':'')
+        +'</div>';
+    }
+    html+='</div><div class="wc-rows">';
+    var sorted=players.slice().sort(function(a,b){return b.score-a.score;});
+    for(var p=0;p<sorted.length;p++){
+      var pl=sorted[p],w=totalScore>0?(pl.score/totalScore*100).toFixed(1):+(100/players.length).toFixed(1);
+      html+='<div class="wc-row">'
+        +'<div class="wc-pos">'+POS[pl.idx]+'</div>'
+        +'<div class="wc-name" title="'+esc(pl.name)+'">'+esc(pl.last)+'</div>'
+        +'<div class="wc-bar-wrap"><div class="wc-bar-fill" style="width:'+w+'%;background:'+pl.col+'"></div></div>'
+        +'<div class="wc-pct">'+w+'%</div>'
+        +'<div class="wc-ops">'+fmtSlash(pl.ops)+'</div>'
+      +'</div>';
+    }
+    html+='</div>';
+    document.getElementById('dash-wins').innerHTML = html;
+  })();
+
+  // ── Tab 5: Leaders ────────────────────────────────────────────────────────
+  (function() {
+    var cats=[
+      {k:'hr',  l:'HR', f:function(v){return Math.round(v);}},
+      {k:'rbi', l:'RBI',f:function(v){return Math.round(v);}},
+      {k:'runs',l:'R',  f:function(v){return Math.round(v);}},
+      {k:'avg', l:'AVG',f:fmtSlash},
+      {k:'ops', l:'OPS',f:fmtSlash},
+      {k:'sb',  l:'SB', f:function(v){return Math.round(v);}},
+    ];
+    var players=[];
+    for(var i=0;i<9;i++){
+      var slot=S.lineup[i]; if(!slot) continue;
+      var st=slot.player.stats;
+      players.push({name:slot.player.name,pos:POS[i],hr:st.hr,rbi:st.rbi,runs:st.runs||0,avg:st.avg,ops:(st.obp||0)+(st.slg||0),sb:st.sb});
+    }
+    var html='<div class="ld-grid">';
+    for(var c=0;c<cats.length;c++){
+      var cat=cats[c], sorted=players.slice().sort(function(a,b){return b[cat.k]-a[cat.k];});
+      html+='<div class="ld-col"><div class="ld-head">'+cat.l+'</div>';
+      for(var p=0;p<sorted.length;p++){
+        var medal=p===0?'ld-gold':p===1?'ld-silver':p===2?'ld-bronze':'';
+        html+='<div class="ld-row '+medal+'"><span class="ld-rank">'+(p+1)+'</span><span class="ld-name" title="'+esc(sorted[p].name)+'">'+esc(sorted[p].name.split(' ').pop())+'</span><span class="ld-val">'+cat.f(sorted[p][cat.k])+'</span></div>';
+      }
+      html+='</div>';
+    }
+    document.getElementById('dash-leaders').innerHTML = html+'</div>';
   })();
 
   var a = res.agg;
@@ -4369,7 +4481,7 @@ function resetGame() {
 }
 
 function switchDashTab(tab) {
-  var tabs = ['cards','radar','leaders'];
+  var tabs = ['lineup','matrix','plot','wins','leaders'];
   for (var t = 0; t < tabs.length; t++) {
     var el = document.getElementById('dash-'+tabs[t]);
     if (el) el.style.display = tabs[t] === tab ? '' : 'none';
