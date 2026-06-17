@@ -1367,7 +1367,9 @@ var ERA_CONFIG = {
       g:[40,110,162], avg:[0.220,0.275,0.375], ops:[0.600,0.750,0.960],
       r:[20,55,120],  hr:[0,12,50],            rbi:[15,55,120],
       tb:[60,185,340],sb:[0,20,100]
-\ \ \ \ }\r\n\ \ }\r\n};
+    }
+  }
+};
 
 // ─── Era-specific scoring (ceiling/floor for final lineup totals) ─────────────
 var ERA_SCORING = {
@@ -1384,7 +1386,9 @@ var ERA_SCORING = {
   nostalgia: {
     W:     { avg:.10, obp:.22, slg:.20, hr:.16, rbi:.12, runs:.10, sb:.10 },
     CEIL:  { avg:.310, obp:.390, slg:.480, hr:215, rbi:810, runs:800, sb:340 },
-\ \ \ \ FLOOR:\ \{\ avg:\.220,\ obp:\.280,\ slg:\.330,\ hr:20,\ \ rbi:260,\ runs:260,\ sb:0\ \ \ }\r\n\ \ }\r\n};
+    FLOOR: { avg:.220, obp:.280, slg:.330, hr:20,  rbi:260, runs:260, sb:0   }
+  }
+};
 
 // Scoring weights — AVG/OBP/SLG are rate stats (lineup avg), HR/RBI/R/SB are counting (summed)
 var W     = { avg:.10, obp:.22, slg:.20, hr:.18, rbi:.14, runs:.10, sb:.06 };
@@ -1422,7 +1426,8 @@ var SEASON_AVG = {
   1987:{avg:.265,obp:.333,slg:.413}, 1988:{avg:.259,obp:.326,slg:.384},
   1989:{avg:.261,obp:.329,slg:.389}, 1990:{avg:.259,obp:.328,slg:.388},
   1991:{avg:.256,obp:.326,slg:.387}, 1992:{avg:.255,obp:.323,slg:.376},
-\ \ 1993:\{avg:\.267,obp:\.336,slg:\.408}\r\n};
+  1993:{avg:.267,obp:.336,slg:.408}
+};
 
 // ─── Awards data from SABR Lahman Database 2025 ─────────────────────────────
 // MVP top-5 per league per year; GG = Gold Glove; NOSTALGIA_ALLSTARS = fallback
