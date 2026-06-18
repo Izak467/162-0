@@ -730,6 +730,12 @@ body::before {
   font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1;
 }
 .rules-close:hover { color: var(--cream); }
+.rules-section { margin-bottom: 13px; }
+.rules-section-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold); margin-bottom: 5px; font-weight: 700; }
+.rules-p { font-size: 11px; color: var(--cream-dim); line-height: 1.5; }
+.rules-note { font-size: 10px; color: var(--muted); margin-top: 4px; }
+.rules-strategy { background: rgba(201,164,74,0.06); border: 1px solid rgba(201,164,74,0.18); border-radius: 6px; padding: 10px 12px; }
+.rules-strat { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
 
 /* ─── Score insight ────────────────────────────────────────────── */
 .score-insight {
@@ -1116,23 +1122,52 @@ body.era-deadball::after {
 
   <div class="card">
     <div class="card-header">How to Play</div>
-    <ul class="rules-list">
-      <li>Pick an era, then each round the slot machine spins a random <strong>MLB team + year</strong> from that era's window. Don't like what you got? You have <strong>one team skip</strong> and <strong>one year skip</strong> per game.</li>
-      <li>A player needs <strong>10+ games at a position</strong> to be eligible there.</li>
-      <li>Fill all 9 slots: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong>. Use <strong>Available Only</strong> or the <strong>Position</strong> filter to find the right fits fast.</li>
-      <li>Slots lock once filled — but you get one <strong>↔ Move Token</strong> to reassign any placed player to another open position they qualify for.</li>
-      <li>Scored on <strong>AVG, OBP, SLG, HR, RBI, R, and SB</strong> — era-adjusted, weighted by games played. Durability counts. 162-0 takes elite production everywhere.</li>
-      <li>Browse the full roster of everyone who suited up that season. Stat cards are color-coded <strong>red → green</strong> so the studs stand out.
-        <ul class="badge-guide">
-          <li><span id="bgmvp"></span> MVP</li>
-          <li><span id="bgroy"></span> Rookie of the Year</li>
-          <li><span id="bgss"></span> Silver Slugger</li>
-          <li><span id="bgas"></span> All-Star</li>
-        </ul>
-      </li>
-    </ul>
-  </div>
 
+    <div class="rules-section">
+      <div class="rules-section-lbl">The Goal</div>
+      <p class="rules-p">Build the strongest 9-man lineup you can from players across MLB history. Your lineup gets scored — the higher the better.</p>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-section-lbl">Each Round</div>
+      <ul class="rules-list">
+        <li>A slot machine spins a random <strong>MLB team + year</strong> from your era. See the full roster, pick any player, and drop them into an open eligible position.</li>
+        <li>A player needs <strong>10+ games at a position</strong> that season to qualify there.</li>
+        <li>You get one <strong>team skip</strong> and one <strong>year skip</strong> per game — use them wisely.</li>
+      </ul>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-section-lbl">Your Lineup</div>
+      <ul class="rules-list">
+        <li>9 slots to fill: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong></li>
+        <li>Use <strong>Available Only</strong> or the <strong>Position</strong> filter to find fits fast.</li>
+        <li>Slots lock once filled. One <strong>↔ Move Token</strong> lets you reassign any placed player to another open position they qualify for.</li>
+      </ul>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-section-lbl">Player Badges</div>
+      <ul class="badge-guide">
+        <li><span id="bgmvp"></span> MVP</li>
+        <li><span id="bgroy"></span> Rookie of the Year</li>
+        <li><span id="bgss"></span> Silver Slugger</li>
+        <li><span id="bgas"></span> All-Star</li>
+      </ul>
+      <p class="rules-note">Stat cards are color-coded red → green — the studs stand out at a glance.</p>
+    </div>
+
+    <div class="rules-section rules-strategy">
+      <div class="rules-section-lbl">&#x26A1; Basic Strategy</div>
+      <ul class="rules-list">
+        <li><strong>Fill every slot.</strong> Empty positions tank your score — a partial lineup cannot win.</li>
+        <li><strong>Games played matter.</strong> A star who played 150 games scores higher than the same player in 60, even at a better rate. Durability counts.</li>
+        <li><strong>Volume wins.</strong> HR, RBI, Runs, and SB are raw totals across all 9 players — pack in counting stats wherever you can.</li>
+        <li><strong>Know your era.</strong> Scoring weights shift between eras — speed matters more in the nostalgia era, power dominates the steroid era.</li>
+        <li><strong>Don't neglect your corners.</strong> Catcher and middle infield count as much as your cleanup hitters. Weak links hurt.</li>
+      </ul>
+    </div>
+  </div>
 
   <div class="card history-card" id="history-card">
     <div id="history-section"></div>
@@ -1215,19 +1250,28 @@ body.era-deadball::after {
   <div class="rules-modal-box" onclick="event.stopPropagation()">
     <div class="rules-modal-hdr">
       How to Play
-      <button class="rules-close" onclick="toggleRulesModal()">✕</button>
+      <button class="rules-close" onclick="toggleRulesModal()">&#x2715;</button>
     </div>
-    <ul class="rules-list">
-      <li>Each round, a slot machine spins a random <strong>MLB team + year</strong> from your chosen era.</li>
-      <li>You see the <strong>full roster</strong> sorted by games. Pick any player and assign them to an eligible open position.</li>
-      <li>A player needs <strong>10+ games at a position</strong> that season to be eligible there.</li>
-      <li>Fill all 9 slots: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong>.</li>
-      <li>Filled slots are locked. You have <strong>one Move token</strong> to reassign placed players to different eligible positions.</li>
-      <li>You also have <strong>one team skip</strong> and <strong>one year skip</strong> per game.</li>
-    </ul>
+    <div class="rules-section">
+      <div class="rules-section-lbl">Each Round</div>
+      <ul class="rules-list">
+        <li>A slot machine spins a random <strong>MLB team + year</strong>. Pick any player from the roster and assign them to an eligible open position.</li>
+        <li>A player needs <strong>10+ games at a position</strong> that season to qualify there.</li>
+        <li>Fill all 9 slots: <strong>C · 1B · 2B · 3B · SS · LF · CF · RF · DH</strong>.</li>
+        <li>You have one <strong>team skip</strong>, one <strong>year skip</strong>, and one <strong>&#x21D4; Move Token</strong>.</li>
+      </ul>
+    </div>
+    <div class="rules-strat">
+      <div class="rules-section-lbl">&#x26A1; Quick Strategy</div>
+      <ul class="rules-list">
+        <li><strong>Fill every slot</strong> — empty positions hurt badly.</li>
+        <li><strong>Games played matter</strong> — a star in 150 games outscores a star in 60.</li>
+        <li><strong>Volume stats are totals</strong> — HR, RBI, Runs, SB are summed across all 9 players.</li>
+        <li><strong>Know your era</strong> — scoring weights shift between eras.</li>
+      </ul>
+    </div>
   </div>
 </div>
-
 <!-- ═══════════ RESULTS ═══════════ -->
 <div id="screen-results" class="screen">
   <div style="display:flex;gap:8px;justify-content:center;padding:8px 0 4px;flex-wrap:wrap">
@@ -1403,24 +1447,24 @@ var ERA_CONFIG = {
 // Counting stats summed across lineup; era weights reflect each era's historical context
 var ERA_SCORING = {
   modern: {
-    W:     { woba:.52, hr:.16, rbi:.12, runs:.10, sb:.10 },
+    W:     { woba:.50, hr:.16, rbi:.12, runs:.12, sb:.10 },
     CEIL:  { woba:.365, hr:265, rbi:880, runs:840, sb:210 },
     FLOOR: { woba:.285, hr:30,  rbi:450, runs:430, sb:0   }
   },
   steroid: {
-    W:     { woba:.52, hr:.20, rbi:.12, runs:.10, sb:.06 },
+    W:     { woba:.50, hr:.20, rbi:.12, runs:.12, sb:.06 },
     CEIL:  { woba:.378, hr:280, rbi:940, runs:880, sb:185 },
     FLOOR: { woba:.290, hr:35,  rbi:490, runs:460, sb:0   }
   },
   nostalgia: {
-    W:     { woba:.52, hr:.14, rbi:.12, runs:.10, sb:.12 },
+    W:     { woba:.50, hr:.14, rbi:.12, runs:.12, sb:.12 },
     CEIL:  { woba:.355, hr:215, rbi:810, runs:800, sb:240 },
     FLOOR: { woba:.280, hr:20,  rbi:400, runs:390, sb:0   }
   }
 };
 
 // Legacy aliases — kept for any external references; scoring driven by ERA_SCORING above
-var W     = { woba:.52, hr:.16, rbi:.12, runs:.10, sb:.10 };
+var W     = { woba:.50, hr:.16, rbi:.12, runs:.12, sb:.10 };
 var CEIL  = { woba:.365, hr:265, rbi:880, runs:840, sb:210 };
 var FLOOR = { woba:.285, hr:30,  rbi:450, runs:430, sb:0   };
 
