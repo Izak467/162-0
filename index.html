@@ -1403,26 +1403,26 @@ var ERA_CONFIG = {
 // Counting stats summed across lineup; era weights reflect each era's historical context
 var ERA_SCORING = {
   modern: {
-    W:     { woba:.50, hr:.16, rbi:.12, runs:.12, sb:.10 },
+    W:     { woba:.52, hr:.16, rbi:.12, runs:.10, sb:.10 },
     CEIL:  { woba:.365, hr:265, rbi:880, runs:840, sb:210 },
-    FLOOR: { woba:.285, hr:30,  rbi:300, runs:300, sb:0   }
+    FLOOR: { woba:.285, hr:30,  rbi:450, runs:430, sb:0   }
   },
   steroid: {
-    W:     { woba:.50, hr:.20, rbi:.12, runs:.12, sb:.06 },
+    W:     { woba:.52, hr:.20, rbi:.12, runs:.10, sb:.06 },
     CEIL:  { woba:.378, hr:280, rbi:940, runs:880, sb:185 },
-    FLOOR: { woba:.290, hr:35,  rbi:320, runs:310, sb:0   }
+    FLOOR: { woba:.290, hr:35,  rbi:490, runs:460, sb:0   }
   },
   nostalgia: {
-    W:     { woba:.50, hr:.14, rbi:.12, runs:.12, sb:.12 },
-    CEIL:  { woba:.355, hr:215, rbi:810, runs:800, sb:340 },
-    FLOOR: { woba:.280, hr:20,  rbi:260, runs:260, sb:0   }
+    W:     { woba:.52, hr:.14, rbi:.12, runs:.10, sb:.12 },
+    CEIL:  { woba:.355, hr:215, rbi:810, runs:800, sb:240 },
+    FLOOR: { woba:.280, hr:20,  rbi:400, runs:390, sb:0   }
   }
 };
 
 // Legacy aliases — kept for any external references; scoring driven by ERA_SCORING above
-var W     = { woba:.50, hr:.16, rbi:.12, runs:.12, sb:.10 };
+var W     = { woba:.52, hr:.16, rbi:.12, runs:.10, sb:.10 };
 var CEIL  = { woba:.365, hr:265, rbi:880, runs:840, sb:210 };
-var FLOOR = { woba:.285, hr:30,  rbi:300, runs:300, sb:0   };
+var FLOOR = { woba:.285, hr:30,  rbi:450, runs:430, sb:0   };
 
 // MLB league averages by season — rate stats used for durability-adjusted normalization
 var SEASON_AVG = {
@@ -3429,7 +3429,6 @@ function simulate() {
     runs += st.runs;
     sb   += st.sb;
     avgS += st.avg || 0; obpS += st.obp || 0; slgS += st.slg || 0;
-    avgS += st.avg || 0; obpS += st.obp || 0; slgS += st.slg || 0;
     totalGames += Math.min(st.games, 162);
     n++;
   }
@@ -3450,7 +3449,7 @@ function simulate() {
 
   var strength = 0;
   for (var k2 = 0; k2 < keys.length; k2++) strength += norm[keys[k2]] * SC.W[keys[k2]];
-  var wins = Math.min(Math.round(55 + 107 * Math.pow(strength, 2.1)), 162);
+  var wins = Math.min(Math.round(42 + 120 * Math.pow(strength, 2.4)), 162);
   return { wins: wins, strength: strength, norm: norm, agg: agg };
 }
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -4019,7 +4018,7 @@ function renderRoster() {
       + '<th '+thClick('name')+'>Player'+sortArrow('name')+'</th>'
       + '<th '+thClick('games')+' class="'+(S.sort.col==='games'?'sorted':'')+'" style="text-align:right">G'+sortArrow('games')+'</th>'
       + '<th '+thClick('avg')+' class="'+(S.sort.col==='avg'?'sorted':'')+'" style="text-align:right">AVG'+sortArrow('avg')+'</th>'
-      + '<th '+thClick('woba')+' class="'+(S.sort.col==='woba'?'sorted':'')+'" style="text-align:right">OPS'+sortArrow('woba')+'</th>'
+      + '<th '+thClick('ops')+' class="'+(S.sort.col==='ops'?'sorted':'')+'" style="text-align:right">OPS'+sortArrow('ops')+'</th>'
       + '<th '+thClick('runs')+' class="'+(S.sort.col==='runs'?'sorted':'')+'" style="text-align:right">R'+sortArrow('runs')+'</th>'
       + '<th '+thClick('hr')+' class="'+(S.sort.col==='hr'?'sorted':'')+'" style="text-align:right">HR'+sortArrow('hr')+'</th>'
       + '<th '+thClick('rbi')+' class="'+(S.sort.col==='rbi'?'sorted':'')+'" style="text-align:right">RBI'+sortArrow('rbi')+'</th>'
@@ -4039,7 +4038,7 @@ function renderRoster() {
         + '<td class="td-name">'+esc(p.name)+(badges?'<span class="pr-award-badges">'+badges+'</span>':'')+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.games,SR.g[0],SR.g[1],SR.g[2])+'">'+st.games+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.avg,SR.avg[0],SR.avg[1],SR.avg[2])+'">'+fmtSlash(st.avg)+'</td>'
-        + '<td class="td-num" style="background:'+statTint(playerWOBA(st),SR.woba[0],SR.woba[1],SR.woba[2])+'">'+fmtSlash(playerWOBA(st))+'</td>'
+        + '<td class="td-num" style="background:'+statTint((st.obp||0)+(st.slg||0),SR.ops[0],SR.ops[1],SR.ops[2])+'">'+fmtSlash((st.obp||0)+(st.slg||0))+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.runs,SR.r[0],SR.r[1],SR.r[2])+'">'+st.runs+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.hr,SR.hr[0],SR.hr[1],SR.hr[2])+'">'+st.hr+'</td>'
         + '<td class="td-num" style="background:'+statTint(st.rbi,SR.rbi[0],SR.rbi[1],SR.rbi[2])+'">'+st.rbi+'</td>'
@@ -4241,7 +4240,7 @@ function showResults() {
   saveToHistory(res.wins);
 
   var rec = document.getElementById('result-record');
-  var recClass = res.wins===162 ? 'perfect' : res.wins>=150 ? 'transcendent' : res.wins>=130 ? 'dominant' : res.wins>=110 ? 'great' : res.wins>=95 ? 'good' : res.wins>=82 ? 'mediocre' : 'bad';
+  var recClass = res.wins===162 ? 'perfect' : res.wins>=130 ? 'transcendent' : res.wins>=115 ? 'dominant' : res.wins>=100 ? 'great' : res.wins>=87 ? 'good' : res.wins>=74 ? 'mediocre' : 'bad';
   rec.className = 'result-record ' + recClass;
   document.getElementById('hard-mode-badge').style.display = S.hardMode ? 'block' : 'none';
   var eraBadgeEl = document.getElementById('era-badge');
@@ -4260,11 +4259,11 @@ function showResults() {
         confetti({ particleCount: 8, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#c9a44a','#f0ece2','#ffffff','#1e4d30'] });
         if (Date.now() < end) requestAnimationFrame(frame);
       })();
-    } else if (wins >= 150) {
-      confetti({ particleCount: 140, spread: 100, origin: { y: 0.5 }, colors: ['#c9a44a','#f0ece2','#3a6090','#ffffff'] });
     } else if (wins >= 130) {
+      confetti({ particleCount: 140, spread: 100, origin: { y: 0.5 }, colors: ['#c9a44a','#f0ece2','#3a6090','#ffffff'] });
+    } else if (wins >= 115) {
       confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 }, colors: ['#c9a44a','#f0ece2','#3a6090'] });
-    } else if (wins >= 110) {
+    } else if (wins >= 100) {
       confetti({ particleCount: 45, spread: 60, origin: { y: 0.6 }, colors: ['#c9a44a','#f0ece2'] });
     }
   }
@@ -4296,12 +4295,12 @@ function showResults() {
 
   var tags = [
     [162,'PERFECT SEASON. 162-0. You built a true Murderers\' Row.'],
-    [150,'Historic. This lineup would obliterate the record books.'],
-    [140,'Transcendent. A generational run.'],
-    [130,'Dominant. A top-5 offense in MLB history.'],
-    [110,'Elite. Deep October runs every single year.'],
-    [95, 'Solid contender — but short of legendary.'],
-    [82, 'Decent. You\'d sneak into the playoffs. Aim higher.'],
+    [130,'Historic. This lineup would obliterate the record books.'],
+    [115,'Transcendent. A generational run.'],
+    [100,'Dominant. A top-5 offense in MLB history.'],
+    [87, 'Elite. Deep October runs every single year.'],
+    [74, 'Solid contender — but short of legendary.'],
+    [63, 'Decent. You\'d sneak into the playoffs. Aim higher.'],
     [0,  'This lineup has gaps. Try again and optimize every slot.'],
   ];
   var tagline = '';
@@ -4392,7 +4391,7 @@ function showResults() {
     for (var i=0;i<9;i++) {
       var slot = S.lineup[i]; if (!slot) continue;
       var st = slot.player.stats;
-      pts.push({name:slot.player.name.split(' ').slice(-1)[0],obp:st.obp||0,slg:st.slg||0,hr:st.hr||0,woba:playerWOBA(st, S.spin ? S.spin.year : 2019)});
+      pts.push({name:slot.player.name.split(' ').slice(-1)[0],obp:st.obp||0,slg:st.slg||0,hr:st.hr||0,woba:playerWOBA(st, slot.year || (S.spin ? S.spin.year : 2019))});
     }
     if (!pts.length) { document.getElementById('dash-plot').innerHTML = ''; return; }
     var obpMin=Math.max(0.220,Math.min.apply(null,pts.map(function(p){return p.obp;}))-0.030);

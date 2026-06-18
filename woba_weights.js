@@ -1,4 +1,4 @@
-﻿// FanGraphs wOBA linear weights + league-average wOBA, per season (1901-2026)
+// FanGraphs wOBA linear weights + league-average wOBA, per season (1901-2026)
 // Source: fangraphs.com/guts.aspx — generated 2026-06-17
 var WOBA_WEIGHTS = {
   1901: {bb:0.751, hbp:0.783, h1b:0.95, h2b:1.337, h3b:1.685, hr:2.132, lgWoba:0.327},
