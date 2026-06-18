@@ -3458,6 +3458,7 @@ function sleep(ms) { return new Promise(function(r){setTimeout(r,ms);}); }
 function busy() { return S.spinning || S.loading; }
 function fmtSlash(n) { return (n != null && isFinite(n)) ? n.toFixed(3).replace(/^0\./,'.') : '.---'; }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function _lastName(n) { var p=n.split(' '); return p.length>2 && /^(Jr\.?|Sr\.?|I{2,3}|IV|V)$/i.test(p[p.length-1]) ? p[p.length-2] : p[p.length-1]; }
 
 // ─── Era theme application ────────────────────────────────────────────────────
 function applyEraTheme(era) {
@@ -4124,7 +4125,7 @@ function buildConfirmBar() {
   var pa = S.pendingAssign;
   if (!pa) return '';
   return '<div class="confirm-bar">'
-    +'<div class="confirm-bar-text">Slot <strong>'+esc(pa.playerName.split(' ').slice(-1)[0])+'</strong> at <strong>'+pa.posName+'</strong>?</div>'
+    +'<div class="confirm-bar-text">Slot <strong>'+esc(_lastName(pa.playerName))+'</strong> at <strong>'+pa.posName+'</strong>?</div>'
     +'<button class="confirm-yes-btn" onclick="confirmAssign()">✓ Sign \'Em</button>'
     +'<button class="confirm-no-btn" onclick="cancelAssign()">Cancel</button>'
     +'</div>';
@@ -4367,7 +4368,7 @@ function showResults() {
     for (var i=0;i<9;i++) {
       var slot=S.lineup[i]; if(!slot) continue;
       var st=slot.player.stats;
-      var last=slot.player.name.split(' ').slice(-1)[0];
+      var last=_lastName(slot.player.name);
       html += '<tr><td class="hm-th-row"><span class="hm-pos">'+POS[i]+'</span> '+esc(last)+'</td>';
       for (var c=0;c<cols.length;c++) {
         var col=cols[c];
@@ -4391,7 +4392,7 @@ function showResults() {
     for (var i=0;i<9;i++) {
       var slot = S.lineup[i]; if (!slot) continue;
       var st = slot.player.stats;
-      pts.push({name:slot.player.name.split(' ').slice(-1)[0],obp:st.obp||0,slg:st.slg||0,hr:st.hr||0,woba:playerWOBA(st, slot.year || (S.spin ? S.spin.year : 2019))});
+      pts.push({name:_lastName(slot.player.name),obp:st.obp||0,slg:st.slg||0,hr:st.hr||0,woba:playerWOBA(st, slot.year || (S.spin ? S.spin.year : 2019))});
     }
     if (!pts.length) { document.getElementById('dash-plot').innerHTML = ''; return; }
     var obpMin=Math.max(0.220,Math.min.apply(null,pts.map(function(p){return p.obp;}))-0.030);
