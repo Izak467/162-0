@@ -5198,7 +5198,6 @@ function showResults() {
     for(var i=0;i<9;i++){
       var slot=S.lineup[i]; if(!slot) continue;
       var st=slot.player.stats;
-      seenPlayers[p.id] = true;
       players.push({name:slot.player.name,pos:POS[i],year:slot.year,hr:st.hr,rbi:st.rbi,runs:st.runs||0,avg:st.avg,ops:(st.obp||0)+(st.slg||0),sb:st.sb});
     }
     var html='<div class="ld-grid">';
