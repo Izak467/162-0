@@ -4434,7 +4434,7 @@ function showResults() {
       var pt=pts[p];
       var cx=xp(pt.obp),cy=yp(pt.slg);
       var r=Math.max(7,Math.min(14,7+pt.hr/55*7));
-      var col=statTextColor(pt.woba,SR_sc.woba[0],SR_sc.woba[1],SR_sc.woba[2]);
+      var col=statTextColor(pt.obp+pt.slg,SR_sc.ops[0],SR_sc.ops[1],SR_sc.ops[2]);
       // dot with glow ring
       svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+(r+2)+'" fill="'+col+'" fill-opacity="0.18"/>';
       svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+r+'" fill="'+col+'" fill-opacity="0.90" stroke="rgba(13,27,42,0.8)" stroke-width="1.5"/>';
