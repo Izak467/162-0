@@ -1,37 +1,34 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Murderers' Row — Scoring Algorithm Whitepaper</title>
 <style>
-  /* ── Screen + Print base ─────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     font-family: 'Georgia', 'Times New Roman', serif;
     font-size: 11pt;
-    line-height: 1.65;
+    line-height: 1.5;
     color: #1a1a1a;
     background: #f5f3ef;
   }
 
-  /* ── Page container ──────────────────────────────────── */
   .page {
     width: 8.5in;
     min-height: 11in;
-    margin: 0.5in auto;
+    margin: 0.3in auto;
     background: #fff;
-    padding: 1in 1.1in 1in 1.1in;
+    padding: 0.72in 1.0in 0.85in 1.0in;
     box-shadow: 0 4px 32px rgba(0,0,0,0.12);
   }
 
-  /* ── Cover ───────────────────────────────────────────── */
   .cover {
     text-align: center;
-    padding: 0.6in 0 0.5in;
+    padding: 0.20in 0 0.16in;
     border-bottom: 2px solid #b8a96a;
-    margin-bottom: 0.45in;
+    margin-bottom: 0.20in;
   }
   .cover-logo {
     font-family: 'Georgia', serif;
@@ -39,7 +36,7 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: #8a7340;
-    margin-bottom: 0.18in;
+    margin-bottom: 0.07in;
   }
   .cover h1 {
     font-size: 22pt;
@@ -47,13 +44,13 @@
     color: #1a1a1a;
     letter-spacing: -0.01em;
     line-height: 1.2;
-    margin-bottom: 0.12in;
+    margin-bottom: 0.09in;
   }
   .cover-sub {
     font-size: 12pt;
     color: #555;
     font-style: italic;
-    margin-bottom: 0.22in;
+    margin-bottom: 0.09in;
   }
   .cover-meta {
     font-size: 9.5pt;
@@ -65,16 +62,15 @@
     width: 2.5in;
     height: 1px;
     background: #b8a96a;
-    margin: 0.18in auto;
+    margin: 0.09in auto;
   }
 
-  /* ── TOC ─────────────────────────────────────────────── */
   .toc {
     background: #faf9f6;
     border: 1px solid #e0d9ca;
     border-radius: 4px;
-    padding: 0.22in 0.28in;
-    margin-bottom: 0.45in;
+    padding: 0.13in 0.18in;
+    margin-bottom: 0.20in;
   }
   .toc-title {
     font-size: 10pt;
@@ -82,59 +78,38 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #8a7340;
-    margin-bottom: 0.10in;
+    margin-bottom: 0.06in;
   }
-  .toc ol {
-    padding-left: 1.4em;
-  }
-  .toc li {
-    font-size: 10pt;
-    line-height: 1.8;
-    color: #333;
-  }
-  .toc li.toc-sub {
-    padding-left: 1.2em;
-    font-size: 9.5pt;
-    color: #555;
-  }
+  .toc ol { padding-left: 1.4em; }
+  .toc li { font-size: 10pt; line-height: 1.6; color: #333; }
+  .toc li.toc-sub { padding-left: 1.2em; font-size: 9.5pt; color: #555; }
 
-  /* ── Sections ────────────────────────────────────────── */
   h2 {
     font-size: 15pt;
     font-weight: 700;
     color: #1a1a1a;
-    margin-top: 0.38in;
-    margin-bottom: 0.10in;
-    padding-bottom: 0.06in;
+    margin-top: 0.26in;
+    margin-bottom: 0.06in;
+    padding-bottom: 0.04in;
     border-bottom: 1px solid #d4c99a;
     letter-spacing: -0.01em;
   }
-  h2 .sec-num {
-    color: #b8a96a;
-    margin-right: 0.15em;
-  }
+  h2 .sec-num { color: #b8a96a; margin-right: 0.15em; }
 
   h3 {
     font-size: 11.5pt;
     font-weight: 700;
     color: #2a2a2a;
-    margin-top: 0.22in;
-    margin-bottom: 0.07in;
+    margin-top: 0.14in;
+    margin-bottom: 0.05in;
   }
-  h3 .sec-num {
-    color: #b8a96a;
-    margin-right: 0.12em;
-  }
+  h3 .sec-num { color: #b8a96a; margin-right: 0.12em; }
 
-  p {
-    margin-bottom: 0.10in;
-    text-align: justify;
-  }
+  p { margin-bottom: 0.07in; text-align: justify; }
 
-  /* ── Blockquote (citations) ──────────────────────────── */
   blockquote {
-    margin: 0.12in 0 0.12in 0.25in;
-    padding: 0.08in 0.15in 0.08in 0.15in;
+    margin: 0.08in 0 0.08in 0.18in;
+    padding: 0.06in 0.12in;
     border-left: 3px solid #b8a96a;
     background: #faf9f6;
     font-size: 9.5pt;
@@ -143,16 +118,15 @@
   }
   blockquote strong { font-style: normal; color: #333; }
 
-  /* ── Code / formula ──────────────────────────────────── */
   pre {
     background: #f4f2ec;
     border: 1px solid #e0d9ca;
     border-radius: 3px;
-    padding: 0.10in 0.14in;
-    margin: 0.10in 0 0.12in;
+    padding: 0.07in 0.12in;
+    margin: 0.06in 0 0.08in;
     font-family: 'Courier New', monospace;
     font-size: 9.5pt;
-    line-height: 1.5;
+    line-height: 1.45;
     overflow-x: auto;
     white-space: pre-wrap;
     word-break: break-all;
@@ -166,19 +140,15 @@
   }
   pre code { background: none; padding: 0; font-size: inherit; }
 
-  /* ── Tables ──────────────────────────────────────────── */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 0.12in 0 0.16in;
+    margin: 0.08in 0 0.12in;
     font-size: 9.5pt;
   }
-  thead tr {
-    background: #2a2015;
-    color: #e8dfc0;
-  }
+  thead tr { background: #2a2015; color: #e8dfc0; }
   thead th {
-    padding: 0.06in 0.10in;
+    padding: 0.05in 0.10in;
     text-align: left;
     font-weight: 600;
     letter-spacing: 0.03em;
@@ -188,32 +158,24 @@
   tbody tr:nth-child(even) { background: #faf9f6; }
   tbody tr:nth-child(odd)  { background: #fff; }
   tbody td {
-    padding: 0.045in 0.10in;
+    padding: 0.036in 0.10in;
     border-bottom: 1px solid #e8e0d0;
     vertical-align: top;
   }
   tbody tr:last-child td { border-bottom: 2px solid #b8a96a; }
 
-  /* ── Lists ───────────────────────────────────────────── */
-  ul, ol {
-    padding-left: 1.4em;
-    margin-bottom: 0.10in;
-  }
-  li {
-    margin-bottom: 0.04in;
-  }
+  ul, ol { padding-left: 1.4em; margin-bottom: 0.07in; }
+  li { margin-bottom: 0.03in; }
 
-  /* ── Footnote-style section divider ──────────────────── */
   .section-rule {
     border: none;
     border-top: 1px solid #e0d9ca;
-    margin: 0.30in 0 0.18in;
+    margin: 0.22in 0 0.12in;
   }
 
-  /* ── Footer ──────────────────────────────────────────── */
   .doc-footer {
-    margin-top: 0.40in;
-    padding-top: 0.12in;
+    margin-top: 0.24in;
+    padding-top: 0.09in;
     border-top: 2px solid #b8a96a;
     font-size: 8.5pt;
     color: #999;
@@ -222,13 +184,12 @@
     letter-spacing: 0.04em;
   }
 
-  /* ── Print ───────────────────────────────────────────── */
   @media print {
     body { background: #fff; font-size: 10.5pt; }
     .page {
       width: 100%;
       margin: 0;
-      padding: 0.75in 0.9in;
+      padding: 0.65in 0.85in;
       box-shadow: none;
       min-height: unset;
     }
@@ -237,16 +198,10 @@
     pre, blockquote, table { page-break-inside: avoid; }
     .cover { page-break-after: always; }
     .toc   { page-break-after: always; }
-
-    @page {
-      size: letter;
-      margin: 0.75in 0.9in;
-    }
+    @page { size: letter; margin: 0.65in 0.85in; }
     @page :first { margin-top: 0.5in; }
-
-    /* running footer */
     @bottom-center {
-      content: "murderers-row.net  ·  Scoring Algorithm Whitepaper  ·  " counter(page);
+      content: "murderers-row.net  \B7  Scoring Algorithm Whitepaper  \B7  " counter(page);
       font-family: 'Courier New', monospace;
       font-size: 8pt;
       color: #aaa;
@@ -446,7 +401,7 @@
     </thead>
     <tbody>
       <tr>
-        <td>wOBA</td><td>52%</td><td>52%</td><td>52%</td>
+        <td>wOBA</td><td>50%</td><td>50%</td><td>50%</td>
         <td>Best single measure of offensive quality; era-adjusted by construction</td>
       </tr>
       <tr>
@@ -458,7 +413,7 @@
         <td>Consistent proxy for run production across eras</td>
       </tr>
       <tr>
-        <td>Runs</td><td>10%</td><td>10%</td><td>10%</td>
+        <td>Runs</td><td>12%</td><td>12%</td><td>12%</td>
         <td>Correlated with RBI but measures run scoring rather than run driving</td>
       </tr>
       <tr>
@@ -467,11 +422,7 @@
       </tr>
     </tbody>
   </table>
-  <p>
-    <em>Note: the Runs weight was reduced from 12% to 10% (with the 2% redistributed to wOBA) to reduce
-    the implicit double-weighting of run production, since RBI and Runs are highly correlated and each
-    measures similar run-context outcomes.</em>
-  </p>
+
 
   <h3><span class="sec-num">5.3</span> Nostalgia Era SB Ceiling</h3>
   <p>
