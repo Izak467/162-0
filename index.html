@@ -497,8 +497,8 @@ body::before {
   cursor: pointer; transition: all .15s;
 }
 .confirm-no-btn:hover { border-color: var(--red); color: var(--red); }
-.pos-chip { display:inline-block; font-size:9px; font-weight:700; padding:2px 6px; border-radius:4px; border:1px solid var(--gold); color:var(--gold); background:rgba(201,164,74,0.1); letter-spacing:.5px; }
-.pos-chip.filled { border-color:var(--border); color:var(--muted); background:transparent; opacity:0.4; }
+.pos-chip { display:inline-block; font-size:9px; font-weight:600; padding:1px 5px; border-radius:3px; border:1px solid rgba(201,164,74,0.45); color:rgba(201,164,74,0.75); background:transparent; letter-spacing:.4px; }
+.pos-chip.filled { border-color:transparent; color:var(--border); background:transparent; opacity:0.5; }
 .move-help {
   font-size: 11px; color: var(--muted); margin-top: 7px; line-height: 1.5;
 }
@@ -1198,6 +1198,7 @@ body.era-deadball::after {
     <div class="move-help" id="move-help">
       ↔ <strong style="color:var(--gold-lt)">Move Token</strong> — once a player is placed, click the <strong style="color:var(--gold-lt)">↔</strong> icon on their lineup slot to reassign them to any other eligible open position. You have <strong style="color:var(--gold-lt)">two uses</strong> per game.
     </div>
+    <div id="pos-tracker" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin-top:7px;padding-top:6px;border-top:1px solid var(--border)"></div>
   </div>
 
   <!-- Slot Machine -->
@@ -1227,8 +1228,6 @@ body.era-deadball::after {
       <button class="skip-btn" id="btn-skip-team" onclick="skipTeam()">Skip Team <span class="skip-ct" id="ct-skip-team">(1 left)</span></button>
     </div>
   </div>
-
-  <div id="pos-tracker" style="display:flex;gap:4px;flex-wrap:wrap;margin:6px 0 2px"></div>
 
   <!-- Roster -->
   <div class="roster-card">
