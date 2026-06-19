@@ -5390,7 +5390,7 @@ function renderRoster() {
         + (S.hardMode ? '' :
           '<div class="pr-stats">'
           + '<span class="pr-stat-pill pr-stat-g" style="background:'+statTint(st.games,SR.g[0],SR.g[1],SR.g[2])+'"><span class="pr-stat-lbl">G</span>'+st.games+'</span>'
-          + '<span class="pr-stat-pill pr-stat-ops" style="background:'+statTint((st.obp||0)+(st.slg||0),SR.ops[0],SR.ops[1],SR.ops[2])+'"><span class="pr-stat-lbl">OPS</span>'+fmtSlash((st.obp||0)+(st.slg||0))+'</span>'
+          + (S.era==='deadball'?'<span class="pr-stat-pill pr-stat-ops" style="background:'+statTint(st.avg,SR.avg[0],SR.avg[1],SR.avg[2])+'"><span class="pr-stat-lbl">AVG</span>'+fmtSlash(st.avg)+'</span>':'<span class="pr-stat-pill pr-stat-ops" style="background:'+statTint((st.obp||0)+(st.slg||0),SR.ops[0],SR.ops[1],SR.ops[2])+'"><span class="pr-stat-lbl">OPS</span>'+fmtSlash((st.obp||0)+(st.slg||0))+'</span>')
           + '<span class="pr-stat-pill" style="background:'+statTint(st.runs,SR.r[0],SR.r[1],SR.r[2])+'"><span class="pr-stat-lbl">R</span>'+st.runs+'</span>'
           + '<span class="pr-stat-pill" style="background:'+statTint(S.era==='deadball'?((st.hr||0)+(st.h2b||0)+(st.h3b||0)):st.hr,SR.hr[0],SR.hr[1],SR.hr[2])+'"><span class="pr-stat-lbl">'+(S.era==='deadball'?'XBH':'HR')+'</span>'+(S.era==='deadball'?(st.hr||0)+(st.h2b||0)+(st.h3b||0):st.hr)+'</span>'
           + '<span class="pr-stat-pill" style="background:'+statTint(st.rbi,SR.rbi[0],SR.rbi[1],SR.rbi[2])+'"><span class="pr-stat-lbl">RBI</span>'+st.rbi+'</span>'
