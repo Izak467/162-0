@@ -1109,42 +1109,27 @@ body.era-deadball::after {
 .era-snap::-webkit-scrollbar { display: none; }
 .era-snap-card {
   scroll-snap-align: center; flex: 0 0 calc(100% - 44px);
-  min-height: 122px; border-radius: 14px;
+  min-height: 110px; border-radius: 12px;
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 5px; overflow: hidden; cursor: pointer;
-  transition: opacity .22s, transform .22s;
-  opacity: .64; transform: scale(.94); position: relative;
+  justify-content: center; gap: 7px; cursor: pointer;
+  transition: opacity .2s, transform .2s, border-color .2s;
+  opacity: .58; transform: scale(.955);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
 }
-.era-snap-card.esc-active { opacity: 1; transform: scale(1); }
-.esc-emoji { font-size: 24px; line-height: 1; }
-.esc-name {
-  font-family: Georgia, serif; font-size: 14px; font-weight: 700;
-  color: rgba(255,255,255,.96); letter-spacing: .2px;
-}
-.esc-years { font-size: 10px; color: rgba(255,255,255,.58); letter-spacing: 1.8px; text-transform: uppercase; }
-/* Per-era carousel card themes */
-.era-snap-card { box-shadow: inset 0 1px 0 rgba(255,255,255,.1); isolation: isolate; }
-.era-snap-card::before { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; z-index: 0; border-radius: inherit; }
-.esc-emoji, .esc-name, .esc-years { position: relative; z-index: 1; }
-.esc-card-deadball { background: linear-gradient(148deg,#6e1a2c 0%,#3e0e18 60%,#1a0610 100%); }
-.esc-card-deadball::before { background-image: repeating-linear-gradient(0deg,transparent 0px,transparent 2px,rgba(200,140,110,.038) 2px,rgba(200,140,110,.038) 3px); }
-.esc-card-golden { background: linear-gradient(148deg,#8a6414 0%,#5c4008 60%,#2e1e04 100%); }
-.esc-card-golden::before { background-image: linear-gradient(45deg,rgba(255,210,80,.08) 25%,transparent 25%),linear-gradient(-45deg,rgba(255,210,80,.08) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(255,210,80,.08) 75%),linear-gradient(-45deg,transparent 75%,rgba(255,210,80,.08) 75%); background-size: 16px 16px; background-position: 0 0,0 8px,8px -8px,-8px 0; }
-.esc-card-postwar { background: linear-gradient(148deg,#0e6070 0%,#094a58 60%,#042e38 100%); }
-.esc-card-postwar::before { background-image: radial-gradient(rgba(160,230,255,.12) 1.5px,transparent 1.5px); background-size: 9px 9px; }
-.esc-card-nostalgia { background: linear-gradient(148deg,#1a5e38 0%,#10421e 60%,#082210 100%); }
-.esc-card-nostalgia::before { background-image: linear-gradient(rgba(100,220,130,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(100,220,130,.06) 1px,transparent 1px); background-size: 14px 14px; }
-.esc-card-steroid { background: radial-gradient(ellipse at 50% 0%,#5a1eb0 0%,#3c1278 45%,#160640 100%); }
-.esc-card-steroid::before { background-image: radial-gradient(rgba(180,130,255,.12) 1.5px,transparent 1.5px); background-size: 16px 16px; background-position: 4px 4px; }
-.esc-card-modern { background: linear-gradient(148deg,#1c3c6c 0%,#102448 60%,#081428 100%); }
-.esc-card-modern::before { background-image: linear-gradient(rgba(100,160,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(100,160,255,.05) 1px,transparent 1px); background-size: 22px 22px; }
-.esc-arrow {
-  position: absolute; top: 50%; transform: translateY(-50%); z-index: 20;
-  background: none; border: none; outline: none; cursor: pointer;
-  color: rgba(255,255,255,.42); font-size: 20px; line-height: 1;
-  padding: 14px 10px; -webkit-tap-highlight-color: transparent;
-  transition: color .18s; user-select: none; -webkit-user-select: none;
-}
+.era-snap-card.esc-active { opacity: 1; transform: scale(1); border-color: var(--gold); border-left-color: var(--gold); }
+.esc-emoji { font-size: 28px; line-height: 1; }
+.esc-name { font-family: Georgia, serif; font-size: 16px; font-weight: 700; color: rgba(255,255,255,.95); letter-spacing: .3px; }
+.esc-years { font-size: 10px; color: var(--muted); letter-spacing: 1.8px; text-transform: uppercase; }
+.esc-card-deadball { border-left-color: #8B2030; }
+.esc-card-golden { border-left-color: #b08820; }
+.esc-card-postwar { border-left-color: #1080a0; }
+.esc-card-nostalgia { border-left-color: #208050; }
+.esc-card-steroid { border-left-color: #8030c0; }
+.esc-card-modern { border-left-color: #2860c0; }
+.era-snap-card.esc-active { border-left-color: var(--gold); }
+.esc-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:20; background:none; border:none; outline:none; cursor:pointer; color:rgba(255,255,255,.42); font-size:20px; line-height:1; padding:14px 10px; -webkit-tap-highlight-color:transparent; transition:color .18s; user-select:none; -webkit-user-select:none; }
 .esc-arrow:hover { color: rgba(255,255,255,.78); }
 .esc-arrow-l { left: 0; }
 .esc-arrow-r { right: 0; }
@@ -1212,35 +1197,35 @@ body.era-deadball::after {
   <!-- Era selector panel -->
   <div class="era-panel">
     <div class="era-tabs">
-      <button class="era-tab active" data-era="modern" onclick="selectEra('modern')">
-        <span class="era-tab-icon">📊</span>
-        <span class="era-tab-name">Modern Era</span>
-        <span class="era-tab-years">2005 – 2025</span>
-      </button>
-      <button class="era-tab" data-era="steroid" onclick="selectEra('steroid')">
-        <span class="era-tab-icon">💉</span>
-        <span class="era-tab-name">Juiced Era</span>
-        <span class="era-tab-years">1995 – 2004</span>
-      </button>
-      <button class="era-tab" data-era="nostalgia" onclick="selectEra('nostalgia')">
-        <span class="era-tab-icon">📺</span>
-        <span class="era-tab-name">Hardball Era</span>
-        <span class="era-tab-years">1969 – 1993</span>
-      </button>
-      <button class="era-tab" data-era="postwar" onclick="selectEra('postwar')">
-        <span class="era-tab-icon">⚾</span>
-        <span class="era-tab-name">Post-War Era</span>
-        <span class="era-tab-years">1946 – 1968</span>
+      <button class="era-tab" data-era="deadball" onclick="selectEra('deadball')">
+        <span class="era-tab-icon">🪨</span>
+        <span class="era-tab-name">Dead Ball</span>
+        <span class="era-tab-years">1901 – 1919</span>
       </button>
       <button class="era-tab" data-era="golden" onclick="selectEra('golden')">
         <span class="era-tab-icon">🎩</span>
         <span class="era-tab-name">Golden Age</span>
         <span class="era-tab-years">1920 – 1942</span>
       </button>
-      <button class="era-tab" data-era="deadball" onclick="selectEra('deadball')">
-        <span class="era-tab-icon">🪨</span>
-        <span class="era-tab-name">Dead Ball Era</span>
-        <span class="era-tab-years">1901 – 1919</span>
+      <button class="era-tab" data-era="postwar" onclick="selectEra('postwar')">
+        <span class="era-tab-icon">⚾</span>
+        <span class="era-tab-name">Post-War</span>
+        <span class="era-tab-years">1946 – 1968</span>
+      </button>
+      <button class="era-tab" data-era="nostalgia" onclick="selectEra('nostalgia')">
+        <span class="era-tab-icon">📺</span>
+        <span class="era-tab-name">Hardball</span>
+        <span class="era-tab-years">1969 – 1993</span>
+      </button>
+      <button class="era-tab" data-era="steroid" onclick="selectEra('steroid')">
+        <span class="era-tab-icon">💉</span>
+        <span class="era-tab-name">Juiced</span>
+        <span class="era-tab-years">1995 – 2004</span>
+      </button>
+      <button class="era-tab active" data-era="modern" onclick="selectEra('modern')">
+        <span class="era-tab-icon">📊</span>
+        <span class="era-tab-name">Modern</span>
+        <span class="era-tab-years">2005 – 2025</span>
       </button>
     </div>
     <div id="era-snap-wrap"></div>
@@ -4883,7 +4868,7 @@ function isEligibleAt(player, pos) {
   return player.positions.indexOf(pos) !== -1;
 }
 function slotLabel(pos) {
-  var lahmanEras = {deadball:1,golden:1,postwar:1,nostalgia:1};
+  var lahmanEras = {deadball:1,golden:1,postwar:1};
   if (lahmanEras[S.era] && (pos === 'LF' || pos === 'CF' || pos === 'RF')) return 'OF';
   return pos;
 }
@@ -5042,7 +5027,7 @@ function doSpin(lockYear, lockTeamId) {
       : pick(mTeamPool.length ? mTeamPool : validTeams);
     finalTeamInfo = historicalTeamInfo(finalTeam.id, finalYear);
   }
-  S.spin = { year:finalYear, teamId:finalTeam.id, teamName:finalTeamInfo.name };
+  S.spin = { year:finalYear, teamId:finalTeam.id, teamName:finalTeamInfo.name, logoUrl:finalTeamInfo.logoUrl||null, abbr:finalTeamInfo.abbr||'' };
 
   // Track recents (only for randomly chosen values, not locked ones)
   if (lockYear == null) {
@@ -5295,7 +5280,7 @@ function renderRoster() {
   if (rosterLogo) {
     if (S.spin) {
       var _tInfo = historicalTeamInfo(S.spin.teamId, S.spin.year);
-      rosterLogo.src = _tInfo.logoUrl || teamLogoUrl(_tInfo.abbr);
+      rosterLogo.src = S.spin.logoUrl || _tInfo.logoUrl || teamLogoUrl(S.spin.abbr || _tInfo.abbr);
       rosterLogo.setAttribute('data-abbr', _tInfo.abbr.toLowerCase());
       rosterLogo.style.display = '';
     } else {
@@ -5558,17 +5543,23 @@ function togglePosDropdown(e) {
 
 function _buildPosDropdownHtml() {
   var html = '';
+  var _lahman = {deadball:1,golden:1,postwar:1};
+  var _ofDone = false;
   for (var i = 0; i < POS.length; i++) {
     var pos = POS[i];
     if (pos === 'DH') continue;
+    if (_lahman[S.era] && (pos === 'LF' || pos === 'CF' || pos === 'RF')) {
+      if (!_ofDone) {
+        _ofDone = true;
+        var _ofChk = S._pendingPos.indexOf('LF') !== -1 || S._pendingPos.indexOf('CF') !== -1 || S._pendingPos.indexOf('RF') !== -1;
+        html += '<label class="pos-dd-item"><input type="checkbox" ' + (_ofChk ? 'checked' : '') + ' onchange="togglePendingOF()"> OF</label>';
+      }
+      continue;
+    }
     var checked = S._pendingPos.indexOf(pos) !== -1;
-    html += '<label class="pos-dd-item">'
-      + '<input type="checkbox" ' + (checked ? 'checked' : '') + ' onchange="togglePendingPos(\'' + pos + '\')">'
-      + ' ' + slotLabel(pos) + '</label>';
+    html += '<label class="pos-dd-item"><input type="checkbox" ' + (checked ? 'checked' : '') + ' onchange="togglePendingPos(\'' + pos + '\')">' + ' ' + pos + '</label>';
   }
-  html += '<div class="pos-dd-footer">'
-    + '<button class="pos-dd-all" onclick="clearPendingPos()">Clear</button>'
-    + '</div>';
+  html += '<div class="pos-dd-footer"><button class="pos-dd-all" onclick="clearPendingPos()">Clear</button></div>';
   return html;
 }
 
@@ -5581,7 +5572,20 @@ function togglePendingPos(pos) {
   renderRoster();
 }
 
-function clearPendingPos() {
+
+function togglePendingOF() {
+  var has = S.posFilter.indexOf('LF') !== -1;
+  if (has) {
+    S.posFilter = S.posFilter.filter(function(p){ return p !== 'LF' && p !== 'CF' && p !== 'RF'; });
+  } else {
+    if (S.posFilter.indexOf('LF') === -1) S.posFilter.push('LF');
+    if (S.posFilter.indexOf('CF') === -1) S.posFilter.push('CF');
+    if (S.posFilter.indexOf('RF') === -1) S.posFilter.push('RF');
+  }
+  S._pendingPos = S.posFilter.slice();
+  updateFilterBar(false);
+  renderRoster();
+}function clearPendingPos() {
   S.posFilter = [];
   S._pendingPos = [];
   var dd = document.getElementById('pos-dropdown');
