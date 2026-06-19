@@ -1463,22 +1463,26 @@ var ERA_SCORING = {
   modern: {
     W:     { woba:.50, hr:.16, rbi:.12, runs:.12, sb:.10 },
     CEIL:  { woba:.365, hr:270, rbi:860, runs:840, sb:178 },
-    FLOOR: { woba:.285, hr:30,  rbi:450, runs:430, sb:0   }
+    FLOOR: { woba:.285, hr:30,  rbi:450, runs:430, sb:0   },
+    exp:   2.2
   },
   steroid: {
     W:     { woba:.50, hr:.20, rbi:.12, runs:.12, sb:.06 },
     CEIL:  { woba:.376, hr:295, rbi:970, runs:930, sb:110 },
-    FLOOR: { woba:.290, hr:35,  rbi:490, runs:460, sb:0   }
+    FLOOR: { woba:.290, hr:35,  rbi:490, runs:460, sb:0   },
+    exp:   2.1
   },
   nostalgia: {
     W:     { woba:.50, hr:.16, rbi:.12, runs:.12, sb:.10 },
     CEIL:  { woba:.375, hr:240, rbi:855, runs:840, sb:270 },
-    FLOOR: { woba:.280, hr:20,  rbi:400, runs:390, sb:0   }
+    FLOOR: { woba:.280, hr:20,  rbi:400, runs:390, sb:0   },
+    exp:   2.2
   },
   postwar: {
     W:     { woba:.50, hr:.16, rbi:.12, runs:.12, sb:.10 },
     CEIL:  { woba:.368, hr:225, rbi:800, runs:785, sb:180 },
-    FLOOR: { woba:.275, hr:10,  rbi:380, runs:350, sb:0   }
+    FLOOR: { woba:.275, hr:10,  rbi:380, runs:350, sb:0   },
+    exp:   2.2
   }
 };
 
@@ -3966,6 +3970,22 @@ function _svgBall(w) {
     +'<path d="M14.1,6.1 L12.5,5.6 M13.5,8.0 L12.1,7.8 M13.3,10 L11.9,10 M13.5,12.0 L12.1,12.2 M14.0,13.9 L12.6,14.4" fill="none" stroke="#c04444" stroke-width="0.6" stroke-linecap="round"/></svg>';
 }
 
+function _svgNeedle(w) {
+  w = w||14; var id='nd'+(++_svgIdCtr);
+  return '<svg width="'+w+'" height="'+w+'" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs>'
+    +'<linearGradient id="'+id+'b" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#d8e8f4"/><stop offset="100%" stop-color="#a0c0d8"/></linearGradient>'
+    +'</defs>'
+    +'<g transform="rotate(-45 10 10)">'
+    +'<rect x="3" y="8.6" width="11" height="2.8" rx="1" fill="url(#'+id+'b)" stroke="#7090b0" stroke-width="0.4"/>'
+    +'<rect x="3.4" y="9.0" width="5.5" height="2.0" rx="0.6" fill="#e05050" opacity="0.55"/>'
+    +'<line x1="9.5" y1="8.6" x2="9.5" y2="11.4" stroke="#7090b0" stroke-width="0.4"/>'
+    +'<line x1="11.5" y1="8.6" x2="11.5" y2="11.4" stroke="#7090b0" stroke-width="0.4"/>'
+    +'<path d="M14 9.1 L18 10 L14 10.9 Z" fill="#aab0b8"/>'
+    +'<line x1="1.5" y1="7.8" x2="1.5" y2="12.2" stroke="#444" stroke-width="1.6" stroke-linecap="round"/>'
+    +'<line x1="1.5" y1="10" x2="3" y2="10" stroke="#666" stroke-width="1" stroke-linecap="round"/>'
+    +'</g></svg>';
+}
+
 // ─── Stat text color (same ramp as statTint but full-opacity for text) ────────
 function statTextColor(value, floor, mid, ceil) {
   var clamped = Math.max(floor, Math.min(ceil, +value||0));
@@ -4003,6 +4023,9 @@ function getAwardBadgesHtml(player, year) {
   }
   if (eraCfg.showSS && ad && ad.silverSluggers && ad.silverSluggers[player.id]) {
     html += '<span class="award-badge award-ss" title="Silver Slugger">'+_svgBall(14)+'</span>';
+  }
+  if (S.era === 'steroid' && STEROID_ENHANCED[player.name]) {
+    html += '<span class="award-badge award-peds" title="Mitchell Report / confirmed PED use — HR ceiling raised in scoring">'+_svgNeedle(14)+'</span>';
   }
   return html;
 }
@@ -4213,6 +4236,14 @@ function playerWOBA(st, year) {
   return num / pa;
 }
 
+var STEROID_ENHANCED = {
+  'Barry Bonds':true,'Roger Clemens':true,'Mark McGwire':true,'Sammy Sosa':true,
+  'Alex Rodriguez':true,'Jason Giambi':true,'Gary Sheffield':true,'Manny Ramirez':true,
+  'Rafael Palmeiro':true,'Andy Pettitte':true,'Miguel Tejada':true,'David Justice':true,
+  'Chuck Knoblauch':true,'Mo Vaughn':true,'Troy Glaus':true,'Jeremy Giambi':true,
+  'Kevin Brown':true,'Benito Santiago':true
+};
+
 function simulate() {
   var SC = ERA_SCORING[S.era || 'modern'];
   var hr=0, rbi=0, runs=0, sb=0, totalGames=0;
@@ -4250,16 +4281,31 @@ function simulate() {
     games: totalGames
   };
 
+  var roidsCount = 0;
+  if (S.era === 'steroid') {
+    for (var ri = 0; ri < 9; ri++) {
+      if (S.lineup[ri] && STEROID_ENHANCED[S.lineup[ri].player.name]) roidsCount++;
+    }
+  }
+  var effectiveCeil = SC.CEIL;
+  if (roidsCount > 0) {
+    effectiveCeil = {};
+    var ck = Object.keys(SC.CEIL);
+    for (var ci = 0; ci < ck.length; ci++) effectiveCeil[ck[ci]] = SC.CEIL[ck[ci]];
+    effectiveCeil.hr = SC.CEIL.hr + (roidsCount * 10);
+  }
+
   var norm = {};
   var keys = Object.keys(SC.W);
   for (var k = 0; k < keys.length; k++) {
     var key = keys[k];
-    norm[key] = Math.min(Math.max((agg[key] - SC.FLOOR[key]) / (SC.CEIL[key] - SC.FLOOR[key]), 0), 1);
+    norm[key] = Math.min(Math.max((agg[key] - SC.FLOOR[key]) / (effectiveCeil[key] - SC.FLOOR[key]), 0), 1);
   }
 
   var strength = 0;
   for (var k2 = 0; k2 < keys.length; k2++) strength += norm[keys[k2]] * SC.W[keys[k2]];
-  var wins = Math.min(Math.round(42 + 120 * Math.pow(strength, 2.2)), 162);
+  var eraExp = (ERA_SCORING[S.era] && ERA_SCORING[S.era].exp) || 2.2;
+    var wins = Math.min(Math.round(42 + 120 * Math.pow(strength, eraExp)), 162);
   return { wins: wins, strength: strength, norm: norm, agg: agg };
 }
 // ─── Helpers ─────────────────────────────────────────────────────────────────
