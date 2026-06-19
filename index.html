@@ -4129,6 +4129,72 @@ function fetchRoster(teamId, year) {
   });
 }
 
+// ─── Lahman helpers ──────────────────────────────────────────────────────────
+var LAHMAN_LOGO = {
+  NYA:'nyy', NYN:'sfg', BRO:'lad', SLN:'stl', SLA:'bal',
+  CHA:'chw', CHN:'chc', PHA:'oak', PHI:'phi', BOS:'bos',
+  CLE:'cle', DET:'det', PIT:'pit', CIN:'cin', BAL:'bal',
+  WSH:'min', ML1:'atl', BSN:'atl', KCA:'oak', LAD:'lad',
+  SFN:'sfg', HOU:'hou', NYM:'nym', MIN:'min', LAA:'laa',
+  MIL:'mil', MLN:'atl', KC1:'oak'
+};
+
+function getLahmanTeams(year) {
+  var d = (typeof LAHMAN_DATA !== 'undefined') && LAHMAN_DATA[year];
+  if (!d) return [];
+  return Object.keys(d).map(function(id) {
+    return { id: id, name: d[id].name, abbr: d[id].abbr };
+  });
+}
+
+function getLahmanTeam(year, teamId) {
+  return (typeof LAHMAN_DATA !== 'undefined') && LAHMAN_DATA[year] && LAHMAN_DATA[year][teamId];
+}
+
+function fetchRosterLahman(year, teamId) {
+  var team = getLahmanTeam(year, teamId);
+  if (!team || !team.players) return Promise.resolve([]);
+  var players = team.players.map(function(p) {
+    var tb = p.h1b + 2*p.h2b + 3*p.h3b + 4*p.hr;
+    return {
+      id: p.id,
+      name: p.name,
+      positions: p.positions && p.positions.length ? p.positions : ['DH'],
+      stats: {
+        avg: p.avg, obp: p.obp, slg: p.slg,
+        hr: p.hr, rbi: p.rbi, runs: p.r, tb: tb,
+        sb: p.sb, games: p.g, ab: p.ab, bb: p.bb,
+        h1b: p.h1b, h2b: p.h2b, h3b: p.h3b,
+        hbp: p.hbp || 0, sf: p.sf || 0
+      }
+    };
+  });
+  return Promise.resolve(players);
+}
+
+function fetchAwardsForLahmanYear(year) {
+  var cache = { allStars: {}, silverSluggers: {}, roys: {}, mvpWinners: {} };
+  if (typeof LAHMAN_MVP_RANKS !== 'undefined') {
+    Object.keys(LAHMAN_MVP_RANKS).forEach(function(k) {
+      var parts = k.split('|');
+      if (parseInt(parts[1]) === year) cache.mvpWinners[parts[0]] = LAHMAN_MVP_RANKS[k];
+    });
+  }
+  if (typeof LAHMAN_ROY !== 'undefined') {
+    Object.keys(LAHMAN_ROY).forEach(function(k) {
+      var parts = k.split('|');
+      if (parseInt(parts[1]) === year) cache.roys[parts[0]] = true;
+    });
+  }
+  if (typeof LAHMAN_ALLSTARS !== 'undefined') {
+    Object.keys(LAHMAN_ALLSTARS).forEach(function(k) {
+      var parts = k.split('|');
+      if (parseInt(parts[1]) === year) cache.allStars[parts[0]] = true;
+    });
+  }
+  return Promise.resolve(cache);
+}
+
 // ─── Simulation ──────────────────────────────────────────────────────────────
 // wOBA coefficients (FanGraphs linear weights, approximate — stable across eras)
 // Fallback weights (modern average) — used when WOBA_WEIGHTS year lookup misses
@@ -4395,8 +4461,11 @@ function doSpin(lockYear, lockTeamId) {
   // Exclude recently used years/teams from random picks
   var eraYears = ERA_CONFIG[S.era || 'modern'].yearPool;
 
+  var isLahman = !!(ERA_CONFIG[S.era] && ERA_CONFIG[S.era].lahman);
+
   // When keeping a team (skipYear), only allow years that team existed
   var validYears = (lockTeamId != null) ? eraYears.filter(function(y) {
+    if (isLahman) return !!(typeof LAHMAN_DATA !== 'undefined' && LAHMAN_DATA[y] && LAHMAN_DATA[y][lockTeamId]);
     var h = TEAM_HISTORY[lockTeamId];
     return !h || (y >= h.from && (!h.to || y <= h.to));
   }) : eraYears;
@@ -4404,14 +4473,25 @@ function doSpin(lockYear, lockTeamId) {
 
   var finalYear = lockYear != null ? lockYear : pick(yearPool.length ? yearPool : validYears);
 
-  // Only pick teams that existed in the selected year
-  var validTeams = getValidTeams(finalYear);
-  var teamPool = validTeams.filter(function(t){ return S.recentTeams.indexOf(t.id) === -1; });
-  var finalTeam = lockTeamId != null
-    ? TEAMS.filter(function(t){return t.id===lockTeamId;})[0]
-    : pick(teamPool.length ? teamPool : validTeams);
-
-  var finalTeamInfo = historicalTeamInfo(finalTeam.id, finalYear);
+  // Pick teams from correct source for the era
+  var validTeams, finalTeam, finalTeamInfo;
+  if (isLahman) {
+    validTeams = getLahmanTeams(finalYear);
+    var lTeamPool = validTeams.filter(function(t){ return S.recentTeams.indexOf(t.id) === -1; });
+    finalTeam = lockTeamId != null
+      ? (validTeams.filter(function(t){ return t.id === lockTeamId; })[0] || validTeams[0])
+      : pick(lTeamPool.length ? lTeamPool : validTeams);
+    var lahmanLogoId = (LAHMAN_LOGO[finalTeam.abbr] || finalTeam.abbr.toLowerCase());
+    finalTeamInfo = { name: finalTeam.name, abbr: finalTeam.abbr,
+      logoUrl: 'https://a.espncdn.com/i/teamlogos/mlb/500/' + lahmanLogoId + '.png' };
+  } else {
+    validTeams = getValidTeams(finalYear);
+    var mTeamPool = validTeams.filter(function(t){ return S.recentTeams.indexOf(t.id) === -1; });
+    finalTeam = lockTeamId != null
+      ? TEAMS.filter(function(t){return t.id===lockTeamId;})[0]
+      : pick(mTeamPool.length ? mTeamPool : validTeams);
+    finalTeamInfo = historicalTeamInfo(finalTeam.id, finalYear);
+  }
   S.spin = { year:finalYear, teamId:finalTeam.id, teamName:finalTeamInfo.name };
 
   // Track recents (only for randomly chosen values, not locked ones)
@@ -4527,28 +4607,38 @@ function loadRoster() {
 
   var year = S.spin.year;
   var spinTeamId = S.spin.teamId;
-  apiFetch('/standings?leagueId=103,104&season='+year+'&standingsTypes=regularSeason').then(function(data) {
-    if (!S.spin || S.spin.teamId !== spinTeamId) return;
-    var recs = data.records || [];
-    for (var i = 0; i < recs.length; i++) {
-      var tr = recs[i].teamRecords || [];
-      for (var j = 0; j < tr.length; j++) {
-        if (tr[j].team && tr[j].team.id === spinTeamId) {
-          var lr = tr[j].leagueRecord;
-          S.spin.record = lr.wins + '-' + lr.losses;
-          renderRoster();
-          return;
+  var isLahman = !!(ERA_CONFIG[S.era] && ERA_CONFIG[S.era].lahman);
+
+  if (!isLahman) {
+    apiFetch('/standings?leagueId=103,104&season='+year+'&standingsTypes=regularSeason').then(function(data) {
+      if (!S.spin || S.spin.teamId !== spinTeamId) return;
+      var recs = data.records || [];
+      for (var i = 0; i < recs.length; i++) {
+        var tr = recs[i].teamRecords || [];
+        for (var j = 0; j < tr.length; j++) {
+          if (tr[j].team && tr[j].team.id === spinTeamId) {
+            var lr = tr[j].leagueRecord;
+            S.spin.record = lr.wins + '-' + lr.losses;
+            renderRoster();
+            return;
+          }
         }
       }
-    }
-  }).catch(function() {});
+    }).catch(function() {});
+  }
 
-  fetchAwardsForYear(year, S.era).then(function(awards) {
+  var awardsPromise = isLahman
+    ? fetchAwardsForLahmanYear(year)
+    : fetchAwardsForYear(year, S.era);
+  awardsPromise.then(function(awards) {
     S.awardData = awards;
     if (!S.loading && !S.spinning && S.allPlayers.length) renderRoster();
   });
 
-  return fetchRoster(S.spin.teamId, year).then(function(players) {
+  var rosterPromise = isLahman
+    ? fetchRosterLahman(year, spinTeamId)
+    : fetchRoster(spinTeamId, year);
+  return rosterPromise.then(function(players) {
     S.allPlayers = players;
   }).catch(function(e) {
     S.loadError = 'Could not load ' + esc(S.spin.teamName) + ' ' + year + ' roster. Try a skip.';
@@ -5553,6 +5643,8 @@ function dismissSharedLineup() {
 (function(){var _bg;_bg=document.getElementById('bgmvp');if(_bg)_bg.innerHTML=_svgTrophy(1,14);_bg=document.getElementById('bgroy');if(_bg)_bg.innerHTML=_svgFlame(14);_bg=document.getElementById('bgss');if(_bg)_bg.innerHTML=_svgBall(14);_bg=document.getElementById('bgas');if(_bg)_bg.innerHTML=_svgStar(14);})();
 (function(){var m=window.location.hash.match(/^#lineup=([A-Za-z0-9\-_]+)$/);if(!m)return;var d=decodeLineup(m[1]);if(d)showSharedLineup(d);})();
 </script>
+<script src="lahman_data.js"></script>
+<script src="lahman_awards_data.js"></script>
 <script src="woba_weights.js"></script>
 </body>
 </html>
