@@ -1092,6 +1092,8 @@ body.era-deadball::after {
   display: flex; overflow-x: scroll;
   scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
   scrollbar-width: none; padding: 6px 22px; gap: 10px; box-sizing: border-box;
+  -webkit-mask-image: linear-gradient(to right,transparent 0%,black 14%,black 86%,transparent 100%);
+  mask-image: linear-gradient(to right,transparent 0%,black 14%,black 86%,transparent 100%);
 }
 .era-snap::-webkit-scrollbar { display: none; }
 .era-snap-card {
@@ -1100,7 +1102,7 @@ body.era-deadball::after {
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 5px; overflow: hidden; cursor: pointer;
   transition: opacity .22s, transform .22s;
-  opacity: .52; transform: scale(.94); position: relative;
+  opacity: .64; transform: scale(.94); position: relative;
 }
 .era-snap-card.esc-active { opacity: 1; transform: scale(1); }
 .esc-emoji { font-size: 24px; line-height: 1; }
@@ -1128,11 +1130,11 @@ body.era-deadball::after {
 .esc-arrow {
   position: absolute; top: 50%; transform: translateY(-50%); z-index: 20;
   background: none; border: none; outline: none; cursor: pointer;
-  color: rgba(255,255,255,.22); font-size: 20px; line-height: 1;
+  color: rgba(255,255,255,.42); font-size: 20px; line-height: 1;
   padding: 14px 10px; -webkit-tap-highlight-color: transparent;
   transition: color .18s; user-select: none; -webkit-user-select: none;
 }
-.esc-arrow:hover { color: rgba(255,255,255,.55); }
+.esc-arrow:hover { color: rgba(255,255,255,.78); }
 .esc-arrow-l { left: 0; }
 .esc-arrow-r { right: 0; }
 .esc-arrow[hidden] { display: none; }
