@@ -4708,12 +4708,15 @@ var _SNAP_DATA = [
   { era:'modern',    emoji:'📊', name:'Modern',     years:'2005 – 2025', cls:'esc-card-modern' },
 ];
 
-var _snapBuilt = false, _snapScrolling = false;
+var _snapBuilt = false, _snapScrolling = false, _escNavLock = false, _escNavLockTimer, _escThemeTimer;
 function _escNavigate(dir) {
   var idx = 0;
   for (var i = 0; i < _SNAP_DATA.length; i++) { if (_SNAP_DATA[i].era === _selectedEra) { idx = i; break; } }
   var next = idx + dir;
   if (next < 0 || next >= _SNAP_DATA.length) return;
+  clearTimeout(_escThemeTimer);
+  _escNavLock = true; clearTimeout(_escNavLockTimer);
+  _escNavLockTimer = setTimeout(function() { _escNavLock = false; }, 500);
   selectEra(_SNAP_DATA[next].era);
 }
 
@@ -4758,7 +4761,7 @@ function buildEraSnap() {
 
   // Scroll → detect centered card → selectEra
   var snap = document.getElementById('era-snap');
-  var _escRafPending = false, _escThemeTimer;
+  var _escRafPending = false;
   snap.addEventListener('scroll', function() {
     if (_escRafPending) return;
     _escRafPending = true;
@@ -4777,6 +4780,7 @@ function buildEraSnap() {
       if (!best) return;
       _syncSnapHighlight(best.dataset.era);
       if (best.dataset.era !== _selectedEra) {
+        if (_escNavLock) return;
         _selectedEra = best.dataset.era;
         _updateEscArrows();
         clearTimeout(_escThemeTimer);
