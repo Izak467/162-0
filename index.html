@@ -1116,6 +1116,16 @@ body.era-deadball::after {
         <span class="era-tab-name">Post-War Era</span>
         <span class="era-tab-years">1946 – 1968</span>
       </button>
+      <button class="era-tab" data-era="golden" onclick="selectEra('golden')">
+        <span class="era-tab-icon">🎩</span>
+        <span class="era-tab-name">Golden Age</span>
+        <span class="era-tab-years">1920 – 1942</span>
+      </button>
+      <button class="era-tab" data-era="deadball" onclick="selectEra('deadball')">
+        <span class="era-tab-icon">🪨</span>
+        <span class="era-tab-name">Dead Ball Era</span>
+        <span class="era-tab-years">1901 – 1919</span>
+      </button>
     </div>
     <div class="era-desc-area">
       <div class="era-desc-text" id="era-desc-text">Launch angles are optimized, the shift is banned, and every front office has a MIT grad running the numbers. From Pujols to Ohtani, the deepest and most statistically analyzed player pool in history. Build wisely.</div>
@@ -1453,6 +1463,34 @@ var ERA_CONFIG = {
       r:[15,50,115],  hr:[0,12,47],            rbi:[15,55,130],
       tb:[55,170,345],sb:[0,8,65]
     }
+  },
+  golden: {
+    name: 'Golden Age',
+    yearPool: [1920,1921,1922,1923,1924,1925,1926,1927,1928,1929,1930,1931,1932,1933,1934,1935,1936,1937,1938,1939,1940,1941,1942],
+    seasonScale: {},
+    showSS: false, showASG: true, showROY: false, showMVP: true,
+    lahman: true,
+    fbColl: 'scores_golden', fbCollHard: 'hardScores_golden',
+    statRanges: {
+      g:[30,100,154], avg:[0.240,0.290,0.370], woba:[0.290,0.330,0.400],
+      obp:[0.295,0.345,0.430], slg:[0.360,0.450,0.620], ops:[0.655,0.795,1.050],
+      r:[20,60,130],  hr:[0,10,50],            rbi:[20,70,150],
+      tb:[60,185,360],sb:[0,10,60]
+    }
+  },
+  deadball: {
+    name: 'Dead Ball Era',
+    yearPool: [1901,1902,1903,1904,1905,1906,1907,1908,1909,1910,1911,1912,1913,1914,1915,1916,1917,1918,1919],
+    seasonScale: {},
+    showSS: false, showASG: false, showROY: false, showMVP: true,
+    lahman: true,
+    fbColl: 'scores_deadball', fbCollHard: 'hardScores_deadball',
+    statRanges: {
+      g:[30,100,154], avg:[0.240,0.285,0.360], woba:[0.275,0.310,0.375],
+      obp:[0.285,0.330,0.415], slg:[0.300,0.370,0.490], ops:[0.585,0.700,0.905],
+      r:[15,50,110],  hr:[0,2,16],             rbi:[15,50,115],
+      tb:[50,160,285],sb:[0,20,90]
+    }
   }
 };
 
@@ -1482,6 +1520,20 @@ var ERA_SCORING = {
     W:     { woba:.50, hr:.16, rbi:.12, runs:.12, sb:.10 },
     CEIL:  { woba:.368, hr:225, rbi:800, runs:785, sb:180 },
     FLOOR: { woba:.275, hr:10,  rbi:380, runs:350, sb:0   },
+    exp:   2.2
+  },
+  golden: {
+    // Ruth era: HR suddenly matter; SB less important; offense was high 1920-1930, tighter 1930s
+    W:     { woba:.50, hr:.18, rbi:.12, runs:.12, sb:.08 },
+    CEIL:  { woba:.392, hr:215, rbi:940, runs:900, sb:125 },
+    FLOOR: { woba:.290, hr:8,   rbi:390, runs:370, sb:0   },
+    exp:   2.2
+  },
+  deadball: {
+    // Pre-HR era: stolen bases and runs dominated; HR nearly irrelevant
+    W:     { woba:.50, hr:.06, rbi:.12, runs:.14, sb:.18 },
+    CEIL:  { woba:.385, hr:55,  rbi:740, runs:760, sb:290 },
+    FLOOR: { woba:.275, hr:0,   rbi:330, runs:340, sb:20  },
     exp:   2.2
   }
 };
@@ -4157,9 +4209,12 @@ var LAHMAN_LOGO = {
   NYA:'nyy', NYN:'sfg', BRO:'lad', SLN:'stl', SLA:'bal',
   CHA:'chw', CHN:'chc', PHA:'oak', PHI:'phi', BOS:'bos',
   CLE:'cle', DET:'det', PIT:'pit', CIN:'cin', BAL:'bal',
-  WSH:'min', ML1:'atl', BSN:'atl', KCA:'oak', LAD:'lad',
-  SFN:'sfg', HOU:'hou', NYM:'nym', MIN:'min', LAA:'laa',
-  MIL:'mil', MLN:'atl', KC1:'oak'
+  WS1:'min', WS2:'tex', WSH:'min',               // WS1=orig Senators→Twins; WS2=expansion→Rangers
+  ML1:'atl', MLN:'atl', MLA:'bal', BSN:'atl',    // MLA=1901 Milw Brewers→Browns→Orioles
+  BLA:'bal',                                      // BLA=1901-02 Baltimore AL→became Yankees
+  KCA:'oak', LAD:'lad', SFN:'sfg', HOU:'hou',
+  NYM:'nym', MIN:'min', LAA:'laa', CAL:'laa',
+  MIL:'mil', KC1:'oak', OAK:'oak', ATL:'atl', LAN:'lad'
 };
 
 function getLahmanTeams(year) {
@@ -4362,7 +4417,9 @@ var _ERA_DESCS = {
   modern:   'Launch angles are optimized, the shift is banned, and every front office has a MIT grad running the numbers. From Pujols to Ohtani, the deepest and most statistically analyzed player pool in history. Build wisely.',
   steroid:  'McGwire hit 70. Sosa hit 66. Bonds hit 73. Nobody in the commissioner\'s office was asking too many questions. The most historically offensive stretch in baseball history — and we mean that both ways.',
   nostalgia:'From the Big Red Machine to the Iron Man. Rickey Henderson stole bases before you could blink, Tony Gwynn made .300 look like a down year, and the stolen base was a legitimate weapon of war. Your dad\'s game at its absolute finest.',
-  postwar: 'Baseball\'s golden age. Jackie Robinson changed everything in \'47. Willie Mays in center, Mickey Mantle in the Bronx, Hank Aaron in Milwaukee — three all-timers playing the same era at the same time. Maris chased the immortal 60 until he broke it. Every legend you\'ve ever heard of lived right here.'
+  postwar: 'Baseball at its most iconic. Jackie Robinson changed everything in \'47. Willie Mays in center, Mickey Mantle in the Bronx, Hank Aaron in Milwaukee — three all-timers playing the same era at the same time. Maris chased the immortal 60 until he broke it. Every legend you\'ve ever heard of lived right here.',
+  golden:   'Babe Ruth didn\'t just change baseball — he invented a new sport. The home run went from a novelty to the whole show, and the Bambino hit them farther than anyone thought possible. Lou Gehrig, Rogers Hornsby, Jimmie Foxx — the game\'s first true power era, played in wool and cap.',
+  deadball: 'No one hit home runs. Instead, they stole bases, played inside ball, and scratched out runs one at a time. Ty Cobb hit .420 and started fights at the same time. Honus Wagner was the best player in baseball and nobody could explain exactly how. Pitchers owned the world — until Ruth showed up and ended it all.'
 };
 
 function selectEra(eraKey) {
