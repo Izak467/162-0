@@ -1080,6 +1080,57 @@ body.era-deadball::after {
     rgba(200,140,110,0.022) 2px, rgba(200,140,110,0.022) 3px
   );
 }
+
+/* ── Era Timeline Slider ──────────────────────────────────── */
+.era-slider-wrap { padding: 6px 16px 2px; }
+@media (max-width: 640px) { .era-tabs { display: none; } }
+.era-slider { position: relative; touch-action: none; -webkit-user-select: none; user-select: none; }
+.era-slider-track {
+  display: flex; height: 54px; border-radius: 6px; overflow: hidden;
+  cursor: pointer; box-shadow: 0 2px 14px rgba(0,0,0,.6);
+}
+.era-zone {
+  position: relative; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; overflow: hidden;
+  flex-shrink: 0; transition: filter .15s, opacity .15s;
+}
+.era-zone:not(.era-zone-active) { opacity: .72; }
+.era-zone.era-zone-active { filter: brightness(1.35); opacity: 1; }
+.era-zone-gap { flex-shrink: 0; }
+.era-zone-emoji { font-size: 14px; line-height: 1; }
+.era-zone-name {
+  font-family: Georgia, serif; font-size: 8.5px; font-weight: 700;
+  color: rgba(255,255,255,.85); letter-spacing: .4px;
+  white-space: nowrap; overflow: hidden; max-width: 98%; margin-top: 2px;
+}
+.era-slider-handle {
+  position: absolute; top: -4px; width: 18px; height: 62px;
+  transform: translateX(-50%); cursor: grab; z-index: 10;
+  transition: left .25s ease;
+}
+.era-slider-handle::after {
+  content: ''; position: absolute; left: 50%; top: 0;
+  width: 3px; height: 100%; transform: translateX(-50%);
+  background: var(--gold); border-radius: 1.5px;
+  box-shadow: 0 0 10px rgba(212,175,55,.65);
+}
+.era-slider-handle::before {
+  content: ''; position: absolute; left: 50%; top: 50%;
+  width: 14px; height: 14px; transform: translate(-50%, -50%);
+  background: var(--gold); border-radius: 50%; z-index: 1;
+  box-shadow: 0 0 10px rgba(212,175,55,.8), 0 1px 4px rgba(0,0,0,.5);
+}
+.era-slider-handle:active { cursor: grabbing; }
+.era-slider-ticks { position: relative; height: 22px; margin-top: 4px; }
+.era-tick {
+  position: absolute; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+}
+.era-tick-line { width: 1px; height: 5px; background: var(--border-lt); }
+.era-tick-year {
+  font-size: 8px; color: var(--muted); letter-spacing: .3px;
+  margin-top: 2px; white-space: nowrap;
+}
 </style>
 </head>
 <body>
@@ -1127,6 +1178,7 @@ body.era-deadball::after {
         <span class="era-tab-years">1901 – 1919</span>
       </button>
     </div>
+    <div id="era-slider-wrap"></div>
     <div class="era-desc-area">
       <div class="era-desc-text" id="era-desc-text">Launch angles are optimized, the shift is banned, and every front office has a MIT grad running the numbers. From Pujols to Ohtani, the deepest and most statistically analyzed player pool in history. Build wisely.</div>
     </div>
@@ -4412,6 +4464,169 @@ function applyEraTheme(era) {
   root.style.setProperty('--muted',     t.muted);
 }
 
+// ─── Era Timeline Slider ─────────────────────────────────────────────────────
+// Era colors: a deliberate spectrum across 124 years of baseball history.
+// Warm earth (oldest) → jewel tones (mid-century) → cool precision (modern).
+// Dead Ball: sepia rust — dirt fields, lye-balls, farmland stadiums
+// Golden Age: true amber gold — Ruth, art deco, wool uniforms, prosperity
+// WWII gap: void
+// Post-War: period teal — '50s Americana, stadium seats, chrome and fins
+// Hardball: forest green — AstroTurf, Oakland A's, gritty working-class game
+// Strike gap: void
+// Juiced: imperial violet — ominous, outsized, chemically enhanced
+// Modern: deep navy — analytics, launch angles, front-office optimization
+var _ERA_ZONES = [
+  { era:'deadball',  emoji:'🪨', name:'Dead Ball',  color:'#6B3A1F', start:1901, end:1920 },
+  { era:'golden',    emoji:'🎩', name:'Golden Age', color:'#8B6914', start:1920, end:1943 },
+  { era:null,                                        color:'#080604', start:1943, end:1946 },
+  { era:'postwar',   emoji:'⚾', name:'Post-War',   color:'#0E5E6F', start:1946, end:1969 },
+  { era:'nostalgia', emoji:'📺', name:'Hardball',   color:'#1A5C38', start:1969, end:1994 },
+  { era:null,                                        color:'#06080a', start:1994, end:1995 },
+  { era:'steroid',   emoji:'💉', name:'Juiced',     color:'#4C1D95', start:1995, end:2005 },
+  { era:'modern',    emoji:'📊', name:'Modern',     color:'#1E3A5F', start:2005, end:2025 },
+];
+var _TL_START = 1901, _TL_SPAN = 124; // 2025 - 1901
+
+function _tlPct(yr)  { return (yr - _TL_START) / _TL_SPAN * 100; }
+function _zoneW(z)   { return (z.end - z.start) / _TL_SPAN * 100; }
+function _zoneMid(z) { return _tlPct((z.start + z.end) / 2); }
+
+function _eraFromPct(pct) {
+  var yr = _TL_START + pct / 100 * _TL_SPAN;
+  for (var i = 0; i < _ERA_ZONES.length; i++) {
+    var z = _ERA_ZONES[i];
+    if (z.era && yr >= z.start && yr < z.end) return z.era;
+  }
+  // In a gap — assign to nearest era
+  if (yr < 1920) return 'deadball';
+  if (yr < 1946) return 'golden';
+  if (yr < 1969) return 'postwar';
+  if (yr < 1995) return 'nostalgia';
+  if (yr < 2005) return 'steroid';
+  return 'modern';
+}
+
+function _updateSliderHandle(era) {
+  var handle = document.getElementById('era-slider-handle');
+  if (!handle) return;
+  for (var i = 0; i < _ERA_ZONES.length; i++) {
+    var z = _ERA_ZONES[i];
+    if (z.era === era) { handle.style.left = _zoneMid(z).toFixed(3) + '%'; break; }
+  }
+  document.querySelectorAll('.era-zone[data-era]').forEach(function(z) {
+    z.classList.toggle('era-zone-active', z.dataset.era === era);
+  });
+}
+
+var _sliderBuilt = false;
+function buildEraSlider() {
+  var wrap = document.getElementById('era-slider-wrap');
+  if (!wrap) return;
+  if (_sliderBuilt) { _updateSliderHandle(_selectedEra); return; }
+  _sliderBuilt = true;
+
+  var tHtml = '<div class="era-slider-track" id="era-slider-track">';
+  for (var i = 0; i < _ERA_ZONES.length; i++) {
+    var z = _ERA_ZONES[i];
+    var w = _zoneW(z).toFixed(4) + '%';
+    if (z.era) {
+      var cls = 'era-zone' + (z.era === _selectedEra ? ' era-zone-active' : '');
+      tHtml += '<div class="'+cls+'" data-era="'+z.era+'" style="width:'+w+';background:'+z.color+'">'
+        + '<span class="era-zone-emoji">'+z.emoji+'</span>'
+        + '<span class="era-zone-name">'+z.name+'</span>'
+        + '</div>';
+    } else {
+      tHtml += '<div class="era-zone era-zone-gap" style="width:'+w+';background:'+z.color+'"></div>';
+    }
+  }
+  tHtml += '</div>';
+
+  var tickYears = [1901, 1920, 1946, 1969, 1995, 2005, 2025];
+  var ticHtml = '<div class="era-slider-ticks">';
+  for (var t = 0; t < tickYears.length; t++) {
+    ticHtml += '<div class="era-tick" style="left:'+_tlPct(tickYears[t]).toFixed(3)+'%">'
+      + '<div class="era-tick-line"></div>'
+      + '<div class="era-tick-year">'+tickYears[t]+'</div>'
+      + '</div>';
+  }
+  ticHtml += '</div>';
+
+  var initZ = _ERA_ZONES.filter(function(z){ return z.era === _selectedEra; })[0] || _ERA_ZONES[7];
+  var hHtml = '<div class="era-slider-handle" id="era-slider-handle" style="left:'+_zoneMid(initZ).toFixed(3)+'%"></div>';
+
+  wrap.innerHTML = '<div class="era-slider">' + tHtml + hHtml + ticHtml + '</div>';
+  _bindSliderDrag(
+    document.getElementById('era-slider-handle'),
+    document.getElementById('era-slider-track')
+  );
+}
+
+function _bindSliderDrag(handle, track) {
+  if (!handle || !track) return;
+  var dragging = false;
+
+  function pctFromEvent(e) {
+    var rect = track.getBoundingClientRect();
+    var cx = e.touches ? e.touches[0].clientX : e.clientX;
+    return Math.max(0, Math.min(100, (cx - rect.left) / rect.width * 100));
+  }
+
+  function applyDragPct(pct) {
+    handle.style.transition = 'none';
+    handle.style.left = pct.toFixed(3) + '%';
+    var era = _eraFromPct(pct);
+    if (era !== _selectedEra) {
+      _selectedEra = era;
+      applyEraTheme(era);
+      var el = document.getElementById('era-desc-text');
+      if (el) el.textContent = _ERA_DESCS[era] || '';
+      document.querySelectorAll('.era-tab').forEach(function(tb) {
+        tb.classList.toggle('active', tb.dataset.era === era);
+      });
+      document.querySelectorAll('.era-zone[data-era]').forEach(function(z) {
+        z.classList.toggle('era-zone-active', z.dataset.era === era);
+      });
+    }
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    e.preventDefault();
+    applyDragPct(pctFromEvent(e));
+  }
+
+  function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    handle.style.transition = '';
+    _updateSliderHandle(_selectedEra);
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onUp);
+  }
+
+  handle.addEventListener('mousedown', function(e) {
+    dragging = true;
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    e.preventDefault();
+  });
+  handle.addEventListener('touchstart', function(e) {
+    dragging = true;
+    document.addEventListener('touchmove', onMove, {passive:false});
+    document.addEventListener('touchend', onUp);
+    e.preventDefault();
+  }, {passive:false});
+
+  // Click anywhere on track to jump directly to that era
+  track.addEventListener('click', function(e) {
+    if (e.target === handle) return;
+    var era = _eraFromPct(pctFromEvent(e));
+    if (era) selectEra(era);
+  });
+}
+
 var _selectedEra = 'modern';
 var _ERA_DESCS = {
   modern:   'Launch angles are optimized, the shift is banned, and every front office has a MIT grad running the numbers. From Pujols to Ohtani, the deepest and most statistically analyzed player pool in history. Build wisely.',
@@ -4430,6 +4645,7 @@ function selectEra(eraKey) {
   });
   var el = document.getElementById('era-desc-text');
   if (el) el.textContent = _ERA_DESCS[eraKey] || '';
+  _updateSliderHandle(eraKey);
 }
 
 function startSelectedEra() {
@@ -5528,6 +5744,7 @@ function showScreen(name) {
   document.getElementById('screen-'+name).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if (name === 'landing') {
+    buildEraSlider();
     selectEra(_selectedEra || 'modern');
     renderHistory();
   }
@@ -5773,6 +5990,7 @@ function dismissSharedLineup() {
 }
 (function(){var _bg;_bg=document.getElementById('bgmvp');if(_bg)_bg.innerHTML=_svgTrophy(1,14);_bg=document.getElementById('bgroy');if(_bg)_bg.innerHTML=_svgFlame(14);_bg=document.getElementById('bgss');if(_bg)_bg.innerHTML=_svgBall(14);_bg=document.getElementById('bgas');if(_bg)_bg.innerHTML=_svgStar(14);})();
 (function(){var m=window.location.hash.match(/^#lineup=([A-Za-z0-9\-_]+)$/);if(!m)return;var d=decodeLineup(m[1]);if(d)showSharedLineup(d);})();
+buildEraSlider();
 </script>
 <script src="lahman_data.js"></script>
 <script src="lahman_awards_data.js"></script>
