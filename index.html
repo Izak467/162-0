@@ -1095,10 +1095,26 @@ body.era-deadball::after {
 @media (max-width: 640px) {
   #era-slider-wrap { display: none; }
   .era-snap-wrap { display: none; }
-  .era-tabs { display: flex; overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; padding: 0; gap: 0; }
+  .era-tabs { display: flex; overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; padding: 4px 6px; gap: 6px; }
   .era-tabs::before, .era-tabs::after { content: ''; flex: 0 0 50%; }
   .era-tabs::-webkit-scrollbar { display: none; }
-  .era-tab { flex: 0 0 auto; flex-direction: row; gap: 5px; padding: 9px 13px; }
+  .era-tab { flex: 0 0 auto; flex-direction: row; gap: 5px; padding: 8px 14px;
+    border: 1px solid var(--border-lt); border-right: 1px solid var(--border-lt);
+    border-radius: 20px; transition: border-color .25s, box-shadow .25s, background .25s; }
+  .era-tab:last-child { border: 1px solid var(--border-lt); }
+  .era-tab.active { box-shadow: none; }
+  .era-tab[data-era="deadball"]         { border-color: rgba(139,32,48,.45); }
+  .era-tab[data-era="golden"]           { border-color: rgba(176,136,32,.45); }
+  .era-tab[data-era="postwar"]          { border-color: rgba(16,128,160,.45); }
+  .era-tab[data-era="nostalgia"]        { border-color: rgba(32,128,80,.45); }
+  .era-tab[data-era="steroid"]          { border-color: rgba(128,48,192,.45); }
+  .era-tab[data-era="modern"]           { border-color: rgba(40,96,192,.45); }
+  .era-tab[data-era="deadball"].active  { border-color: #8B2030; box-shadow: 0 0 10px rgba(139,32,48,.45); background: rgba(139,32,48,.12); }
+  .era-tab[data-era="golden"].active    { border-color: #b08820; box-shadow: 0 0 10px rgba(176,136,32,.45); background: rgba(176,136,32,.12); }
+  .era-tab[data-era="postwar"].active   { border-color: #1080a0; box-shadow: 0 0 10px rgba(16,128,160,.45); background: rgba(16,128,160,.12); }
+  .era-tab[data-era="nostalgia"].active { border-color: #208050; box-shadow: 0 0 10px rgba(32,128,80,.45); background: rgba(32,128,80,.12); }
+  .era-tab[data-era="steroid"].active   { border-color: #8030c0; box-shadow: 0 0 10px rgba(128,48,192,.45); background: rgba(128,48,192,.12); }
+  .era-tab[data-era="modern"].active    { border-color: #2860c0; box-shadow: 0 0 10px rgba(40,96,192,.45); background: rgba(40,96,192,.12); }
   .era-tab-years { display: none; }
   .era-tab-icon { font-size: 16px; }
   .era-tab-name { font-size: 12px; }
