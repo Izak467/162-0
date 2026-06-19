@@ -4086,6 +4086,7 @@ function getStatRanges(era, year) {
 
 // ─── SVG Award Badges ────────────────────────────────────────────────────────
 var _svgIdCtr = 0;
+var HOF_PLAYERS={aaronha01:1,alexape01:1,allendi01:1,alomaro01:1,ansonca01:1,aparilu01:1,applilu01:1,ashburi01:1,averiea01:1,bagweje01:1,baineha01:1,bakerfr01:1,bancrda01:1,bankser01:1,becklja01:1,bellco99:1,beltrad01:1,benchjo01:1,bendech01:1,berrayo01:1,biggicr01:1,blylebe01:1,boggswa01:1,bottoji01:1,boudrlo01:1,bresnro01:1,brettge01:1,brocklo01:1,broutda01:1,brownmo01:1,brownra99:1,brownwi02:1,bunniji01:1,burkeje01:1,camparo01:1,carewro01:1,careyma01:1,carltst01:1,cartega01:1,cepedor01:1,chancfr01:1,charlos99:1,chesbja01:1,clarkfr01:1,clarkjo01:1,clemero01:1,cobbty01:1,cochrmi01:1,collied01:1,colliji01:1,combsea01:1,connoro01:1,coopean99:1,covelst01:1,crawfsa01:1,cronijo01:1,cuyleki01:1,dandrra99:1,davisge01:1,dawsoan01:1,dayle99:1,deandi01:1,delahed01:1,dickebi01:1,dihigma99:1,dimagjo01:1,dobyla01:1,doerrbo01:1,drysddo01:1,duffyhu01:1,eckerde01:1,eversjo01:1,ewingbu01:1,faberre01:1,fellebo01:1,ferreri01:1,fingero01:1,fiskca01:1,flickel01:1,fordwh01:1,fostebi99:1,foxne01:1,foxxji01:1,friscfr01:1,galvipu01:1,gehrich01:1,gehrilo01:1,gibsobo01:1,gibsojo99:1,glavito02:1,gomezle01:1,gordojo01:1,gosligo01:1,gossari01:1,grantfr99:1,greenha01:1,griffcl01:1,griffke02:1,grimebu01:1,grovele01:1,guerrvl01:1,gwynnto01:1,hafeych01:1,haineje01:1,hallaro01:1,hamilbi01:1,hartnga01:1,heilmha01:1,heltoto01:1,henderi01:1,hermabi01:1,hillpe99:1,hodgegi01:1,hoffmtr01:1,hoopeha01:1,hornsro01:1,hoytwa01:1,hubbeca01:1,hunteca01:1,irvinmo01:1,jacksre01:1,jackstr01:1,jenkife01:1,jennihu01:1,jeterde01:1,johnsju99:1,johnsra05:1,johnswa01:1,jonesch06:1,jossad01:1,kaatji01:1,kalinal01:1,keefeti01:1,keelewi01:1,kellejo01:1,kellge01:1,kellyge01:1,kellyki01:1,kentje01:1,killeha01:1,kinerra01:1,kleinch01:1,koufasa01:1,lajoina01:1,larkiba01:1,lazzeto01:1,lemonbo01:1,leonabu99:1,lindsfr01:1,lloydpo99:1,lombaer01:1,lyonste01:1,mackebi99:1,maddugr01:1,mantlmi01:1,manushe01:1,maranra01:1,maricju01:1,marquru01:1,martied01:1,martipe02:1,mathech01:1,matheed01:1,mauerjo01:1,mayswi01:1,mazerbi01:1,mccarto01:1,mccovwi01:1,mcginjo01:1,mcgrifr01:1,mcphebi01:1,medwijo01:1,mendejo99:1,minosmi01:1,mizejo01:1,molitpa01:1,morgajo02:1,morrija02:1,murraed02:1,musiast01:1,mussimi01:1,newhoha01:1,nichoki01:1,niekrph01:1,olivato01:1,orourji01:1,ortizda01:1,ottme01:1,paigesa01:1,palmeji01:1,parkeda01:1,pennohe01:1,perezto01:1,perryga01:1,piazzmi01:1,planked01:1,puckeki01:1,radboch01:1,raineti01:1,reesepe01:1,riceji01:1,ricesa01:1,ripkeca01:1,riverma01:1,rixeyep01:1,rizzuph01:1,roberro01:1,robinbr01:1,robinfr02:1,robinja02:1,rodriiv01:1,roganbu99:1,rolensc01:1,roushed01:1,ruffire01:1,rusieam01:1,ruthba01:1,ryanno01:1,sabatcc01:1,sandbry01:1,santolo99:1,santoro01:1,schalra01:1,schmimi01:1,schoere01:1,seaveto01:1,seweljo01:1,simmoal01:1,simmote01:1,sislege01:1,slaugen01:1,smithhi99:1,smithle02:1,smithoz01:1,smoltjo01:1,snidedu01:1,spahnwa01:1,speaktr01:1,stargwi01:1,steartu99:1,suttebr01:1,suttlmu99:1,suttodo01:1,suzukic01:1,taylobe99:1,terrybi01:1,thomafr04:1,thomeji01:1,thompsa01:1,tinkejo01:1,torricr99:1,trammal01:1,traynpi01:1,vanceda01:1,vaughar01:1,wadderu01:1,wagnebi02:1,wagneho01:1,walkela01:1,wallabo01:1,walshed01:1,wanerll01:1,wanerpa01:1,wardjo01:1,welchmi01:1,wellswi99:1,wheatza01:1,whitede01:1,wilheho01:1,willibi01:1,willijo99:1,willite01:1,willivi01:1,wilsoha01:1,wilsoju99:1,winfida01:1,wynnea01:1,yastrca01:1,youngcy01:1,youngro01:1,yountro01:1};
 function _svgTrophy(rank, w) {
   w = w||14; var id='tr'+(++_svgIdCtr);
   var fc=[['#fff0a0','#f0c040','#906010'],['#f0f0f8','#c0c0cc','#606070'],['#f0c090','#c07840','#6a3810']];
@@ -4145,6 +4146,18 @@ function _svgNeedle(w) {
     +'</g></svg>';
 }
 
+function _svgPlaque(w) {
+  w = w||14; var id='hf'+(++_svgIdCtr);
+  return '<svg width="'+w+'" height="'+w+'" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><defs>'
+    +'<linearGradient id="'+id+'" x1="20%" y1="0%" x2="80%" y2="100%"><stop offset="0%" stop-color="#f0d060"/><stop offset="50%" stop-color="#d4a830"/><stop offset="100%" stop-color="#8B6010"/></linearGradient>'
+    +'</defs>'
+    +'<polygon points="10,1.5 18.5,7.5 1.5,7.5" fill="url(#'+id+')"/>'
+    +'<rect x="3" y="7.5" width="2.5" height="9" fill="url(#'+id+')"/>'
+    +'<rect x="8.75" y="7.5" width="2.5" height="9" fill="url(#'+id+')"/>'
+    +'<rect x="14.5" y="7.5" width="2.5" height="9" fill="url(#'+id+')"/>'
+    +'<rect x="1" y="16.5" width="18" height="2" rx="0.5" fill="url(#'+id+')"/></svg>';
+}
+
 // ─── Stat text color (same ramp as statTint but full-opacity for text) ────────
 function statTextColor(value, floor, mid, ceil) {
   var clamped = Math.max(floor, Math.min(ceil, +value||0));
@@ -4185,6 +4198,9 @@ function getAwardBadgesHtml(player, year) {
   }
   if (S.era === 'steroid' && isEnhanced(player.name, year)) {
     html += '<span class="award-badge award-peds" title="Mitchell Report / confirmed PED use — HR ceiling raised in scoring">'+_svgNeedle(14)+'</span>';
+  }
+  if (HOF_PLAYERS && HOF_PLAYERS[player.id] && {deadball:1,golden:1,postwar:1,nostalgia:1}[S.era]) {
+    html += '<span class="award-badge award-hof" title="Hall of Fame">'+_svgPlaque(14)+'</span>';
   }
   return html;
 }
@@ -4742,7 +4758,7 @@ function buildEraSnap() {
 
   // Scroll → detect centered card → selectEra
   var snap = document.getElementById('era-snap');
-  var _escRafPending = false;
+  var _escRafPending = false, _escThemeTimer;
   snap.addEventListener('scroll', function() {
     if (_escRafPending) return;
     _escRafPending = true;
@@ -4758,12 +4774,15 @@ function buildEraSnap() {
         var dist = Math.abs((cards[c].offsetLeft + cards[c].offsetWidth / 2) - center);
         if (dist < bestDist) { bestDist = dist; best = cards[c]; }
       }
-      if (best && best.dataset.era !== _selectedEra) {
-        _snapScrolling = true;
-        selectEra(best.dataset.era);
-        _snapScrolling = false;
-      } else if (best) {
-        _syncSnapHighlight(best.dataset.era);
+      if (!best) return;
+      _syncSnapHighlight(best.dataset.era);
+      if (best.dataset.era !== _selectedEra) {
+        _selectedEra = best.dataset.era;
+        _updateEscArrows();
+        clearTimeout(_escThemeTimer);
+        _escThemeTimer = setTimeout(function() {
+          _snapScrolling = true; selectEra(_selectedEra); _snapScrolling = false;
+        }, 100);
       }
     });
   }, {passive: true});
@@ -5686,6 +5705,9 @@ function showResults() {
         if (slot.awards.roy) bdg += '<span class="fl-award-badge">'+_svgFlame(14)+'</span>';
         if (slot.awards.asg) bdg += '<span class="fl-award-badge">'+_svgStar(14)+'</span>';
         if (slot.awards.ss)  bdg += '<span class="fl-award-badge">'+_svgBall(14)+'</span>';
+      }
+      if (HOF_PLAYERS && HOF_PLAYERS[slot.player.id] && {deadball:1,golden:1,postwar:1,nostalgia:1}[S.era]) {
+        bdg += '<span class="fl-award-badge">'+_svgPlaque(14)+'</span>';
       }
       html += '<div class="lu-row">'
         +'<div class="lu-pos">'+POS[i]+'</div>'
