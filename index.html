@@ -1096,6 +1096,7 @@ body.era-deadball::after {
   #era-slider-wrap { display: none; }
   .era-snap-wrap { display: none; }
   .era-tabs { display: flex; overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; padding: 0; gap: 0; }
+  .era-tabs::before, .era-tabs::after { content: ''; flex: 0 0 50%; }
   .era-tabs::-webkit-scrollbar { display: none; }
   .era-tab { flex: 0 0 auto; flex-direction: row; gap: 5px; padding: 9px 13px; }
   .era-tab-years { display: none; }
@@ -4844,7 +4845,7 @@ function selectEra(eraKey) {
   if (activeTab && activeTab.parentNode) {
     var _ts = activeTab.parentNode;
     var _tgt = activeTab.offsetLeft - _ts.clientWidth/2 + activeTab.offsetWidth/2;
-    _ts.scrollTo({left: Math.max(0, _tgt), behavior:'smooth'});
+    _ts.scrollTo({left: Math.min(Math.max(0, _tgt), _ts.scrollWidth - _ts.clientWidth), behavior:'smooth'});
   }
   var el = document.getElementById('era-desc-text');
   if (el) el.textContent = _ERA_DESCS[eraKey] || '';
