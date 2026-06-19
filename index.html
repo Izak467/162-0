@@ -1081,9 +1081,34 @@ body.era-deadball::after {
   );
 }
 
-/* ── Era Timeline Slider ──────────────────────────────────── */
+/* ── Era Timeline Slider (desktop) + Swipe Carousel (mobile) ─ */
 .era-slider-wrap { padding: 6px 16px 2px; }
-@media (max-width: 640px) { .era-tabs { display: none; } }
+@media (max-width: 640px) { .era-tabs { display: none; } .era-slider-wrap { display: none; } }
+@media (min-width: 641px) { .era-snap-wrap { display: none; } }
+
+/* ── Era Swipe Carousel ───────────────────────────────────── */
+.era-snap-wrap { padding: 8px 0 6px; }
+.era-snap {
+  display: flex; overflow-x: scroll;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 6px 22px; gap: 10px; box-sizing: border-box;
+}
+.era-snap::-webkit-scrollbar { display: none; }
+.era-snap-card {
+  scroll-snap-align: center; flex: 0 0 calc(100% - 44px);
+  min-height: 122px; border-radius: 14px;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 5px; overflow: hidden; cursor: pointer;
+  transition: opacity .22s, transform .22s;
+  opacity: .52; transform: scale(.94); position: relative;
+}
+.era-snap-card.esc-active { opacity: 1; transform: scale(1); }
+.esc-emoji { font-size: 40px; line-height: 1; }
+.esc-name {
+  font-family: Georgia, serif; font-size: 18px; font-weight: 700;
+  color: rgba(255,255,255,.96); letter-spacing: .2px;
+}
+.esc-years { font-size: 10px; color: rgba(255,255,255,.58); letter-spacing: 1.8px; text-transform: uppercase; }
 .era-slider { position: relative; touch-action: none; -webkit-user-select: none; user-select: none; }
 .era-slider-track {
   display: flex; height: 54px; border-radius: 6px; overflow: hidden;
@@ -1178,6 +1203,7 @@ body.era-deadball::after {
         <span class="era-tab-years">1901 – 1919</span>
       </button>
     </div>
+    <div id="era-snap-wrap"></div>
     <div id="era-slider-wrap"></div>
     <div class="era-desc-area">
       <div class="era-desc-text" id="era-desc-text">Launch angles are optimized, the shift is banned, and every front office has a MIT grad running the numbers. From Pujols to Ohtani, the deepest and most statistically analyzed player pool in history. Build wisely.</div>
@@ -4627,6 +4653,87 @@ function _bindSliderDrag(handle, track) {
   });
 }
 
+// ─── Era Swipe Carousel (mobile) ─────────────────────────────────────────────
+var _SNAP_DATA = [
+  { era:'deadball',  emoji:'🪨', name:'Dead Ball',  years:'1901 – 1919', c1:'#6B1A2E', c2:'#3d0e1a' },
+  { era:'golden',    emoji:'🎩', name:'Golden Age', years:'1920 – 1942', c1:'#8B6914', c2:'#4e3a07' },
+  { era:'postwar',   emoji:'⚾', name:'Post-War',   years:'1946 – 1968', c1:'#0E5E6F', c2:'#073842' },
+  { era:'nostalgia', emoji:'📺', name:'Hardball',   years:'1969 – 1993', c1:'#1A5C38', c2:'#0d3320' },
+  { era:'steroid',   emoji:'💉', name:'Juiced',     years:'1995 – 2004', c1:'#4C1D95', c2:'#28095c' },
+  { era:'modern',    emoji:'📊', name:'Modern',     years:'2005 – 2025', c1:'#1E3A5F', c2:'#0e2038' },
+];
+
+var _snapBuilt = false, _snapScrolling = false;
+
+function buildEraSnap() {
+  var wrap = document.getElementById('era-snap-wrap');
+  if (!wrap || _snapBuilt) { _syncEraSnap(_selectedEra, false); return; }
+  _snapBuilt = true;
+
+  var html = '<div class="era-snap" id="era-snap">';
+  for (var i = 0; i < _SNAP_DATA.length; i++) {
+    var d = _SNAP_DATA[i];
+    var active = d.era === _selectedEra ? ' esc-active' : '';
+    html += '<div class="era-snap-card'+active+'" data-era="'+d.era+'"'
+      + ' style="background:linear-gradient(148deg,'+d.c1+' 0%,'+d.c2+' 100%)">'
+      + '<div class="esc-emoji">'+d.emoji+'</div>'
+      + '<div class="esc-name">'+d.name+'</div>'
+      + '<div class="esc-years">'+d.years+'</div>'
+      + '</div>';
+  }
+  html += '</div>';
+  wrap.innerHTML = html;
+
+  // Scroll to active card without animation
+  _syncEraSnap(_selectedEra, false);
+
+  // Scroll → detect centered card → selectEra
+  var snap = document.getElementById('era-snap');
+  var scrollTimer;
+  snap.addEventListener('scroll', function() {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function() {
+      if (_snapScrolling) return;
+      var el = document.getElementById('era-snap');
+      if (!el) return;
+      var center = el.scrollLeft + el.clientWidth / 2;
+      var cards = el.querySelectorAll('.era-snap-card');
+      var best = null, bestDist = Infinity;
+      for (var c = 0; c < cards.length; c++) {
+        var dist = Math.abs((cards[c].offsetLeft + cards[c].offsetWidth / 2) - center);
+        if (dist < bestDist) { bestDist = dist; best = cards[c]; }
+      }
+      if (best && best.dataset.era !== _selectedEra) {
+        _snapScrolling = true;
+        selectEra(best.dataset.era);
+        _snapScrolling = false;
+      } else if (best) {
+        _syncSnapHighlight(best.dataset.era);
+      }
+    }, 60);
+  }, {passive: true});
+}
+
+function _syncSnapHighlight(era) {
+  var cards = document.querySelectorAll('.era-snap-card');
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].classList.toggle('esc-active', cards[i].dataset.era === era);
+  }
+}
+
+function _syncEraSnap(era, animate) {
+  if (_snapScrolling) return;
+  var snap = document.getElementById('era-snap');
+  if (!snap) return;
+  var card = snap.querySelector('.era-snap-card[data-era="'+era+'"]');
+  if (!card) return;
+  _syncSnapHighlight(era);
+  var target = card.offsetLeft + card.offsetWidth / 2 - snap.clientWidth / 2;
+  if (Math.abs(snap.scrollLeft - target) > 4) {
+    snap.scrollTo({ left: Math.max(0, target), behavior: animate === false ? 'auto' : 'smooth' });
+  }
+}
+
 var _selectedEra = 'modern';
 var _ERA_DESCS = {
   modern:   'Launch angles are optimized, the shift is banned, and every front office has a MIT grad running the numbers. From Pujols to Ohtani, the deepest and most statistically analyzed player pool in history. Build wisely.',
@@ -4646,6 +4753,7 @@ function selectEra(eraKey) {
   var el = document.getElementById('era-desc-text');
   if (el) el.textContent = _ERA_DESCS[eraKey] || '';
   _updateSliderHandle(eraKey);
+  _syncEraSnap(eraKey);
 }
 
 function startSelectedEra() {
@@ -5745,6 +5853,7 @@ function showScreen(name) {
   window.scrollTo({top:0,behavior:'smooth'});
   if (name === 'landing') {
     buildEraSlider();
+    buildEraSnap();
     selectEra(_selectedEra || 'modern');
     renderHistory();
   }
@@ -5991,6 +6100,7 @@ function dismissSharedLineup() {
 (function(){var _bg;_bg=document.getElementById('bgmvp');if(_bg)_bg.innerHTML=_svgTrophy(1,14);_bg=document.getElementById('bgroy');if(_bg)_bg.innerHTML=_svgFlame(14);_bg=document.getElementById('bgss');if(_bg)_bg.innerHTML=_svgBall(14);_bg=document.getElementById('bgas');if(_bg)_bg.innerHTML=_svgStar(14);})();
 (function(){var m=window.location.hash.match(/^#lineup=([A-Za-z0-9\-_]+)$/);if(!m)return;var d=decodeLineup(m[1]);if(d)showSharedLineup(d);})();
 buildEraSlider();
+buildEraSnap();
 </script>
 <script src="lahman_data.js"></script>
 <script src="lahman_awards_data.js"></script>
