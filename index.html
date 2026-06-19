@@ -1085,7 +1085,16 @@ body.era-deadball::after {
 
 /* ── Era Timeline Slider (desktop) + Swipe Carousel (mobile) ─ */
 #era-slider-wrap { padding: 6px 16px 2px; }
-@media (max-width: 640px) { .era-tabs { display: none; } #era-slider-wrap { display: none; } }
+@media (max-width: 640px) {
+  #era-slider-wrap { display: none; }
+  .era-snap-wrap { display: none; }
+  .era-tabs { display: flex; overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; padding: 0; gap: 0; }
+  .era-tabs::-webkit-scrollbar { display: none; }
+  .era-tab { flex: 0 0 auto; flex-direction: row; gap: 5px; padding: 9px 13px; }
+  .era-tab-years { display: none; }
+  .era-tab-icon { font-size: 16px; }
+  .era-tab-name { font-size: 12px; }
+}
 @media (min-width: 641px) { .era-snap-wrap { display: none; } }
 
 /* ── Era Swipe Carousel ───────────────────────────────────── */
@@ -4832,6 +4841,8 @@ function selectEra(eraKey) {
   document.querySelectorAll('.era-tab').forEach(function(tab) {
     tab.classList.toggle('active', tab.dataset.era === eraKey);
   });
+  var activeTab = document.querySelector('.era-tab.active');
+  if (activeTab) activeTab.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
   var el = document.getElementById('era-desc-text');
   if (el) el.textContent = _ERA_DESCS[eraKey] || '';
   _updateSliderHandle(eraKey);
