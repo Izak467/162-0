@@ -4364,7 +4364,7 @@ function fetchRosterLahman(year, teamId) {
     return {
       id: p.id,
       name: p.name,
-      positions: (function(ps){ var out=[]; (ps&&ps.length?ps:['DH']).forEach(function(x){ if(x==='OF'){out.push('LF','CF','RF');}else{out.push(x);} }); return out; })(p.positions),
+      positions: (function(ps){ var out=[]; (ps&&ps.length?ps:['DH']).forEach(function(x){ if(x==='LF'||x==='CF'||x==='RF'){if(out.indexOf('OF')===-1)out.push('OF');}else{out.push(x);} }); return out; })(p.positions),
       stats: {
         avg: p.avg, obp: p.obp, slg: p.slg,
         hr: p.hr, rbi: p.rbi, runs: p.r, tb: tb,
@@ -4866,8 +4866,17 @@ function statTint(value, floor, mid, ceil) {
 }
 
 function isEligibleAt(player, pos) {
+  if (pos === 'LF' || pos === 'CF' || pos === 'RF') {
+    return player.positions.indexOf(pos) !== -1 || player.positions.indexOf('OF') !== -1;
+  }
   return player.positions.indexOf(pos) !== -1;
 }
+function slotLabel(pos) {
+  var lahmanEras = {deadball:1,golden:1,postwar:1,nostalgia:1};
+  if (lahmanEras[S.era] && (pos === 'LF' || pos === 'CF' || pos === 'RF')) return 'OF';
+  return pos;
+}
+
 
 function eligibleSlotsFor(player) {
   // Returns { available: [posIdx], filled: [posIdx] }
@@ -5187,7 +5196,7 @@ function renderLineup() {
     var isMoving = (S.movingSlotIdx === i);
     var cls = slot ? (isMoving ? 'ls moving' : 'ls filled') : 'ls';
     html += '<div class="'+cls+'">';
-    html += '<div class="ls-pos">'+POS[i]+'</div>';
+    html += '<div class="ls-pos">'+slotLabel(POS[i])+'</div>';
     if (slot) {
       var nameParts = slot.player.name.split(' ');
       var suffixes = ['Jr.','Sr.','II','III','IV','V'];
@@ -5544,7 +5553,7 @@ function _buildPosDropdownHtml() {
     var checked = S._pendingPos.indexOf(pos) !== -1;
     html += '<label class="pos-dd-item">'
       + '<input type="checkbox" ' + (checked ? 'checked' : '') + ' onchange="togglePendingPos(\'' + pos + '\')">'
-      + ' ' + pos + '</label>';
+      + ' ' + slotLabel(pos) + '</label>';
   }
   html += '<div class="pos-dd-footer">'
     + '<button class="pos-dd-all" onclick="clearPendingPos()">Clear</button>'
@@ -5718,7 +5727,7 @@ function showResults() {
         bdg += '<span class="fl-award-badge">'+_svgPlaque(14)+'</span>';
       }
       html += '<div class="lu-row">'
-        +'<div class="lu-pos">'+POS[i]+'</div>'
+        +'<div class="lu-pos">'+slotLabel(POS[i])+'</div>'
         +'<div class="lu-body">'
           +'<div class="lu-name">'+esc(slot.player.name)+(bdg?' <span style="margin-left:3px">'+bdg+'</span>':'')+'</div>'
           +'<div class="lu-ctx">'+slot.year+' · '+esc(slot.teamName)+'</div>'
@@ -5751,7 +5760,7 @@ function showResults() {
       var slot=S.lineup[i]; if(!slot) continue;
       var st=slot.player.stats;
       var last=_lastName(slot.player.name);
-      html += '<tr><td class="hm-th-row"><span class="hm-pos">'+POS[i]+'</span> '+esc(last)+'</td>';
+      html += '<tr><td class="hm-th-row"><span class="hm-pos">'+slotLabel(POS[i])+'</span> '+esc(last)+'</td>';
       for (var c=0;c<cols.length;c++) {
         var col=cols[c];
         var val=col.k==='r'?(st.runs||0):col.k==='ops'?((st.obp||0)+(st.slg||0)):col.k==='hr'&&S.era==='deadball'?((st.hr||0)+(st.h2b||0)+(st.h3b||0)):(st[col.k]||0);
