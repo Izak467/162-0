@@ -879,7 +879,7 @@ body::before {
   overflow: hidden;
   margin-bottom: 16px;
 }
-.era-tabs { display: flex; border-bottom: 1px solid var(--border); }
+.era-tabs { display: flex; border-bottom: 1px solid var(--border); position: relative; }
 .era-tab {
   flex: 1;
   background: transparent; border: none;
@@ -1115,7 +1115,7 @@ body.era-deadball::after {
 }
 .era-snap::-webkit-scrollbar { display: none; }
 .era-snap-card {
-  scroll-snap-align: center; flex: 0 0 calc(100% - 44px);
+  scroll-snap-align: center; flex: 0 0 100%;
   min-height: 110px; border-radius: 12px;
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 7px; cursor: pointer;
@@ -5984,6 +5984,7 @@ function showScreen(name) {
     buildEraSnap();
     selectEra(_selectedEra || 'modern');
     renderHistory();
+    requestAnimationFrame(function() { _syncEraSnap(_selectedEra || 'modern', false); });
   }
 }
 
