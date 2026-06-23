@@ -1188,6 +1188,50 @@ body.era-deadball::after {
   font-size: 8px; color: var(--muted); letter-spacing: .3px;
   margin-top: 2px; white-space: nowrap;
 }
+
+/* ── 1v1 Challenge ─────────────────────────────────────────────────────── */
+.vs-banner {
+  background: rgba(201,164,74,.08); border: 1px solid rgba(201,164,74,.3);
+  border-radius: 10px; padding: 12px 16px; text-align: center; margin: 0 0 8px;
+}
+.vs-banner-title { color: var(--gold); font-size: 13px; font-weight: 700; letter-spacing: 1px; }
+.vs-banner-sub { color: var(--cream-dim); font-size: 11px; margin-top: 3px; }
+.challenge-btn {
+  padding: 13px 22px; background: transparent;
+  border: 1.5px solid var(--gold); color: var(--gold);
+  font-size: 14px; font-weight: 700; border-radius: 8px; cursor: pointer;
+  transition: background .2s;
+}
+.challenge-btn:hover { background: rgba(201,164,74,.12); }
+.vs-section { margin-top: 0; }
+.vs-header {
+  display: flex; justify-content: space-around; align-items: center;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px; margin-bottom: 10px; gap: 8px;
+}
+.vs-side { text-align: center; flex: 1; }
+.vs-side-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.vs-side-record { font-size: 26px; font-weight: 700; color: var(--cream); font-family: Georgia,serif; }
+.vs-side-era { font-size: 10px; color: var(--muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; }
+.vs-divider { font-size: 18px; color: var(--gold); font-weight: 700; }
+.vs-outcome {
+  text-align: center; font-size: 13px; font-weight: 700; color: var(--gold);
+  letter-spacing: .5px; margin-bottom: 10px; padding: 8px 12px;
+  background: rgba(201,164,74,.08); border-radius: 8px; border: 1px solid rgba(201,164,74,.2);
+}
+.vs-grid { display: flex; flex-direction: column; gap: 3px; }
+.vs-row {
+  display: grid; grid-template-columns: 1fr 36px 1fr;
+  gap: 4px; align-items: center; padding: 7px 10px;
+  background: var(--surface); border-radius: 7px; border: 1px solid var(--border);
+}
+.vs-row.you-win  { border-color: rgba(201,164,74,.4); }
+.vs-row.they-win { border-color: rgba(90,120,200,.35); }
+.vs-cell { font-size: 12px; color: var(--cream-dim); }
+.vs-cell.w { color: var(--cream); font-weight: 700; }
+.vs-cell-r { text-align: right; }
+.vs-cell-sub { font-size: 10px; color: var(--muted); }
+.vs-pos-lbl { text-align: center; font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: .5px; }
 </style>
 </head>
 <body>
@@ -1201,6 +1245,7 @@ body.era-deadball::after {
     <div class="hero-sub">Build the most feared lineup in baseball history · Choose your era</div>
   </div>
 
+  <div id="vs-banner" style="display:none" class="vs-banner"><div class="vs-banner-title">&#x2694; You've Been Challenged!</div><div id="vs-banner-sub" class="vs-banner-sub">Play your lineup to see the matchup</div></div>
   <!-- Era selector panel -->
   <div class="era-panel">
     <div class="era-tabs">
@@ -1430,10 +1475,12 @@ body.era-deadball::after {
     <div id="dash-leaders"></div>
   </div>
 
+  <div id="vs-result"></div>
   <div style="padding:10px 0 4px">
     <div id="fl-origins"></div>
   </div>
   <div class="results-btns">
+    <button class="challenge-btn" id="challenge-btn" onclick="copyChallenge()" style="display:none">&#x2694; Challenge a Friend</button>
     <button class="play-again-btn" onclick="resetGame()">Play Again</button>
     <button class="share-btn" onclick="shareScore()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -5670,7 +5717,7 @@ function showResults() {
   var res = simulate();
   var losses = 162 - res.wins;
   S.lastResult = res;
-  saveToHistory(res.wins);
+  saveToHistory(res.wins); _renderVsResult();
 
   var rec = document.getElementById('result-record');
   var recClass = res.wins===162 ? 'perfect' : res.wins>=130 ? 'transcendent' : res.wins>=115 ? 'dominant' : res.wins>=100 ? 'great' : res.wins>=87 ? 'good' : res.wins>=74 ? 'mediocre' : 'bad';
@@ -5996,6 +6043,8 @@ function showScreen(name) {
     selectEra(_selectedEra || 'modern');
     renderHistory();
     requestAnimationFrame(function() { _syncEraSnap(_selectedEra || 'modern', false); });
+    var _vsBanEl = document.getElementById('vs-banner');
+    if (_vsBanEl) _vsBanEl.style.display = _vsChallenge ? '' : 'none';
   }
 }
 
@@ -6244,6 +6293,96 @@ buildEraSnap();
 </script>
 <script src="lahman_data.js"></script>
 <script src="lahman_awards_data.js"></script>
-<script src="woba_weights.js"></script>
+<script src="woba_weights.js">
+// ─── 1v1 Challenge ────────────────────────────────────────────────────────────
+var _vsChallenge = null;
+(function() {
+  var h = window.location.hash;
+  if (h && h.slice(0,4) === '#vs=') {
+    try { _vsChallenge = JSON.parse(atob(h.slice(4))); } catch(e) {}
+    history.replaceState(null,'',window.location.pathname);
+  }
+})();
+
+function _encodeLineup() {
+  if (!S.lastResult) return null;
+  var slots = [];
+  for (var i = 0; i < 9; i++) {
+    var s = S.lineup[i];
+    if (!s) { slots.push(null); continue; }
+    var st = s.player.stats;
+    slots.push({ p:POS[i], n:s.player.name, y:s.year, t:s.teamName||'',
+      g:st.games, ab:st.ab, av:+(st.avg||0).toFixed(3),
+      ob:+(st.obp||0).toFixed(3), sl:+(st.slg||0).toFixed(3),
+      hr:st.hr||0, ri:st.rbi||0, r:st.runs||0, sb:st.sb||0 });
+  }
+  return btoa(JSON.stringify({ v:1, era:S.era, w:S.lastResult.wins, l:slots }));
+}
+
+function copyChallenge() {
+  var encoded = _encodeLineup();
+  if (!encoded) return;
+  var url = window.location.origin + window.location.pathname + '#vs=' + encoded;
+  var btn = document.getElementById('challenge-btn');
+  function _done() { if (btn) { btn.textContent = '✓ Link Copied!'; setTimeout(function(){ btn.textContent = '⚔ Challenge a Friend'; },2500); } }
+  if (navigator.clipboard) { navigator.clipboard.writeText(url).then(_done).catch(function(){ _copyFallback(url); _done(); }); }
+  else { _copyFallback(url); _done(); }
+}
+function _copyFallback(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+function _fmtOps(v) { return v ? (+v).toFixed(3) : '—'; }
+
+function _renderVsResult() {
+  var el = document.getElementById('vs-result');
+  var btn = document.getElementById('challenge-btn');
+  if (btn) btn.style.display = '';
+  if (!el) return;
+  if (!_vsChallenge) { el.innerHTML = ''; return; }
+  var them = _vsChallenge;
+  var myW = S.lastResult ? S.lastResult.wins : 0, myL = 162 - myW;
+  var thW = them.w || 0, thL = 162 - thW;
+  var eraLbl = { modern:'Modern', steroid:'Juiced', nostalgia:'Hardball', postwar:'Post-War', golden:'Golden Age', deadball:'Dead Ball' };
+  var youWin = myW > thW, tied = myW === thW;
+  var outcome = tied ? 'Dead even — it would go to extras'
+    : youWin ? '🏆 You win the series!' : '⚔ Challenger wins the series';
+
+  var rows = '';
+  for (var i = 0; i < 9; i++) {
+    var ms = S.lineup[i], ts = them.l ? them.l[i] : null;
+    var mops = ms ? (+(ms.player.stats.obp||0) + +(ms.player.stats.slg||0)) : 0;
+    var tops = ts ? ((+ts.ob||0) + (+ts.sl||0)) : 0;
+    var cls = mops > tops ? 'you-win' : tops > mops ? 'they-win' : '';
+    var mn = ms ? esc(ms.player.name) : '&mdash;', my = ms ? ms.year : '';
+    var tn = ts ? esc(ts.n) : '&mdash;', ty = ts ? ts.y : '';
+    rows += '<div class="vs-row ' + cls + '">'
+      + '<div class="vs-cell' + (mops >= tops && mops ? ' w' : '') + '">' + mn
+      + '<div class="vs-cell-sub">' + my + (my ? ' &middot; ' : '') + _fmtOps(mops) + '</div></div>'
+      + '<div class="vs-pos-lbl">' + POS[i] + '</div>'
+      + '<div class="vs-cell vs-cell-r' + (tops > mops ? ' w' : '') + '">' + tn
+      + '<div class="vs-cell-sub">' + _fmtOps(tops) + (ty ? ' &middot; ' : '') + ty + '</div></div>'
+      + '</div>';
+  }
+
+  el.innerHTML = '<div class="card vs-section">'
+    + '<div class="res-divider">Head-to-Head</div>'
+    + '<div class="vs-header">'
+    + '<div class="vs-side"><div class="vs-side-label">You</div>'
+    + '<div class="vs-side-record">' + myW + '–' + myL + '</div>'
+    + '<div class="vs-side-era">' + (eraLbl[S.era]||S.era) + '</div></div>'
+    + '<div class="vs-divider">VS</div>'
+    + '<div class="vs-side"><div class="vs-side-label">Challenger</div>'
+    + '<div class="vs-side-record">' + thW + '–' + thL + '</div>'
+    + '<div class="vs-side-era">' + (eraLbl[them.era]||them.era||'?') + '</div></div>'
+    + '</div>'
+    + '<div class="vs-outcome">' + outcome + '</div>'
+    + '<div class="vs-grid">' + rows + '</div>'
+    + '</div>';
+}
+</script>
 </body>
 </html>
