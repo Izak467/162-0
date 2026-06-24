@@ -1253,6 +1253,32 @@ body.era-deadball::after {
   .vs-side-record { font-size:20px; }
   .bo-row { grid-template-columns:22px 1fr 46px; padding:6px 8px; }
 }
+/* Lineup view tabs */
+.lv-tabs { display:flex; gap:0; background:var(--surface2); border-radius:8px; padding:3px; margin-bottom:10px; }
+.lv-tab { flex:1; padding:7px 0; font-size:12px; font-weight:700; border:none; border-radius:6px; cursor:pointer; background:transparent; color:var(--muted); transition:background .15s,color .15s; letter-spacing:.5px; }
+.lv-tab.lv-tab-active { background:var(--surface); color:var(--cream); }
+/* Batting order animated reveal */
+@keyframes bo-appear { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.bo-reveal-row { opacity:0; animation:bo-appear 0.22s ease forwards; display:grid; grid-template-columns:28px 1fr 52px; gap:6px; align-items:center; padding:8px 10px; background:var(--surface); border-radius:7px; border:1px solid var(--border); margin-bottom:3px; }
+/* 1v1 Hub */
+.vs-hub { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin:0 0 8px; }
+.vs-hub-title { color:var(--gold); font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+.vs-hub-row { display:flex; align-items:center; gap:8px; padding:8px 10px; background:var(--surface2); border-radius:8px; margin-bottom:6px; border-left:3px solid var(--border); }
+.vs-hub-row:last-child { margin-bottom:0; }
+.vs-hub-info { flex:1; min-width:0; }
+.vs-hub-label { font-size:12px; font-weight:700; color:var(--cream); }
+.vs-hub-record { font-size:11px; color:var(--muted); margin-top:1px; }
+.vs-hub-status { font-size:10px; font-weight:700; letter-spacing:.5px; white-space:nowrap; }
+.vs-hub-status.waiting { color:var(--muted); }
+.vs-hub-status.received { color:#4caf76; }
+.vs-hub-btns { display:flex; gap:4px; }
+.vs-hub-btn { padding:5px 9px; font-size:11px; font-weight:700; border-radius:6px; border:1px solid var(--border-lt); background:transparent; color:var(--cream-dim); cursor:pointer; transition:background .15s; white-space:nowrap; }
+.vs-hub-btn:hover { background:var(--surface); }
+.vs-hub-dismiss { border-color:transparent; color:var(--muted); }
+/* Duel modal overlay */
+.duel-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:9000; display:flex; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(2px); }
+.duel-modal-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px; max-width:480px; width:100%; max-height:90vh; overflow-y:auto; position:relative; }
+.duel-modal-close { position:absolute; top:12px; right:14px; background:transparent; border:none; color:var(--muted); font-size:18px; cursor:pointer; line-height:1; padding:4px 6px; }
 </style>
 </head>
 <body>
@@ -1266,7 +1292,8 @@ body.era-deadball::after {
     <div class="hero-sub">Build the most feared lineup in baseball history · Choose your era</div>
   </div>
 
-  <div id="vs-banner" style="display:none" class="vs-banner"><div class="vs-banner-title">&#x2694; You've Been Challenged!</div><div id="vs-banner-sub" class="vs-banner-sub">Play your lineup to see the matchup</div></div>
+  <div id="vs-hub" style="display:none" class="vs-hub"><div class="vs-hub-title">&#x2694; Active 1v1 Games</div><div id="vs-hub-list"></div></div>
+<div id="vs-banner" style="display:none" class="vs-banner"><div class="vs-banner-title">&#x2694; You've Been Challenged!</div><div id="vs-banner-sub" class="vs-banner-sub">Play your lineup to see the matchup</div></div>
   <!-- Era selector panel -->
   <div class="era-panel">
     <div class="era-tabs">
@@ -1484,7 +1511,12 @@ body.era-deadball::after {
   </div>
 
   <div class="card">
+    <div class="lv-tabs">
+      <button class="lv-tab lv-tab-active" id="lv-tab-lineup" onclick="setLineupView('lineup')">Lineup</button>
+      <button class="lv-tab" id="lv-tab-batting" onclick="setLineupView('batting')">Batting Order</button>
+    </div>
     <div id="dash-lineup"></div>
+    <div id="batting-order-reveal" style="display:none"></div>
     <div class="res-divider">Performance Matrix</div>
     <div id="dash-matrix"></div>
     <div class="res-divider">Team Totals</div>
@@ -1498,14 +1530,10 @@ body.era-deadball::after {
 
   <div id="vs-result"></div>
   <div style="padding:10px 0 4px">
-    <div id="batting-order-section" style="margin-bottom:8px">
-      <button class="batting-order-btn" id="batting-order-btn" onclick="toggleBattingOrder()">Suggested Batting Order</button>
-      <div id="batting-order-panel" style="display:none"></div>
-    </div>
-    <div id="fl-origins"></div>
+<div id="fl-origins"></div>
   </div>
   <div class="results-btns">
-    <button class="challenge-btn" id="challenge-btn" onclick="copyChallenge()" style="display:none">&#x2694; Challenge a Friend</button>
+    <button class="challenge-btn" id="challenge-btn" onclick="shareChallenge()" style="display:none">&#x2694; Challenge a Friend</button>
     <button class="play-again-btn" onclick="resetGame()">Play Again</button>
     <button class="share-btn" onclick="shareScore()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -6069,6 +6097,7 @@ function showScreen(name) {
     renderHistory();
     requestAnimationFrame(function() { _syncEraSnap(_selectedEra || 'modern', false); });
     _showVsBanner();
+    _renderVsHub();
   }
 }
 
@@ -6335,12 +6364,13 @@ function _b64dec(s)   { return JSON.parse(decodeURIComponent(escape(atob(s)))); 
         _vsChallenge = _b64dec(raw);
         _vsChallenge._raw = raw;
       }
+      _checkDuelResponse(raw);
       history.replaceState(null,'',window.location.pathname);
     }
   } catch(e) {}
 })();
 // show banner on initial page load if arriving via challenge/duel URL
-window.addEventListener('DOMContentLoaded', function() { _showVsBanner(); });
+window.addEventListener('DOMContentLoaded', function() { _showVsBanner(); _renderVsHub(); });
 
 function _encodeLineup() {
   if (!S.lastResult) return null;
@@ -6520,35 +6550,143 @@ function generateBattingOrder() {
   return order;
 }
 
-var _battingOrderVisible = false;
-function toggleBattingOrder() {
-  _battingOrderVisible = !_battingOrderVisible;
-  var panel = document.getElementById('batting-order-panel');
-  var btn   = document.getElementById('batting-order-btn');
-  if (!panel) return;
-  if (_battingOrderVisible) {
+// ─── Lineup View Toggle ───────────────────────────────────────────────────────
+function setLineupView(view) {
+  var lineupEl = document.getElementById('dash-lineup');
+  var boEl     = document.getElementById('batting-order-reveal');
+  var tabL     = document.getElementById('lv-tab-lineup');
+  var tabB     = document.getElementById('lv-tab-batting');
+  if (!lineupEl || !boEl) return;
+  if (view === 'batting') {
+    lineupEl.style.display = 'none'; boEl.style.display = '';
+    if (tabL) tabL.classList.remove('lv-tab-active');
+    if (tabB) tabB.classList.add('lv-tab-active');
+    // Animated sequential reveal
+    boEl.innerHTML = '<div id="bo-reveal-grid" style="padding-bottom:4px"></div>';
+    var grid = document.getElementById('bo-reveal-grid');
     var bo = generateBattingOrder();
-    var html = '<div class="bo-grid">';
-    for (var i = 0; i < bo.length; i++) {
-      var p = bo[i];
-      html += '<div class="bo-row">'
-        +'<div class="bo-num">'+(i+1)+'</div>'
-        +'<div class="bo-name">'+esc(p.name)+'<div class="bo-sub">'+p.pos+' &middot; '+p.year+'</div></div>'
-        +'<div class="bo-ops">'+p.ops.toFixed(3)+'<div class="bo-sub">OPS</div></div>'
-        +'</div>';
-    }
-    html += '</div>';
-    panel.innerHTML = html;
-    panel.style.display='';
-    if(btn) btn.textContent='Hide Batting Order';
+    bo.forEach(function(p, i) {
+      setTimeout(function() {
+        var row = document.createElement('div');
+        row.className = 'bo-reveal-row';
+        row.style.animationDelay = '0s';
+        row.innerHTML = '<div class="bo-num">'+(i+1)+'</div>'
+          +'<div class="bo-name">'+esc(p.name)+'<div class="bo-sub">'+p.pos+' &middot; '+p.year+'</div></div>'
+          +'<div class="bo-ops">'+p.ops.toFixed(3)+'<div class="bo-sub">OPS</div></div>';
+        grid.appendChild(row);
+      }, i * 110);
+    });
   } else {
-    panel.style.display='none';
-    if(btn) btn.textContent='Suggested Batting Order';
+    lineupEl.style.display = ''; boEl.style.display = 'none';
+    if (tabL) tabL.classList.add('lv-tab-active');
+    if (tabB) tabB.classList.remove('lv-tab-active');
+  }
+}
+
+// ─── Multi-Game Hub ───────────────────────────────────────────────────────────
+function _vsGames() { try { return JSON.parse(localStorage.getItem('mr-vs-games')||'[]'); } catch(e) { return []; } }
+function _saveVsGames(a) { localStorage.setItem('mr-vs-games', JSON.stringify(a)); }
+
+function _addChallenge(enc) {
+  var games = _vsGames();
+  if (games.filter(function(g){return g.status==='waiting';}).length >= 3) return false;
+  try {
+    var d = _b64dec(enc);
+    var n = games.filter(function(g){return g.era===d.era;}).length+1;
+    games.push({ id:String(Date.now()), raw:enc, era:d.era, wins:d.w,
+      sentAt:Date.now(), label:(_ERA_LBL[d.era]||d.era)+(n>1?' #'+n:''),
+      status:'waiting', duelRaw:null });
+    _saveVsGames(games); return true;
+  } catch(e) { return false; }
+}
+
+function _checkDuelResponse(fullRaw) {
+  var sep = fullRaw.indexOf('~'); if (sep < 0) return false;
+  var aPart = fullRaw.slice(0, sep);
+  var games = _vsGames(), idx = -1;
+  for (var i = 0; i < games.length; i++) { if (games[i].raw === aPart) { idx = i; break; } }
+  if (idx < 0) return false;
+  games[idx].status = 'received'; games[idx].duelRaw = fullRaw;
+  _saveVsGames(games); return true;
+}
+
+function _renderVsHub() {
+  var el = document.getElementById('vs-hub');
+  var list = document.getElementById('vs-hub-list');
+  if (!el || !list) return;
+  var games = _vsGames();
+  if (!games.length) { el.style.display='none'; return; }
+  el.style.display='';
+  list.innerHTML = games.map(function(g) {
+    var acc = _ERA_ACCENTS[g.era]||'var(--border)';
+    var isR = g.status==='received';
+    return '<div class="vs-hub-row" style="border-left:3px solid '+acc+'">'
+      +'<div class="vs-hub-info"><div class="vs-hub-label">'+esc(g.label)+'</div>'
+      +'<div class="vs-hub-record">'+g.wins+'&ndash;'+(162-g.wins)+'</div></div>'
+      +'<div class="vs-hub-status '+(isR?'received':'waiting')+'">'+(isR?'&#x2714; Response!':'&#x23F3; Waiting')+'</div>'
+      +'<div class="vs-hub-btns">'
+        +(isR?'<button class="vs-hub-btn" onclick="_viewDuel(\''+g.id+'\')">View</button>':'')
+        +'<button class="vs-hub-btn" onclick="_reshareGame(\''+g.id+'\')">&#x1F4CB;</button>'
+        +'<button class="vs-hub-btn vs-hub-dismiss" onclick="_dismissGame(\''+g.id+'\')">&#x2715;</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function _reshareGame(id) {
+  var g = _vsGames().filter(function(x){return x.id===id;})[0]; if (!g) return;
+  var url = window.location.origin+window.location.pathname+'#vs='+g.raw;
+  var text = 'I built a '+g.wins+'-win lineup in the '+(_ERA_LBL[g.era]||g.era)+' era. Can you beat it?';
+  if (navigator.share) { navigator.share({title:'Murderers Row Challenge',text:text,url:url}).catch(function(){}); }
+  else { _copyFallback(url); }
+}
+function _dismissGame(id) { _saveVsGames(_vsGames().filter(function(g){return g.id!==id;})); _renderVsHub(); }
+
+function _viewDuel(id) {
+  var g = _vsGames().filter(function(x){return x.id===id;})[0]; if(!g||!g.duelRaw) return;
+  try {
+    var sep = g.duelRaw.indexOf('~');
+    var p1 = _b64dec(g.duelRaw.slice(0,sep)), p2 = _b64dec(g.duelRaw.slice(sep+1));
+    var wins1 = g.wins, wins2 = p2.w;
+    var content = '<div class="res-divider">'+esc(g.label)+' Duel</div>'
+      +_vsHeader(wins1,162-wins1,p1.era,wins2,162-wins2,p2.era,'You','Challenger')
+      +'<div class="vs-note">Position-by-position OPS comparison</div>'
+      +'<div class="vs-grid">'+_vsRows(p1.l,p2.l,true)+'</div>';
+    document.getElementById('duel-modal-content').innerHTML = content;
+    document.getElementById('duel-modal').style.display='flex';
+  } catch(e) {}
+}
+function _closeDuelModal(e) {
+  if (e && e.target !== document.getElementById('duel-modal')) return;
+  document.getElementById('duel-modal').style.display='none';
+}
+
+// ─── Share Challenge (native share API) ───────────────────────────────────────
+function shareChallenge() {
+  var enc = _encodeLineup(); if (!enc) return;
+  if (!_addChallenge(enc)) {
+    var btn = document.getElementById('challenge-btn');
+    if (btn) { var o=btn.textContent; btn.textContent='Max 3 active!'; setTimeout(function(){btn.textContent=o;},2500); }
+    return;
+  }
+  _renderVsHub();
+  var url = window.location.origin+window.location.pathname+'#vs='+enc;
+  var wins = S.lastResult ? S.lastResult.wins : 0;
+  var text = 'I just built a '+wins+'-win '+(_ERA_LBL[S.era]||S.era)+' era lineup in Murderers Row. Think you can beat it?';
+  if (navigator.share) {
+    navigator.share({title:'Murderers Row Challenge',text:text,url:url}).catch(function(err){
+      if (err.name!=='AbortError') _copyFallback(url);
+    });
+  } else {
+    _copyFallback(url);
+    var btn = document.getElementById('challenge-btn');
+    if (btn) { var o=btn.textContent; btn.textContent='Link Copied!'; setTimeout(function(){btn.textContent=o;},2500); }
   }
 }
 </script>
 <script src="lahman_data.js"></script>
 <script src="lahman_awards_data.js"></script>
 <script src="woba_weights.js"></script>
+<div id="duel-modal" style="display:none" class="duel-modal-overlay" onclick="_closeDuelModal(event)"><div class="duel-modal-card"><button class="duel-modal-close" onclick="_closeDuelModal()">&#x2715;</button><div id="duel-modal-content"></div></div></div>
 </body>
 </html>
