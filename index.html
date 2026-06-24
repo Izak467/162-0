@@ -129,7 +129,7 @@
 @property --border-lt { syntax: '<color>'; inherits: true; initial-value: #3d6080; }
 @property --muted     { syntax: '<color>'; inherits: true; initial-value: #6a82a0; }
 :root {
-  transition: --bg .35s ease, --surface .35s ease, --surface2 .35s ease, --border .35s ease, --border-lt .35s ease, --muted .35s ease;
+  transition: --bg .12s ease, --surface .12s ease, --surface2 .12s ease, --border .12s ease, --border-lt .12s ease, --muted .12s ease;
   --bg:         #0d1b2a;
   --surface:    #132540;
   --surface2:   #1c3355;
@@ -1259,7 +1259,10 @@ body.era-deadball::after {
 .lv-tab.lv-tab-active { background:var(--surface); color:var(--cream); }
 /* Batting order animated reveal */
 @keyframes bo-appear { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-.bo-reveal-row { opacity:0; animation:bo-appear 0.22s ease forwards; display:grid; grid-template-columns:28px 1fr 52px; gap:6px; align-items:center; padding:8px 10px; background:var(--surface); border-radius:7px; border:1px solid var(--border); margin-bottom:3px; }
+.bo-reveal-row { opacity:0; animation:bo-appear 0.22s ease forwards; display:grid; grid-template-columns:28px 1fr auto; gap:6px; align-items:center; padding:8px 10px; background:var(--surface); border-radius:7px; border:1px solid var(--border); margin-bottom:3px; }
+.bo-stats { text-align:right; }
+.bo-slash { font-size:11px; font-weight:700; color:var(--cream-dim); font-family:monospace; white-space:nowrap; }
+.bo-counts { font-size:10px; color:var(--muted); margin-top:2px; white-space:nowrap; }
 /* 1v1 Hub */
 .vs-hub { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin:0 0 8px; }
 .vs-hub-title { color:var(--gold); font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
@@ -6590,9 +6593,12 @@ function setLineupView(view) {
         var row = document.createElement('div');
         row.className = 'bo-reveal-row';
         row.style.animationDelay = '0s';
+        var _st = S.lineup[p.idx] ? S.lineup[p.idx].player.stats : null;
+        var _slash = _st ? (fmtSlash(_st.avg)+'/'+fmtSlash(_st.obp)+'/'+fmtSlash(_st.slg)) : p.ob.toFixed(3);
+        var _cnts = _st ? (S.era==='deadball' ? (Math.round((_st.h2b||0)+(_st.h3b||0)+(_st.hr||0))+'XBH &middot; '+Math.round(_st.rbi||0)+'RBI') : (Math.round(_st.hr||0)+'HR &middot; '+Math.round(_st.rbi||0)+'RBI')) : '';
         row.innerHTML = '<div class="bo-num">'+(i+1)+'</div>'
           +'<div class="bo-name">'+esc(p.name)+'<div class="bo-sub">'+p.pos+' &middot; '+p.year+'</div></div>'
-          +'<div class="bo-ops">'+p.ops.toFixed(3)+'<div class="bo-sub">OPS</div></div>';
+          +'<div class="bo-stats"><div class="bo-slash">'+_slash+'</div><div class="bo-counts">'+_cnts+'</div></div>';
         grid.appendChild(row);
       }, i * 110);
     });
