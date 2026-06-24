@@ -6664,8 +6664,8 @@ function generateBattingOrder() {
   function take(fn) { rem.sort(function(a,b){return fn(b)-fn(a);}); return rem.shift(); }
   var slot3 = take(function(p){ return p.ops; });
   var slot4 = take(function(p){ return p.sl*0.55 + Math.min(p.hr/50,1)*0.35 + Math.min(p.ri/130,1)*0.10; });
-  var slot1 = take(function(p){ return p.ob*0.65 + p.avg*0.20 + Math.min(p.sb/60,1)*0.15; });
-  var slot2 = take(function(p){ return p.ops*0.55 + p.ob*0.30 + Math.min(p.sb/60,1)*0.15; });
+  var slot1 = take(function(p){ return p.ob*0.50 + p.avg*0.15 + Math.min(p.sb/60,1)*0.35; });
+  var slot2 = take(function(p){ return p.ops*0.50 + p.ob*0.25 + Math.min(p.sb/60,1)*0.25; });
   var slot5 = take(function(p){ return p.sl*0.45 + p.ops*0.35 + Math.min(p.ri/110,1)*0.20; });
   rem.sort(function(a,b){ return b.ops - a.ops; });
   var result = [slot1, slot2, slot3, slot4, slot5];
