@@ -6377,8 +6377,8 @@ function _vsRows(mySlots, theirSlots, myDecoded) {
   var rows = '';
   for (var i = 0; i < 9; i++) {
     var ms = mySlots[i], ts = theirSlots ? theirSlots[i] : null;
-    var mo = ms ? (myDecoded?(+(ms.ob||0)++(ms.sl||0)):(+(ms.player.stats.obp||0)++(ms.player.stats.slg||0))) : 0;
-    var to = ts ? (+(ts.ob||0)++(ts.sl||0)) : 0;
+    var mo = ms ? (myDecoded?(+(ms.ob||0) + +(ms.sl||0)):(+(ms.player.stats.obp||0) + +(ms.player.stats.slg||0))) : 0;
+    var to = ts ? (+(ts.ob||0) + +(ts.sl||0)) : 0;
     var cls = mo>to?'you-win':to>mo?'they-win':'';
     var mn = ms?(myDecoded?esc(ms.n):esc(ms.player.name)):'&mdash;', my = ms?(myDecoded?ms.y:ms.year):'';
     var tn = ts?esc(ts.n):'&mdash;', ty = ts?ts.y:'';
